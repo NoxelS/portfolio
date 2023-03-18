@@ -1,35 +1,36 @@
 ---
+import * as Icon from '@astropub/icons';
+
 export interface Props {
-	title: string;
+    title?: string;
 }
 
 const { title } = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+<html lang="en" class="">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title || 'Noel Pascal Schwabenland'}</title>
+
+        <!-- Scripts -->
+        <script is:inline src="utils.js"></script>
+    </head>
+    <body class="bg-white-100 dark:bg-black-100">
+        <div class="flex flex-row items-center p-2 float-right cursor-pointer" onclick="toggleTheme();">
+            <div class="block dark:hidden"><Icon.Moon fill="#000" width="24" height="24" /></div>
+            <div class="hidden dark:block"><Icon.Sun fill="#fff" width="24" height="24" /></div>
+        </div>
+        <main class="p-20"><slot /></main>
+    </body>
 </html>
 <style is:global>
-	:root {
-		--accent: 124, 58, 237;
-		--accent-gradient: linear-gradient(45deg, rgb(var(--accent)), #da62c4 30%, white 60%);
-	}
-	html {
-		font-family: system-ui, sans-serif;
-		background-color: #F6F6F6;
-	}
-	code {
-		font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-			Bitstream Vera Sans Mono, Courier New, monospace;
-	}
+    /** Transition switching themes */
+    html * {
+        transition: background-color 0.5s ease, color 0.2s ease;
+    }
 </style>
