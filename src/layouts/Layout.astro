@@ -1,5 +1,6 @@
 ---
 import * as Icon from '@astropub/icons';
+import { SEO } from 'astro-seo';
 
 export interface Props {
     title?: string;
@@ -19,18 +20,98 @@ const { title } = Astro.props;
 
         <!-- Scripts -->
         <script is:inline src="utils.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+        <script is:inline src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+        <!-- Font -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- SEO -->
+        <SEO
+            title="Noel Pascal Schwabenland"
+            description=""
+            openGraph={{
+                basic: {
+                    title: '',
+                    type: '',
+                    image: ''
+                }
+            }}
+            charset="UTF-8"
+            twitter={{
+                creator: '@noelschwabenla2',
+            }}
+            extend={{
+                // extending the default link tags
+                link: [{ rel: 'icon', href: '/favicon.ico' }],
+                // extending the default meta tags
+                meta: [
+                    {
+                        name: 'twitter:image',
+                        content: ''
+                    },
+                    { name: 'twitter:title', content: '' },
+                    { name: 'twitter:description', content: '' }
+                ]
+            }}
+        />
     </head>
     <body class="bg-white-100 dark:bg-black-100">
         <div class="flex flex-row items-center p-2 float-right cursor-pointer" onclick="toggleTheme();">
-            <div class="block dark:hidden"><Icon.Moon fill="#000" width="24" height="24" /></div>
-            <div class="hidden dark:block"><Icon.Sun fill="#fff" width="24" height="24" /></div>
+            <div class="block dark:hidden" aria-hidden="true"><Icon.Moon fill="#000" width="24" height="24" /></div>
+            <div class="hidden dark:block" aria-hidden="true"><Icon.Sun fill="#fff" width="24" height="24" /></div>
         </div>
-        <main class="p-20"><slot /></main>
-    </body>
+        <div class="grid grid-cols-4 px-40 min-h-screen">
+            <aside class="bg-[#F7F7F7] dark:bg-[#0D131F] h-max text-black-100 dark:text-white-85 px-8 pb-8 text-sm">
+                <img src="IMG_0445.JPEG" class="w-32 h-32 my-6" alt="" />
+                <div class="flex flex-col gap-y-2">
+                    <div class="flex flex-col gap-y-1">
+                        <h2 class="font-extrabold text-black-100 dark:text-white-100 text-xl">Noel Pascal Schwabenland</h2>
+                        <small class="text-sm">Physics Student & Frontend Developer</small>
+                        <div class="flex flex-row items-center gap-x-1 text-xs">
+                            <!-- <Icon.SewingPin fill="#0D131F" width="20" height="20" /> -->
+                            Saarbrücken, Germany
+                        </div>
+                    </div>
+                    <div class="flex flex-col py-4">
+                        <small class="text-xs pb-2 text-black-60 dark:text-white-100">About me</small>
+                        <div class="text-sm text-black-80">
+                            Ich bin von der der computational und theoretischen Physik begeistert und blühe auf, wenn es darum geht, komplexe Probleme zu lösen
+                            während ich immer nach neuen Herausforderungen suche. Mit meinem Hintergrund in der Frontend-Entwicklung bringe ich eine
+                            einzigartige Perspektive in meine Arbeit ein, die technische Fähigkeiten mit analytischen Fähigkeiten verbindet.
+                        </div>
+                    </div>
+                    <a href="https://www.kuppingercole.com" target="_blank" class="flex flex-row items-center gap-x-2 fill-black-100 dark:fill-white-100"
+                        ><Icon.Backpack fill="inherit" width="20" height="20" />KuppingerCole Analysts AG</a
+                    >
+                    <a href="mailto:noel@schwabenland.ch" class="flex flex-row items-center gap-x-2 fill-black-100 dark:fill-white-100"
+                        ><Icon.EnvelopeClosed fill="inherit" width="20" height="20" />noel@schwabenland.ch</a
+                    >
+                    <a href="/cv.pdf" target="_blank" class="flex flex-row items-center gap-x-2 fill-black-100 dark:fill-white-100">
+                        <Icon.FileText fill="inherit" width="20" height="20" />
+                        Download CV
+                    </a>
+                    <div class="flex flex-row items-center gap-x-4 fill-black-100 dark:fill-white-100">
+                        <a href="https://twitter.com/NoelSchwabenla2" class="flex flex-row items-center gap-x-2 fill-black-100 dark:fill-white-100"
+                            ><Icon.TwitterLogo fill="inherit" width="20" height="20" />Twitter</a
+                        >
+                        <a href="https://github.com/NoxelS" class="flex flex-row items-center gap-x-2 fill-black-100 dark:fill-white-100"
+                            ><Icon.GitHubLogo fill="inherit" width="20" height="20" />GitHub</a
+                        >
+                    </div>
+                </div>
+            </aside>
+            <main class="px-8 py-6 flex flex-col col-span-3"><slot /></main>
+        </div>
+    </body><style is:global>
+        /** Transition switching themes */
+        html * {
+            transition: background-color 0.5s ease, color 0.2s ease;
+        }
+    </style>
 </html>
-<style is:global>
-    /** Transition switching themes */
-    html * {
-        transition: background-color 0.5s ease, color 0.2s ease;
-    }
-</style>

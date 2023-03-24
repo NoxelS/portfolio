@@ -1,9 +1,296 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import * as Icon from '@astropub/icons';
+const projects = [
+    {
+        title: 'Projekt 1',
+        description: `This is a template repository for building a web scraper with OpenAI support. The repository provides a basic project structure with TypeScript and Puppeteer pre-configured, as well as OpenAI's GPT… `,
+        tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+        link: 'https://www.google.com',
+        image: 'https://picsum.photos/900/300',
+        language: 'c++',
+        date: '2021-01-01',
+        lastUpdate: '2021-01-01'
+    },
+    {
+        title: 'Projekt 2',
+        description: `This is a template repository for building a web scraper with OpenAI support. The repository provides a basic project structure with TypeScript and Puppeteer pre-configured, as well as OpenAI's GPT… `,
+        tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+        link: 'https://www.google.com',
+        image: 'https://picsum.photos/900/300',
+        language: 'c++',
+        date: '2021-01-01',
+        lastUpdate: '2021-01-01'
+    },
+    {
+        title: 'Projekt 3',
+        description: `This is a template repository for building a web scraper with OpenAI support. The repository provides a basic project structure with TypeScript and Puppeteer pre-configured, as well as OpenAI's GPT… `,
+        tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+        link: 'https://www.google.com',
+        image: 'https://picsum.photos/900/300',
+        language: 'c++',
+        date: '2021-01-01',
+        lastUpdate: '2021-01-01'
+    },
+    {
+        title: 'Projekt 1',
+        description: `This is a template repository for building a web scraper with OpenAI support. The repository provides a basic project structure with TypeScript and Puppeteer pre-configured, as well as OpenAI's GPT… `,
+        tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+        link: 'https://www.google.com',
+        image: 'https://picsum.photos/900/300',
+        language: 'c++',
+        date: '2021-01-01',
+        lastUpdate: '2021-01-01'
+    },
+    {
+        title: 'Projekt 2',
+        description: `This is a template repository for building a web scraper with OpenAI support. The repository provides a basic project structure with TypeScript and Puppeteer pre-configured, as well as OpenAI's GPT… `,
+        tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+        link: 'https://www.google.com',
+        image: 'https://picsum.photos/900/300',
+        language: 'c++',
+        date: '2021-01-01',
+        lastUpdate: '2021-01-01'
+    },
+    {
+        title: 'Projekt 3',
+        description: `This is a template repository for building a web scraper with OpenAI support. The repository provides a basic project structure with TypeScript and Puppeteer pre-configured, as well as OpenAI's GPT… `,
+        tags: ['Tag 1', 'Tag 2', 'Tag 3'],
+        link: 'https://www.google.com',
+        image: 'https://picsum.photos/900/300',
+        language: 'c++',
+        date: '2021-01-01',
+        lastUpdate: '2021-01-01'
+    }
+];
+
+const work = [
+    {
+        title: 'Frontend Developer',
+        location: 'KuppingerCole Analysts AG',
+        link: 'https://www.kuppingercole.com',
+        type: 'Werkstudent, Teilzeit',
+        skills: [
+            'Entwicklung von internen IT‑Projekten, vorwiegend in VueJS und AstroJs',
+            'Selbstständige Entwicklung von lightweight JavaScript Packages',
+            'Mitsprache im Entwicklungsprozess neuer Applikationen und deren Technologiestrukturen'
+        ],
+        date: '10.2021 - Heute'
+    },
+    {
+        title: 'Full Stack Developer',
+        location: 'CMS für die Direktorenvereinigung der Gesamtschulen in Rheinland-Pfalz',
+        type: 'Honorar, Teilzeit',
+        skills: [
+            'Komplettlösung eines Content‑Management‑Systems mittels AngularJs und NodeJs',
+            'Eigenständige Projekt- und Risikoplanung',
+            'Entwicklung von Design und Struktur bis hin zur Realisierung und Deployment',
+            'Datenbankverwaltung in MySql',
+            'Realisierung zu 100% in Typescript',
+            'Versionsverwaltung mithilfe von GIT',
+            'Deployment des Systems mithilfe von Docker'
+        ],
+        date: '09.2020 - 07.2021 '
+    },
+    {
+        title: 'Frontend Developer',
+        location: 'GIP Exyr GmbH',
+        link: 'https://www.gip.com/',
+        type: 'Werkstudent, Vollzeit',
+        skills: [
+            'Entwicklung von modernen AngularJS Frontend Apps zur Datenvisualisierung und workflowbasierten Netzwerksteuerung',
+            'Entwicklung von wiederverwendbaren Komponenten',
+            'Agile Softwareentwicklung gestützt durch Jira',
+            'Kontinuierliche Integration mit Jenkins',
+            'Ticket basierte Entwicklung in einem dynamischen Team',
+            'Versionsverwaltung mithilfe von SVN',
+            'Performanceanalyse von AngularJs Apps'
+        ],
+        date: '04.2020 - 09.2020'
+    },
+    {
+        title: 'Frontend Developer',
+        location: 'SELG Tool der IGS',
+        type: 'Honorar, Teilzeit',
+        skills: [
+            'Komplettlösung einer Webapp zur Datenverwaltung der Integrierten Gesamtschulen in Rheinland‑Pfalz',
+            'Eigenständiges Projektmanagement',
+            'Kontinuierliche Integration mittels Jenkins',
+            'Backend Development mit NodeJs und ExpressJs',
+            'Frontend Development mit Moustache',
+            'Versionsverwaltung mithilfe von GIT',
+            'Deployment des Systems mithilfe von Docker'
+        ],
+        date: '04.2020 - 09.2020'
+    }
+];
+
+const academic = [
+    {
+        title: 'Physik',
+        location: 'Universität des Saarlands',
+        description: 'Bachelor of Science',
+        date: '2023'
+    },
+    {
+        title: 'Oberstufe',
+        location: 'MSS der Integrierten Gesamtschule Nieder-Olm',
+        description: 'Allgemeine Hochschulreife',
+        date: '2020'
+    },
+    {
+        title: 'Mittlere Reife',
+        location: 'MSS der Integrierten Gesamtschule Nieder-Olm',
+        description: 'Mittlere Reife',
+        date: '2023'
+    }
+];
 ---
 
 <Layout>
-    <div class="text-black-100 dark:text-white-100 font-bold self-center pl-10 flex flex-col">
-        <div class="text-lg">My site is under construction!</div>
+    <small class="text-xs text-black-80 pb-4">Meine Projekte</small>
+
+    <div class="swiper-proj swiper">
+        <div class="swiper-wrapper">
+            {
+                projects.map(project => (
+                    <div class="swiper-slide overflow-hidden flex flex-col">
+                        <img class="" src={project.image} alt="" />
+                        <div class="flex flex-col py-4 gap-y-2">
+                            <div class="flex flex-row justify-between items-end">
+                                <div class="text-sm">{project.title}</div>
+                                <div class="text-xs">{project.date}</div>
+                            </div>
+                            <div class="text-xs">{project.description}</div>
+                            <div class="flex flex-row gap-x-2">
+                                {project.tags.map(tag => (
+                                    <div class="text-xs bg-secondary text-white-100 rounded-full px-2 py-1">{tag}</div>
+                                ))}
+                            </div>
+                            <a class="text-sm flex flex-row items-center gap-x-2">
+                                <div>View on GitHub</div> <Icon.ArrowRight fill="#000" width="14" height="14" />
+                            </a>
+                        </div>
+                    </div>
+                ))
+            }
+        </div>
+        <div class="button-next-proj absolute top-1/2 right-0 z-50"><Icon.ArrowRight class="" width="24" height="24" /></div>
     </div>
+
+    <small class="text-xs text-black-80 pt-4 pb-4">Meine Erfahrungen</small>
+
+    <div class="swiper-work swiper">
+        <div class="swiper-wrapper">
+            {
+                work.map(job => (
+                    <div class="swiper-slide flex flex-col">
+                        <div class="flex flex-col py-4 gap-y-2">
+                            <div class="flex flex-row justify-between items-end">
+                                <div class="flex flex-row items-end">
+                                    <div class="text-lg leading-none">{job.title}</div>
+                                    <div class="text-xs ml-2 text-black-60">{job.type}</div>
+                                </div>
+                                <div class="text-xs">{job.date}</div>
+                            </div>
+                            <a href={job.link} class="text-sm">
+                                {job.location}
+                            </a>
+                            <div class="text-xs">
+                                {job.skills.map(skill => (
+                                    <div class="flex flex-row items-start gap-x-2">
+                                        <Icon.Check fill="#000" width="14" height="14" />
+                                        <div>{skill}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                ))
+            }
+        </div>
+        <div class="button-next-work absolute top-1/2 right-0 z-50"><Icon.ArrowRight class="" width="24" height="24" /></div>
+    </div>
+
+    <small class="text-xs text-black-80 pt-4 pb-4">Meine Akademische Laufbahn</small>
+    <div class="grid grid-cols-2 gap-6 w-full"></div>
+
+    <div class="swiper-aca swiper">
+        <div class="swiper-wrapper">
+            {
+                academic.map(job => (
+                    <div class="swiper-slide overflow-hidden flex flex-col">
+                        <div class="flex flex-col py-4 gap-y-2">
+                            <div class="flex flex-row justify-between items-end">
+                                <div class="flex flex-row items-end">
+                                    <div class="text-lg leading-none">{job.title}</div>
+                                </div>
+                                <div class="text-xs">{job.date}</div>
+                            </div>
+                            <div class="text-sm">{job.location}</div>
+                            <div class="text-xs">{job.description}</div>
+                        </div>
+                    </div>
+                ))
+            }
+        </div>
+        <div class="button-next-aca absolute top-1/2 right-0 z-50"><Icon.ArrowRight class="" width="24" height="24" /></div>
+    </div>
+
+    <script is:inline>
+        const swiperproj = new Swiper('.swiper-proj', {
+            // Optional parameters
+            direction: 'horizontal',
+            loop: true,
+
+            slidesPerView: '3',
+            spaceBetween: 20,
+            // If we need pagination
+            // Navigation arrows
+            navigation: {
+                nextEl: '.button-next-proj'
+                // prevEl: '.button-prev'
+            }
+
+            // And if we need scrollbar
+        });
+        const swiperwork = new Swiper('.swiper-work', {
+            // Optional parameters
+            direction: 'horizontal',
+            loop: true,
+
+            slidesPerView: '2',
+            spaceBetween: 20,
+            // If we need pagination
+            // Navigation arrows
+            navigation: {
+                nextEl: '.button-next-work'
+                // prevEl: '.button-prev'
+            }
+
+            // And if we need scrollbar
+        });
+        const swiperjobs = new Swiper('.swiper-aca', {
+            // Optional parameters
+            direction: 'horizontal',
+            loop: true,
+
+            slidesPerView: '3',
+            spaceBetween: 20,
+            // If we need pagination
+            // Navigation arrows
+            navigation: {
+                nextEl: '.button-next-aca'
+                // prevEl: '.button-prev'
+            }
+
+            // And if we need scrollbar
+        });
+    </script>
 </Layout>
+
+<style is:global>
+    .swiper {
+        width: 100%;
+    }
+</style>
