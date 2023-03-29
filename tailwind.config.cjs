@@ -3,6 +3,7 @@ module.exports = {
     content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
     theme: {
         screens: {
+            xxl: { max: '1535px' },
             xl: { max: '1279px' },
             lg: { max: '1023px' },
             md: { max: '767px' },
@@ -18,21 +19,23 @@ module.exports = {
                 20: 'rgba(255, 255, 255, 0.20)'
             },
             black: {
-                100: 'rgba(51,51,51,1)',
-                80: 'rgba(51,51,51,0.8)',
-                60: 'rgba(51,51,51,0.6)',
-                20: 'rgba(51,51,51,0.2)',
-                5: 'rgba(51,51,51,0.05)'
+                100: 'rgba(0,0,0,1.0)',
+                80: 'rgba(0,0,0,0.8)',
+                60: 'rgba(0,0,0,0.6)',
+                40: 'rgba(0,0,0,0.4)',
+                20: 'rgba(0,0,0,0.2)',
+                5: 'rgba(0,0,0,0.05)'
             },
-            primary: '#9B7EDE',
+            primary: '#6E86DD',
             secondary: '#9F4A54',
             accent: '#FF6542',
+            gray: '#F0F3F3',
             inherit: 'inherit'
         },
         fontFamily: {
-            DEFAULT: ['ui-sans-serif', 'sans-serif'],
-            sans: ['sans-serif'],
-            serif: ['serif']
+            DEFAULT: ['Merriweather Sans', 'sans-serif'],
+            sans: ['Merriweather Sans'],
+            serif: ['Merriweather Sans']
         }
     },
     extend: {},

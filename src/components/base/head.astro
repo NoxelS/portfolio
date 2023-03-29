@@ -1,0 +1,55 @@
+---
+import { SEO } from 'astro-seo';
+---
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Noel Pascal Schwabenland</title>
+
+    <!-- Scripts -->
+    <script is:inline src="/utils.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+    <script is:inline src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
+        rel="stylesheet"
+    />
+
+    <!-- SEO -->
+    <SEO
+        title="Noel Pascal Schwabenland"
+        description=""
+        noindex={true}
+        openGraph={{
+            basic: {
+                title: '',
+                type: '',
+                image: ''
+            }
+        }}
+        charset="UTF-8"
+        twitter={{
+            creator: '@noelschwabenla2'
+        }}
+        extend={{
+            // extending the default link tags
+            link: [{ rel: 'icon', href: '/favicon.ico' }],
+            // extending the default meta tags
+            meta: [
+                {
+                    name: 'twitter:image',
+                    content: ''
+                },
+                { name: 'twitter:title', content: '' },
+                { name: 'twitter:description', content: '' }
+            ]
+        }}
+    />
+</head>

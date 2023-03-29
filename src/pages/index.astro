@@ -3,64 +3,88 @@ import Layout from '../layouts/Layout.astro';
 import * as Icon from '@astropub/icons';
 const projects = [
     {
-        title: 'Projekt 1',
-        description: `This is a template repository for building a web scraper with OpenAI support. The repository provides a basic project structure with TypeScript and Puppeteer pre-configured, as well as OpenAI's GPT… `,
-        tags: ['Tag 1', 'Tag 2', 'Tag 3'],
-        link: 'https://www.google.com',
-        image: 'https://picsum.photos/900/300',
-        language: 'c++',
-        date: '2021-01-01',
-        lastUpdate: '2021-01-01'
+        title: 'OpenAI Web Scraper',
+        description: `
+            Bei diesem Projekt handelt es sich um ein Template Repository für die Entwicklung von Web-Scrapern mit OpenAI Support.
+            Da ich viele Web-Scraping Projekte entwickle, habe ich mich entschieden, ein Template Repository zu erstellen, das eine grundlegende Projektstruktur mit TypeScript und Puppeteer vorkonfiguriert, sowie OpenAI's GPT-4 API.
+        `,
+        tags: [
+            { text: 'OpenAI', color: '#88E479' },
+            { text: 'TypeScript', color: '#81F0FF' },
+            { text: 'Puppeteer', color: '#333' },
+            { text: 'Docker', color: '#81F0FF' }
+        ],
+        link: 'https://github.com/NoxelS/openai-scraper',
+        date: '29.03.2023'
     },
     {
-        title: 'Projekt 2',
-        description: `This is a template repository for building a web scraper with OpenAI support. The repository provides a basic project structure with TypeScript and Puppeteer pre-configured, as well as OpenAI's GPT… `,
-        tags: ['Tag 1', 'Tag 2', 'Tag 3'],
-        link: 'https://www.google.com',
-        image: 'https://picsum.photos/900/300',
-        language: 'c++',
-        date: '2021-01-01',
-        lastUpdate: '2021-01-01'
+        title: 'House Scraper',
+        description: `
+            Dieses Projekt ist ein Web-Scraper, der Immobilienanzeigen von von verschiedenen Immobilienportalen 
+            zusammenfasst und mittels OpenAi eine tägliche und aktuelle Zusammenfassung erstellt. Diese wird
+            anschließend per E-Mail an alle Nutzer versendet.
+        `,
+        tags: [
+            { text: 'TypeScript', color: '#81F0FF' },
+            { text: 'Puppeteer', color: '#333' },
+            { text: 'Docker', color: '#81F0FF' }
+        ],
+        link: 'https://github.com/NoxelS/house-scraper',
+        date: '19.02.2022'
     },
     {
-        title: 'Projekt 3',
-        description: `This is a template repository for building a web scraper with OpenAI support. The repository provides a basic project structure with TypeScript and Puppeteer pre-configured, as well as OpenAI's GPT… `,
-        tags: ['Tag 1', 'Tag 2', 'Tag 3'],
-        link: 'https://www.google.com',
-        image: 'https://picsum.photos/900/300',
-        language: 'c++',
-        date: '2021-01-01',
-        lastUpdate: '2021-01-01'
+        title: 'MVB Statement Analyser',
+        description: `
+            Dieses Projekt analysiert mittels einer Machine Learning API alte Kontoauszüge. Damit ist es möglich, Kontotransaktionen welche nur auf 
+            Papier vorliegen, in eine digitale Form zu überführen. Das Projekt unterstützt nur die MVB Bank.
+        `,
+        tags: [
+            { text: 'Machine Learning', color: '#E479CD' },
+            { text: 'TypeScript', color: '#81F0FF' }
+        ],
+        date: '28.01.2022'
     },
     {
-        title: 'Projekt 1',
-        description: `This is a template repository for building a web scraper with OpenAI support. The repository provides a basic project structure with TypeScript and Puppeteer pre-configured, as well as OpenAI's GPT… `,
-        tags: ['Tag 1', 'Tag 2', 'Tag 3'],
-        link: 'https://www.google.com',
-        image: 'https://picsum.photos/900/300',
-        language: 'c++',
-        date: '2021-01-01',
-        lastUpdate: '2021-01-01'
+        title: 'Website der Direktorenvereinigung',
+        description: `
+            Dieses Projekt ist ein Content-Management-System mit einer Website für Direktorenvereinigung der Gesamtschulen in Rheinland-Pfalz.
+            Das CMS ist eine Komplettlösung, die von der Datenbank über die API bis hin zum Frontend reicht. Damit werden Newsartikel und interne Prozesse 
+            der Direktorenvereinigung verwaltet.
+        `,
+        tags: [
+            { text: 'AngularJs', color: '#ED5E5E' },
+            { text: 'ExpressJs', color: '#FFDC81' },
+            { text: 'Docker', color: '#81F0FF' }
+        ],
+        date: '18.09.2021'
     },
     {
-        title: 'Projekt 2',
-        description: `This is a template repository for building a web scraper with OpenAI support. The repository provides a basic project structure with TypeScript and Puppeteer pre-configured, as well as OpenAI's GPT… `,
-        tags: ['Tag 1', 'Tag 2', 'Tag 3'],
-        link: 'https://www.google.com',
-        image: 'https://picsum.photos/900/300',
-        language: 'c++',
-        date: '2021-01-01',
-        lastUpdate: '2021-01-01'
+        title: 'SELG Projekt',
+        description: `
+            Das SELG Projekt ist ein Content-Management-System für integrierten Gesamtschulen in Rheinland-Pfalz. 
+            Mit dem CMS werden Verbalbewertungen und Noten verwaltet und ausgewertet, sodass Lehrer für bevorstehende Gespräche 
+            (die sog. Schüler-Eltern-Lehrer Gespräche, SELG) automatisch vorbereitet werden.
+        `,
+        tags: [
+            { text: 'NodeJs', color: '#FFDC81' },
+            { text: 'ExpressJs', color: '#FFDC81' },
+            { text: 'Docker', color: '#81F0FF' }
+        ],
+        date: '01.09.2020'
     },
     {
-        title: 'Projekt 3',
-        description: `This is a template repository for building a web scraper with OpenAI support. The repository provides a basic project structure with TypeScript and Puppeteer pre-configured, as well as OpenAI's GPT… `,
-        tags: ['Tag 1', 'Tag 2', 'Tag 3'],
-        link: 'https://www.google.com',
-        image: 'https://picsum.photos/900/300',
-        language: 'c++',
-        date: '2021-01-01',
-        lastUpdate: '2021-01-01'
+        title: 'Kokolores',
+        description: `
+            Kokolores ist ein Multiplayerspielt ähnlich wie Quiplash, das ich mit einigen Freunden entwickelt habe. Das Spiel forder die Mitspieler heraus,
+            möglichst lustige und kreative Antworten auf Prompts zu geben. Die Mitspieler können dann die Antworten bewerten und die besten Antworten werden
+            anschließend in einer Rangliste angezeigt. <i>Das Spiel ist leider nicht mehr verfügbar, da wir es nicht mehr weiterentwickeln.</i>
+        `,
+        tags: [
+            { text: 'AngularJs', color: '#ED5E5E' },
+            { text: 'TypeScript', color: '#81F0FF' }
+        ],
+        link: 'http://kokolores.io/',
+        date: '09.02.2020'
     }
 ];
 
@@ -75,7 +99,7 @@ const work = [
             'Selbstständige Entwicklung von lightweight JavaScript Packages',
             'Mitsprache im Entwicklungsprozess neuer Applikationen und deren Technologiestrukturen'
         ],
-        date: '10.2021 - Heute'
+        date: 'Heute - 10.2021'
     },
     {
         title: 'Full Stack Developer',
@@ -90,7 +114,7 @@ const work = [
             'Versionsverwaltung mithilfe von GIT',
             'Deployment des Systems mithilfe von Docker'
         ],
-        date: '09.2020 - 07.2021 '
+        date: '07.2021 - 09.2020'
     },
     {
         title: 'Frontend Developer',
@@ -106,7 +130,7 @@ const work = [
             'Versionsverwaltung mithilfe von SVN',
             'Performanceanalyse von AngularJs Apps'
         ],
-        date: '04.2020 - 09.2020'
+        date: '09.2020 - 04.2020'
     },
     {
         title: 'Frontend Developer',
@@ -121,16 +145,23 @@ const work = [
             'Versionsverwaltung mithilfe von GIT',
             'Deployment des Systems mithilfe von Docker'
         ],
-        date: '04.2020 - 09.2020'
+        date: '09.2020 - 04.2020'
     }
 ];
 
 const academic = [
     {
         title: 'Physik',
+        location: '---',
+        description: 'Master of Science',
+        date: 'ab 2024',
+        prog: true
+    },
+    {
+        title: 'Physik',
         location: 'Universität des Saarlands',
         description: 'Bachelor of Science',
-        date: '2023'
+        date: '2024'
     },
     {
         title: 'Oberstufe',
@@ -148,102 +179,139 @@ const academic = [
 ---
 
 <Layout>
-    <small class="text-xs text-black-80 pb-4">Meine Projekte</small>
-
-    <div class="swiper-proj swiper">
-        <div class="swiper-wrapper">
-            {
-                projects.map(project => (
-                    <div class="swiper-slide overflow-hidden flex flex-col">
-                        <img class="" src={project.image} alt="" />
-                        <div class="flex flex-col py-4 gap-y-2">
-                            <div class="flex flex-row justify-between items-end">
-                                <div class="text-sm">{project.title}</div>
-                                <div class="text-xs">{project.date}</div>
-                            </div>
-                            <div class="text-xs">{project.description}</div>
-                            <div class="flex flex-row gap-x-2">
-                                {project.tags.map(tag => (
-                                    <div class="text-xs bg-secondary text-white-100 rounded-full px-2 py-1">{tag}</div>
-                                ))}
-                            </div>
-                            <a class="text-sm flex flex-row items-center gap-x-2">
-                                <div>View on GitHub</div> <Icon.ArrowRight fill="#000" width="14" height="14" />
-                            </a>
-                        </div>
-                    </div>
-                ))
-            }
-        </div>
-        <div class="button-next-proj absolute top-1/2 right-0 z-50"><Icon.ArrowRight class="" width="24" height="24" /></div>
-    </div>
-
-    <small class="text-xs text-black-80 pt-4 pb-4">Meine Erfahrungen</small>
-
-    <div class="swiper-work swiper">
-        <div class="swiper-wrapper">
-            {
-                work.map(job => (
-                    <div class="swiper-slide flex flex-col">
-                        <div class="flex flex-col py-4 gap-y-2">
-                            <div class="flex flex-row justify-between items-end">
-                                <div class="flex flex-row items-end">
-                                    <div class="text-lg leading-none">{job.title}</div>
-                                    <div class="text-xs ml-2 text-black-60">{job.type}</div>
-                                </div>
-                                <div class="text-xs">{job.date}</div>
-                            </div>
-                            <a href={job.link} class="text-sm">
-                                {job.location}
-                            </a>
-                            <div class="text-xs">
-                                {job.skills.map(skill => (
-                                    <div class="flex flex-row items-start gap-x-2">
-                                        <Icon.Check fill="#000" width="14" height="14" />
-                                        <div>{skill}</div>
+    <div class="text-xs text-black-60 dark:text-white-60 mb-4">Meine Projekte</div>
+    <div class="flex flex-row items-center">
+        <div class="swiper-proj swiper">
+            <div class="swiper-wrapper">
+                {
+                    projects.map(project => (
+                        <div class="swiper-slide overflow-hidden flex flex-col bg-gray dark:bg-[#0D131F] rounded-[20px] p-6 w-max min-w-[400px] max-w-[50%] h-auto md:w-full md:max-w-full">
+                            <div class="flex flex-col gap-y-3">
+                                <div class="flex flex-row justify-between items-end">
+                                    <div class="flex flex-row items-center fill-black-80 dark:fill-white-85">
+                                        <img class="mr-1" src="/icons/code.svg" alt="" />
+                                        <div class="text-base text-black-80 dark:text-white-85">{project.title}</div>
                                     </div>
-                                ))}
+                                    <div class="text-[10px] text-black-40 dark:text-white-30">Letztes Update: {project.date}</div>
+                                </div>
+                                <div class="text-xs text-black-80 dark:text-white-85" set:html={project.description} />
+                                <div class="flex flex-row gap-x-4">
+                                    {project.tags.map(tag => (
+                                        <div class="flex flex-row items-center">
+                                            <div class="w-4 h-4 rounded-full mr-1" style={`background-color: ${tag.color};`} />
+                                            <div class="text-black-60 dark:text-white-60 text-xs">{tag.text}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                                {project.link ? (
+                                    <a target="_blank" href={project.link} class="text-sm text-primary hover:underline">
+                                        Zum Projekt
+                                    </a>
+                                ) : (
+                                    ''
+                                )}
                             </div>
                         </div>
+                    ))
+                }
+                <div
+                    class="swiper-slide overflow-hidden flex flex-col bg-transparent border-black-100 border-[1px] border-dashed rounded-[20px] mr-10 p-6 w-max min-w-[400px] max-w-[50%] h-auto"
+                >
+                    <div class="flex flex-col gap-y-3">
+                        <div class="text-base text-black-80 dark:text-white-85">Weitere Projekte</div>
+                        <div class="text-xs text-black-60 dark:text-white-60">
+                            Über 36 weitere Projekte sind auf meiner <a
+                                target="_blank"
+                                href="https://github.com/NoxelS?tab=repositories"
+                                class="text-primary hover:underline">GitHub Seite</a
+                            > zu finden.
+                        </div>
                     </div>
-                ))
-            }
+                </div>
+            </div>
+            <div class="gradwall"></div>
         </div>
-        <div class="button-next-work absolute top-1/2 right-0 z-50"><Icon.ArrowRight class="" width="24" height="24" /></div>
+        <div class="button-next-proj w-10 flex flex-row justify-end"><img src="/icons/arrow.svg" width="24" height="24" alt="" /></div>
     </div>
 
-    <small class="text-xs text-black-80 pt-4 pb-4">Meine Akademische Laufbahn</small>
-    <div class="grid grid-cols-2 gap-6 w-full"></div>
-
-    <div class="swiper-aca swiper">
-        <div class="swiper-wrapper">
-            {
-                academic.map(job => (
-                    <div class="swiper-slide overflow-hidden flex flex-col">
-                        <div class="flex flex-col py-4 gap-y-2">
-                            <div class="flex flex-row justify-between items-end">
-                                <div class="flex flex-row items-end">
-                                    <div class="text-lg leading-none">{job.title}</div>
+    <div class="text-xs text-black-60 dark:text-white-60 mb-4 mt-14">Meine Erfahrungen</div>
+    <div class="flex flex-row items-center">
+        <div class="swiper-work swiper">
+            <div class="swiper-wrapper">
+                {
+                    work.map(job => (
+                        <div class="swiper-slide overflow-hidden flex flex-col bg-transparent rounded-[5px] border-black-100 dark:border-white-85 border-[1px] p-6 w-[600px] h-auto last:mr-10 md:w-full md:border-0 md:pr-6 md:bg-gray md:rounded-[20px]">
+                            <div class="flex flex-col">
+                                <div class="flex flex-row justify-between items-end md:flex-col md:items-start md:justify-start">
+                                    <div class="flex flex-row items-end md:flex-col md:items-start">
+                                        <div class="text-base text-black-80 dark:text-white-85">{job.title}</div>
+                                        <a
+                                            href={job.link}
+                                            target="_blank"
+                                            class={`text-sm hidden md:block ${job.link ? 'text-primary hover:underline' : 'text-black-80 dark:text-white-85'}`}
+                                        >
+                                            {job.location}
+                                        </a>
+                                        <div class="text-xs ml-2 md:ml-0 mb-[2px] text-black-60 dark:text-white-60">{job.type}</div>
+                                    </div>
+                                    <div class="text-xs mb-[2px] text-black-80 dark:text-white-85">{job.date}</div>
                                 </div>
-                                <div class="text-xs">{job.date}</div>
+                                <a
+                                    href={job.link}
+                                    target="_blank"
+                                    class={`text-sm md:hidden ${job.link ? 'text-primary hover:underline' : 'text-black-80 dark:text-white-85'}`}
+                                >
+                                    {job.location}
+                                </a>
+                                <ul class="mt-2">
+                                    {job.skills.map(tag => (
+                                        <li class="list-item list-disc list-outside ml-4 text-black-60 dark:text-white-60 text-xs mt-1">{tag}</li>
+                                    ))}
+                                </ul>
                             </div>
-                            <div class="text-sm">{job.location}</div>
-                            <div class="text-xs">{job.description}</div>
                         </div>
-                    </div>
-                ))
-            }
+                    ))
+                }
+            </div>
+            <div class="gradwall"></div>
         </div>
-        <div class="button-next-aca absolute top-1/2 right-0 z-50"><Icon.ArrowRight class="" width="24" height="24" /></div>
+        <div class="button-next-work w-10 flex flex-row justify-end"><img src="/icons/arrow.svg" width="24" height="24" alt="" /></div>
+    </div>
+    <div class="text-xs text-black-60 dark:text-white-60 mb-4 mt-14">Meine akademische Laufbahn</div>
+    <div class="flex flex-row items-center">
+        <div class="swiper-aca swiper">
+            <div class="swiper-wrapper">
+                {
+                    academic.map(degree => (
+                        <div
+                            class={`swiper-slide overflow-hidden flex flex-col min-w-[250px] rounded-[5px] p-6 w-max h-auto last:mr-10 md:w-[90%] ${
+                                degree.prog ? 'border-black-100 border-[1px] border-dashed' : 'bg-gray dark:bg-[#0D131F]'
+                            }`}
+                        >
+                            <div class="flex flex-col">
+                                <div class="flex flex-row items-center justify-between">
+                                    <div class="text-xs text-black-60 dark:text-white-60">{degree.location}</div>
+                                    <div class="text-xs text-black-60 dark:text-white-60 ml-20">{degree.date}</div>
+                                </div>
+                                <div class="text-black-80 dark:text-white-85 text-base">{degree.description}</div>
+                                <div class="text-black-80 dark:text-white-85 text-sm">{degree.title}</div>
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
+            <div class="gradwall"></div>
+        </div>
+        <div class="button-next-aca w-10 flex flex-row justify-end"><img src="/icons/arrow.svg" width="24" height="24" alt="" /></div>
     </div>
 
     <script is:inline>
         const swiperproj = new Swiper('.swiper-proj', {
             // Optional parameters
             direction: 'horizontal',
-            loop: true,
+            loop: false,
 
-            slidesPerView: '3',
+            slidesPerView: 'auto',
             spaceBetween: 20,
             // If we need pagination
             // Navigation arrows
@@ -257,9 +325,9 @@ const academic = [
         const swiperwork = new Swiper('.swiper-work', {
             // Optional parameters
             direction: 'horizontal',
-            loop: true,
+            loop: false,
 
-            slidesPerView: '2',
+            slidesPerView: 'auto',
             spaceBetween: 20,
             // If we need pagination
             // Navigation arrows
@@ -273,9 +341,9 @@ const academic = [
         const swiperjobs = new Swiper('.swiper-aca', {
             // Optional parameters
             direction: 'horizontal',
-            loop: true,
+            loop: false,
 
-            slidesPerView: '3',
+            slidesPerView: 'auto',
             spaceBetween: 20,
             // If we need pagination
             // Navigation arrows
@@ -292,5 +360,8 @@ const academic = [
 <style is:global>
     .swiper {
         width: 100%;
+    }
+    .gradwall {
+        @apply h-full absolute top-0 right-0 z-50 flex flex-col items-center justify-center bg-gradient-to-r from-transparent to-white-100 dark:to-[#161F30] w-20 md:w-6;
     }
 </style>
