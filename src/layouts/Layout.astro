@@ -13,14 +13,18 @@ const { title } = Astro.props;
 <!DOCTYPE html>
 <html lang="en" class="">
     <Head />
-    <body class="bg-white-100 dark:bg-[#161F30]">
-        <div class="flex flex-row items-center p-2 float-right cursor-pointer lg:absolute lg:top-0 lg:right-0" onclick="toggleTheme();">
+    <body class="bg-white-100 dark:bg-[#161F30] fill-black-80 dark:fill-white-100">
+        <div class="flex flex-row items-center p-2 float-right cursor-pointer lg:absolute lg:top-0 lg:right-0" data-btn-theme onclick="toggleTheme();">
             <div class="block dark:hidden" aria-hidden="true"><Icon.Moon fill="#000" width="24" height="24" /></div>
             <div class="hidden dark:block" aria-hidden="true"><Icon.Sun fill="#fff" width="24" height="24" /></div>
         </div>
-        <div class="grid grid-cols-4 lg:grid-cols-1 px-40 min-h-screen xxl:px-10 xl:px-0">
+
+        <div class="grid grid-cols-4 lg:grid-cols-1 px-40 min-h-screen xxl:px-10 xl:px-0 xl:grid-cols-3">
             <AboutCard />
-            <main class="p-10 md:px-4 col-span-3"><slot /></main>
+            <main class="p-10 md:px-4 col-span-3 xl:col-span-2"><slot /></main>
         </div>
+
+        <!-- Scripts -->
+        <script is:inline src="/utils.js"></script>
     </body>
 </html>

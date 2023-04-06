@@ -1,0 +1,12 @@
+<div class="swiper-slide swiper-base">
+    <slot />
+</div>
+
+<style is:global>
+    .swiper-base {
+        /** Base */
+        @apply overflow-hidden flex flex-col bg-gray dark:bg-[#0D131F] p-6 w-max min-w-[400px] max-w-[50%] h-auto md:w-full md:max-w-full;
+        /** animations */
+        @apply hover:dark:bg-[#121926];
+    }
+</style>

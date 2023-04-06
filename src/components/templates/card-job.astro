@@ -1,0 +1,41 @@
+---
+import CardBase from './card-base.astro';
+
+export interface Props {
+    job: {
+        title: string;
+        location: string;
+        type: string;
+        date: string;
+        skills: string[];
+        link?: string;
+    };
+}
+
+const { job } = Astro.props;
+---
+
+<CardBase>
+    <div class="flex flex-col">
+        <div class="flex flex-row justify-between items-end md:flex-col md:items-start md:justify-start">
+            <div class="flex flex-row items-end md:flex-col md:items-start">
+                <h3 class="text-base text-black-80 dark:text-white-85">{job.title}</h3>
+                <a
+                    href={job.link}
+                    target="_blank"
+                    class={`text-sm hidden md:block ${job.link ? 'text-primary hover:underline' : 'text-black-80 dark:text-white-85'}`}
+                >
+                    {job.location}
+                </a>
+                <div class="text-xs ml-2 md:ml-0 mb-[2px] text-black-60 dark:text-white-60">{job.type}</div>
+            </div>
+            <div class="text-xs mb-[2px] text-black-80 dark:text-white-85">{job.date}</div>
+        </div>
+        <a href={job.link} target="_blank" class={`text-sm md:hidden ${job.link ? 'text-primary hover:underline' : 'text-black-80 dark:text-white-85'}`}>
+            {job.location}
+        </a>
+        <ul class="mt-2">
+            {job.skills.map(tag => <li class="list-item list-disc list-outside ml-4 text-black-60 dark:text-white-60 text-xs mt-1">{tag}</li>)}
+        </ul>
+    </div>
+</CardBase>

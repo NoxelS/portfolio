@@ -1,0 +1,50 @@
+---
+import CardBase from './card-base.astro';
+
+export interface Props {
+    project: {
+        title: string;
+        description: string;
+        date: string;
+        tags: {
+            text: string;
+            color: string;
+        }[];
+        link?: string;
+    };
+}
+const { project } = Astro.props;
+---
+
+<CardBase>
+    <div class="flex flex-col gap-y-3">
+        <div class="flex flex-row justify-between items-end">
+            <div class="flex flex-row items-center fill-black-80 dark:fill-white-85">
+                <img class="mr-1 hidden dark:block" src="/icons/dark/code.svg" alt="" />
+                <img class="mr-1 block dark:hidden" src="/icons/light/code.svg" alt="" />
+                <h3 class="text-base text-black-80 dark:text-white-85">{project.title}</h3>
+            </div>
+            <div class="text-[10px] text-black-40 dark:text-white-30">Letztes Update: {project.date}</div>
+        </div>
+        <div class="text-xs text-black-80 dark:text-white-85" set:html={project.description} />
+        <div class="flex flex-row gap-x-4">
+            {
+                project.tags.map(tag => (
+                    <div class="flex flex-row items-center">
+                        <div class="w-4 h-4 rounded-full mr-1" style={`background-color: ${tag.color};`} />
+                        <div class="text-black-60 dark:text-white-60 text-xs">{tag.text}</div>
+                    </div>
+                ))
+            }
+        </div>
+        {
+            project.link ? (
+                <a target="_blank" href={project.link} class="text-sm text-primary hover:underline">
+                    Zum Projekt
+                </a>
+            ) : (
+                ''
+            )
+        }
+    </div>
+</CardBase>

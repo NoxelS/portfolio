@@ -1,0 +1,28 @@
+---
+export interface Props {
+    degree: {
+        title: string;
+        location: string;
+        date: string;
+        description: string;
+        prog?: boolean;
+    };
+}
+
+const { degree } = Astro.props;
+---
+
+<div
+    class={`swiper-slide overflow-hidden flex flex-col min-w-[250px] p-6 w-max h-auto last:mr-10 md:w-[90%] ${
+        degree.prog ? 'border-black-100 border-[1px] border-dashed' : 'bg-gray dark:bg-[#0D131F]'
+    }`}
+>
+    <div class="flex flex-col">
+        <div class="flex flex-row items-center justify-between">
+            <div class="text-xs text-black-60 dark:text-white-60">{degree.location}</div>
+            <div class="text-xs text-black-60 dark:text-white-60 ml-20">{degree.date}</div>
+        </div>
+        <div class="text-black-80 dark:text-white-85 text-base">{degree.description}</div>
+        <div class="text-black-80 dark:text-white-85 text-sm">{degree.title}</div>
+    </div>
+</div>

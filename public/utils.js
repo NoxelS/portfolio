@@ -33,4 +33,25 @@ function toggleTheme() {
     }
 }
 
-setTheme(getTheme());
+document.addEventListener('DOMContentLoaded', () => {
+    setTheme(getTheme());
+
+    const sliders = [];
+    document.querySelectorAll('[data-content-slide]').forEach(el => {
+        const id = el.id;
+        const swiper = new Swiper('.swiper-' + id, {
+            direction: 'horizontal',
+            loop: true,
+            slidesPerView: 'auto',
+            spaceBetween: 40,
+            navigation: {
+                nextEl: '.button-next-' + id
+                // prevEl: '.button-prev'
+            }
+        });
+        sliders.push({
+            id,
+            swiper
+        });
+    });
+});

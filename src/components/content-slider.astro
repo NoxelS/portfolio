@@ -1,0 +1,27 @@
+---
+export interface Props {
+    id: string;
+}
+---
+
+<div class="flex flex-row items-center">
+    <div data-content-slide id={Astro.props.id} class={`swiper-${Astro.props.id} swiper`}>
+        <div class="swiper-wrapper">
+            <slot />
+        </div>
+        <div class="gradwall"></div>
+    </div>
+    <div data-btn-slider={Astro.props.id} class={`button-next-${Astro.props.id} w-10 flex flex-row justify-end`}>
+        <img class="hidden dark:block opacity-60" src="/icons/dark/arrow.svg" width="24" height="24" alt="" />
+        <img class="block dark:hidden" src="/icons/light/arrow.svg" width="24" height="24" alt="" />
+    </div>
+</div>
+
+<style is:global>
+    .swiper {
+        width: 100%;
+    }
+    .gradwall {
+        @apply h-full absolute top-0 right-0 z-50 flex flex-col items-center justify-center bg-gradient-to-r from-transparent to-white-100 dark:to-[#161F30] w-20 md:w-6;
+    }
+</style>
