@@ -78,7 +78,8 @@ const { title } = Astro.props;
                         y: {
                             // defining min and max so hiding the dataset does not change scale range
                             min: 0,
-                            max: 100
+                            max: 100,
+                            beginAtZero: true
                         },
                         x: {
                             ticks: {
@@ -93,6 +94,17 @@ const { title } = Astro.props;
             function addDatapoint(x, y, i = 0) {
                 chart.data.labels.push(x);
                 chart.data.datasets[i].data.push(y);
+
+                // Only show last 50 datapoints
+                if (chart.data.labels.length > 100) {
+                    chart.data.labels.shift();
+                    chart.data.datasets[i].data.shift();
+                }
+
+                // Update x axis
+                // chart.options.scales.x.min = 0;
+                // chart.options.scales.x.max = x;
+
                 chart.update();
             }
 
