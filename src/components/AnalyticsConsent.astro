@@ -1,24 +1,10 @@
----
-import { hasOpenPanelConfig } from '../data/analytics';
----
-
-{
-	hasOpenPanelConfig && (
-		<div class="analytics-consent" data-analytics-consent-banner hidden>
-			<p>
-				I use privacy-conscious analytics to understand portfolio usage and technical performance. Analytics runs only if you accept.
-			</p>
-			<div class="analytics-consent__actions">
-				<button type="button" data-analytics-consent-accept>
-					Accept analytics
-				</button>
-				<button type="button" data-analytics-consent-reject>
-					Reject analytics
-				</button>
-			</div>
-		</div>
-	)
-}
+<div class="analytics-consent" data-analytics-consent-banner hidden>
+	<p>I use privacy-conscious analytics to understand portfolio usage and technical performance. Analytics runs only if you accept.</p>
+	<div class="analytics-consent__actions">
+		<button type="button" data-analytics-consent-accept>Accept analytics</button>
+		<button type="button" data-analytics-consent-reject>Reject analytics</button>
+	</div>
+</div>
 
 <style>
 	.analytics-consent {

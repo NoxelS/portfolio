@@ -1,7 +1,7 @@
 ---
 import AnalyticsConsent from '../components/AnalyticsConsent.astro';
 import SEO from '../components/SEO.astro';
-import { hasOpenPanelConfig } from '../data/analytics';
+import { getOpenPanelConfig } from '../data/analytics';
 
 interface Props {
 	title?: string;
@@ -10,6 +10,7 @@ interface Props {
 }
 
 const { title, description, canonicalPath } = Astro.props;
+const openPanelConfig = getOpenPanelConfig();
 ---
 
 <!doctype html>
@@ -19,9 +20,16 @@ const { title, description, canonicalPath } = Astro.props;
 	</head>
 	<body>
 		<slot />
-		{hasOpenPanelConfig && <AnalyticsConsent />}
+		{openPanelConfig && <AnalyticsConsent />}
 		{
-			hasOpenPanelConfig && (
+			openPanelConfig && (
+				<script define:vars={{ openPanelConfig }}>
+					window.__PORTFOLIO_ANALYTICS__ = openPanelConfig;
+				</script>
+			)
+		}
+		{
+			openPanelConfig && (
 				<script>
 					import '../scripts/analytics';
 				</script>

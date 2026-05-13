@@ -1,7 +1,6 @@
 import { onCLS, onFCP, onINP, onLCP, onTTFB, type Metric } from 'web-vitals';
 
 import { buildInfo } from '../lib/build-info';
-import { hasOpenPanelConfig, openPanelConfig } from '../data/analytics';
 import {
 	extractAnalyticsClick,
 	getDeviceClass,
@@ -14,7 +13,9 @@ import {
 	type AnalyticsEventName,
 } from '../lib/analytics-events';
 
-if (hasOpenPanelConfig) {
+const openPanelConfig = window.__PORTFOLIO_ANALYTICS__;
+
+if (openPanelConfig) {
 	startAnalytics();
 }
 
@@ -276,6 +277,11 @@ type OpenPanelQueue = {
 
 declare global {
 	interface Window {
+		__PORTFOLIO_ANALYTICS__?: {
+			clientId: string;
+			apiUrl: string;
+			scriptUrl: string;
+		};
 		op: OpenPanelQueue;
 	}
 }
