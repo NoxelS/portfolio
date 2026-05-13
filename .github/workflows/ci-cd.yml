@@ -29,9 +29,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Set build metadata
-        run: echo "BUILD_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
-
       - name: Run unit and specification tests
         run: npm run test
 
@@ -42,7 +39,7 @@ jobs:
         env:
           PUBLIC_BUILD_VERSION: ${{ github.sha }}
           PUBLIC_COMMIT_SHA: ${{ github.sha }}
-          PUBLIC_BUILT_AT: ${{ env.BUILD_TIMESTAMP }}
+          PUBLIC_BUILT_AT: ${{ github.run_id }}
         run: npm run build
 
       - name: Report bundle size
@@ -55,7 +52,7 @@ jobs:
           docker build \
             --build-arg BUILD_VERSION="$GITHUB_SHA" \
             --build-arg COMMIT_SHA="$GITHUB_SHA" \
-            --build-arg BUILT_AT="$BUILD_TIMESTAMP" \
+            --build-arg BUILT_AT="$GITHUB_RUN_ID" \
             --build-arg PUBLIC_OPENPANEL_CLIENT_ID="${{ vars.PUBLIC_OPENPANEL_CLIENT_ID }}" \
             --build-arg PUBLIC_OPENPANEL_API_URL="${{ vars.PUBLIC_OPENPANEL_API_URL }}" \
             --build-arg PUBLIC_OPENPANEL_SCRIPT_URL="${{ vars.PUBLIC_OPENPANEL_SCRIPT_URL }}" \
@@ -96,9 +93,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set build metadata
-        run: echo "BUILD_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
-
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
@@ -107,7 +101,7 @@ jobs:
           build-args: |
             BUILD_VERSION=${{ github.sha }}
             COMMIT_SHA=${{ github.sha }}
-            BUILT_AT=${{ env.BUILD_TIMESTAMP }}
+            BUILT_AT=${{ github.run_id }}
             PUBLIC_OPENPANEL_CLIENT_ID=${{ vars.PUBLIC_OPENPANEL_CLIENT_ID }}
             PUBLIC_OPENPANEL_API_URL=${{ vars.PUBLIC_OPENPANEL_API_URL }}
             PUBLIC_OPENPANEL_SCRIPT_URL=${{ vars.PUBLIC_OPENPANEL_SCRIPT_URL }}

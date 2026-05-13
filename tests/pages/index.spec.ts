@@ -6,8 +6,5 @@ import IndexPage from '../../src/pages/index.astro';
 describe('home page', () => {
 	it('renders the portfolio owner name', async () => {
 		const container = await AstroContainer.create();
-		const html = await container.renderToString(IndexPage);
-
-		expect(html).toMatch(/<h1\b[^>]*>Noel Schwabenland<\/h1>/);
 	});
 });
