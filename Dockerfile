@@ -4,7 +4,19 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 FROM dependencies AS build
+ARG BUILD_VERSION=development
+ARG COMMIT_SHA=development
+ARG BUILT_AT=development
+ARG PUBLIC_OPENPANEL_CLIENT_ID=
+ARG PUBLIC_OPENPANEL_API_URL=
+ARG PUBLIC_OPENPANEL_SCRIPT_URL=
 ENV ASTRO_TELEMETRY_DISABLED=1
+ENV PUBLIC_BUILD_VERSION=$BUILD_VERSION
+ENV PUBLIC_COMMIT_SHA=$COMMIT_SHA
+ENV PUBLIC_BUILT_AT=$BUILT_AT
+ENV PUBLIC_OPENPANEL_CLIENT_ID=$PUBLIC_OPENPANEL_CLIENT_ID
+ENV PUBLIC_OPENPANEL_API_URL=$PUBLIC_OPENPANEL_API_URL
+ENV PUBLIC_OPENPANEL_SCRIPT_URL=$PUBLIC_OPENPANEL_SCRIPT_URL
 COPY . .
 RUN npm run build
 
@@ -19,4 +31,5 @@ RUN npm ci --omit=dev
 COPY --from=build /app/dist ./dist
 COPY server.mjs ./server.mjs
 EXPOSE 4321
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 CMD node -e "fetch('http://127.0.0.1:4321/health').then((r)=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
 CMD ["node", "./server.mjs"]

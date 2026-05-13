@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "report:bundle": "node scripts/report-bundle-size.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -18,7 +19,8 @@
     "@astrojs/node": "^10.1.0",
     "@astrojs/sitemap": "^3.7.2",
     "astro": "^6.3.1",
-    "sirv": "^3.0.2"
+    "sirv": "^3.0.2",
+    "web-vitals": "^5.2.0"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^4.1.6",

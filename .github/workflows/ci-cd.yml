@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Set build metadata
+        run: echo "BUILD_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
+
       - name: Run unit and specification tests
         run: npm run test
 
@@ -36,7 +39,40 @@ jobs:
         run: npm audit --audit-level=high
 
       - name: Build Astro app
+        env:
+          PUBLIC_BUILD_VERSION: ${{ github.sha }}
+          PUBLIC_COMMIT_SHA: ${{ github.sha }}
+          PUBLIC_BUILT_AT: ${{ env.BUILD_TIMESTAMP }}
         run: npm run build
+
+      - name: Report bundle size
+        run: npm run report:bundle
+
+      - name: Smoke test Docker image
+        run: |
+          set -euo pipefail
+
+          docker build \
+            --build-arg BUILD_VERSION="$GITHUB_SHA" \
+            --build-arg COMMIT_SHA="$GITHUB_SHA" \
+            --build-arg BUILT_AT="$BUILD_TIMESTAMP" \
+            --build-arg PUBLIC_OPENPANEL_CLIENT_ID="${{ vars.PUBLIC_OPENPANEL_CLIENT_ID }}" \
+            --build-arg PUBLIC_OPENPANEL_API_URL="${{ vars.PUBLIC_OPENPANEL_API_URL }}" \
+            --build-arg PUBLIC_OPENPANEL_SCRIPT_URL="${{ vars.PUBLIC_OPENPANEL_SCRIPT_URL }}" \
+            --tag portfolio-smoke-test .
+
+          container_id=$(docker run --detach --publish 127.0.0.1:43210:4321 portfolio-smoke-test)
+          trap 'docker rm -f "$container_id" >/dev/null' EXIT
+
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:43210/health | jq --exit-status --arg commit "$GITHUB_SHA" '.status == "ok" and .commit == $commit' >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+
+          docker logs "$container_id"
+          exit 1
 
   publish:
     name: Publish and Deploy
@@ -60,11 +96,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set build metadata
+        run: echo "BUILD_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
+
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
+          build-args: |
+            BUILD_VERSION=${{ github.sha }}
+            COMMIT_SHA=${{ github.sha }}
+            BUILT_AT=${{ env.BUILD_TIMESTAMP }}
+            PUBLIC_OPENPANEL_CLIENT_ID=${{ vars.PUBLIC_OPENPANEL_CLIENT_ID }}
+            PUBLIC_OPENPANEL_API_URL=${{ vars.PUBLIC_OPENPANEL_API_URL }}
+            PUBLIC_OPENPANEL_SCRIPT_URL=${{ vars.PUBLIC_OPENPANEL_SCRIPT_URL }}
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
             ${{ env.IMAGE_NAME }}:${{ github.sha }}

@@ -3,7 +3,11 @@ import { defineMiddleware } from 'astro:middleware';
 import { setPublicPageCache } from './lib/cache';
 
 export const onRequest = defineMiddleware(async ({ request }, next) => {
+	const startedAt = performance.now();
 	const response = await next();
+	const duration = Math.max(0, performance.now() - startedAt);
+
+	response.headers.append('Server-Timing', `app;dur=${duration.toFixed(1)}`);
 	const cachePolicy = response.headers.get('X-Cache-Policy');
 	response.headers.delete('X-Cache-Policy');
 

@@ -2,6 +2,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { describe, expect, it } from 'vitest';
 
 import IndexPage from '../../src/pages/index.astro';
+import { hasOpenPanelConfig } from '../../src/data/analytics';
 import { GET as getIndexMarkdown } from '../../src/pages/index.md';
 import { GET as getLlms } from '../../src/pages/llms.txt';
 import { GET as getRobots } from '../../src/pages/robots.txt';
@@ -14,6 +15,7 @@ describe('metadata endpoints', () => {
 		expect(html).toContain('<link rel="canonical" href="https://noel.fyi/">');
 		expect(html).toContain('<meta property="og:url" content="https://noel.fyi/">');
 		expect(html).toContain('application/ld+json');
+		expect(html.includes('data-analytics-consent-banner')).toBe(hasOpenPanelConfig);
 	});
 
 	it('exposes robots.txt with the XML sitemap', async () => {
