@@ -1,0 +1,21 @@
+---
+import SEO from '../components/SEO.astro';
+
+interface Props {
+	title?: string;
+	description?: string;
+	canonicalPath?: string;
+}
+
+const { title, description, canonicalPath } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<SEO title={title} description={description} canonicalPath={canonicalPath} />
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>

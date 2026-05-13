@@ -1,13 +1,9 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 
+export const prerender = true;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<title>Noel Schwabenland</title>
-	</head>
-	<body>
-		<h1>Noel Schwabenland</h1>
-	</body>
-</html>
+<BaseLayout title="Noel Schwabenland">
+	<h1>Noel Schwabenland</h1>
+</BaseLayout>

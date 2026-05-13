@@ -1,0 +1,65 @@
+---
+import { defaultSeo } from '../data/site';
+
+interface Props {
+	title?: string;
+	description?: string;
+	canonicalPath?: string;
+	image?: string;
+	imageAlt?: string;
+	type?: 'website' | 'profile' | 'article';
+	noindex?: boolean;
+}
+
+const {
+	title = defaultSeo.title,
+	description = defaultSeo.description,
+	canonicalPath = Astro.url.pathname,
+	image = defaultSeo.image,
+	imageAlt = defaultSeo.imageAlt,
+	type = 'website',
+	noindex = false,
+} = Astro.props;
+
+const siteUrl = Astro.site?.toString() ?? defaultSeo.site;
+const canonicalUrl = new URL(canonicalPath, siteUrl).toString();
+const absoluteImage = image ? new URL(image, siteUrl).toString() : undefined;
+const jsonLd = [
+	{
+		'@context': 'https://schema.org',
+		'@type': 'WebSite',
+		name: defaultSeo.siteName,
+		url: siteUrl,
+		inLanguage: 'en',
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'Person',
+		name: defaultSeo.authorName,
+		url: siteUrl,
+	},
+];
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+<title>{title}</title>
+{description && <meta name="description" content={description} />}
+{noindex && <meta name="robots" content="noindex,nofollow" />}
+<link rel="canonical" href={canonicalUrl} />
+
+<meta property="og:site_name" content={defaultSeo.siteName} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title} />
+{description && <meta property="og:description" content={description} />}
+<meta property="og:url" content={canonicalUrl} />
+{absoluteImage && <meta property="og:image" content={absoluteImage} />}
+{absoluteImage && imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+
+<meta name="twitter:card" content={absoluteImage ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={title} />
+{description && <meta name="twitter:description" content={description} />}
+{absoluteImage && <meta name="twitter:image" content={absoluteImage} />}
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
