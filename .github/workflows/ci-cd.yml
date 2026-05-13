@@ -1,0 +1,96 @@
+name: CI/CD
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: ghcr.io/noxels/portfolio
+  IMAGE_TAG: latest
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit and specification tests
+        run: npm run test
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+
+      - name: Build Astro app
+        run: npm run build
+
+  publish:
+    name: Publish and Deploy
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Trigger Yggdrasil deploy
+        env:
+          WEBHOOK_SECRET: ${{ secrets.YGGDRASIL_WEBHOOK_SECRET }}
+          WEBHOOK_URL: https://hooks.noel.fyi/hooks/deploy
+          REPOSITORY: portfolio
+          IMAGE: ${{ env.IMAGE_NAME }}
+          TAG: ${{ env.IMAGE_TAG }}
+        run: |
+          set -euo pipefail
+
+          payload=$(jq -cn \
+            --arg repository "$REPOSITORY" \
+            --arg ref "$GITHUB_REF" \
+            --arg image "$IMAGE" \
+            --arg tag "$TAG" \
+            '{repository: $repository, ref: $ref, image: $image, tag: $tag}')
+
+          signature="sha256=$(printf '%s' "$payload" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" -binary | xxd -p -c 256)"
+
+          curl --fail-with-body \
+            --request POST \
+            --header "Content-Type: application/json" \
+            --header "X-Hub-Signature-256: $signature" \
+            --data "$payload" \
+            "$WEBHOOK_URL"
