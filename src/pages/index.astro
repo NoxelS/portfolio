@@ -4,4 +4,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 export const prerender = false;
 ---
 
-<BaseLayout title="Noel Schwabenland"></BaseLayout>
+<BaseLayout title="Noel Schwabenland">
+	<section class="mx-auto flex min-h-[calc(100vh-5rem)] max-w-4xl flex-col justify-center gap-6">
+		<p class="text-sm font-medium uppercase tracking-[0.3em] text-cyan-300/80">Portfolio</p>
+		<h1 class="max-w-2xl text-5xl font-semibold tracking-tight text-slate-50 sm:text-6xl">Noel Schwabenland</h1>
+		<p class="max-w-xl text-lg leading-8 text-slate-300">
+			Building a fast, self-hosted portfolio with strong performance, privacy-conscious analytics, and clear technical insight.
+		</p>
+	</section>
+</BaseLayout>

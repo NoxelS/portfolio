@@ -2,6 +2,7 @@
 import AnalyticsConsent from '../components/AnalyticsConsent.astro';
 import SEO from '../components/SEO.astro';
 import { getOpenPanelConfig } from '../data/analytics';
+import '../styles/global.css';
 
 interface Props {
 	title?: string;
@@ -19,7 +20,9 @@ const openPanelConfig = getOpenPanelConfig();
 		<SEO title={title} description={description} canonicalPath={canonicalPath} />
 	</head>
 	<body>
-		<slot />
+		<main class="min-h-screen px-6 py-10 sm:px-10 lg:px-16">
+			<slot />
+		</main>
 		{openPanelConfig && <AnalyticsConsent />}
 		{
 			openPanelConfig && (
