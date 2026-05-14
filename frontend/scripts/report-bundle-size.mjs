@@ -3,20 +3,16 @@ import { createReadStream } from 'node:fs';
 import { readdir, stat } from 'node:fs/promises';
 import { extname, join, relative } from 'node:path';
 
-const clientDir = 'dist/client';
-const serverDir = 'dist/server';
+const distDir = 'dist';
 const trackedExtensions = new Set(['.css', '.js', '.mjs']);
 
-const [clientAssets, serverAssets] = await Promise.all([collectAssets(clientDir), collectAssets(serverDir)]);
+const assets = await collectAssets(distDir);
 
-const clientTracked = clientAssets.filter((asset) => trackedExtensions.has(extname(asset.path)));
-const serverTracked = serverAssets.filter((asset) => trackedExtensions.has(extname(asset.path)));
+const trackedAssets = assets.filter((asset) => trackedExtensions.has(extname(asset.path)));
 
 const report = {
-	client: summarize(clientTracked),
-	server: summarize(serverTracked),
-	largestClientAssets: largest(clientTracked),
-	largestServerAssets: largest(serverTracked),
+	static: summarize(trackedAssets),
+	largestStaticAssets: largest(trackedAssets),
 };
 
 console.log(JSON.stringify(report, null, 2));

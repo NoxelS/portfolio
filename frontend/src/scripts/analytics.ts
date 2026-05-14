@@ -1,5 +1,6 @@
 import { onCLS, onFCP, onINP, onLCP, onTTFB, type Metric } from 'web-vitals';
 
+import type { OpenPanelConfig } from '../data/analytics';
 import { buildInfo } from '../lib/build-info';
 import {
 	extractAnalyticsClick,
@@ -8,29 +9,26 @@ import {
 	getScrollDepthPercent,
 	getStoredConsent,
 	sanitizePath,
-	setStoredConsent,
-	type AnalyticsConsent,
 	type AnalyticsEventName,
 } from '../lib/analytics-events';
 
-const openPanelConfig = window.__PORTFOLIO_ANALYTICS__;
-
-if (openPanelConfig) {
-	startAnalytics();
-}
-
-function startAnalytics(): void {
+export function startAnalytics(openPanelConfig: OpenPanelConfig): void {
 	const initialConsent = getStoredConsent(window.localStorage);
+
+	if (initialConsent !== 'granted') {
+		return;
+	}
+
 	installOpenPanelQueue();
 	window.op('init', {
 		clientId: openPanelConfig.clientId,
 		apiUrl: openPanelConfig.apiUrl,
-		disabled: initialConsent !== 'granted',
+		disabled: false,
 		trackAttributes: false,
 		trackOutgoingLinks: false,
 		trackScreenViews: false,
 	});
-	loadOpenPanelScript();
+	loadOpenPanelScript(openPanelConfig);
 
 	const track = (name: AnalyticsEventName, properties: Record<string, unknown> = {}) => {
 		if (getStoredConsent(window.localStorage) === 'denied') {
@@ -43,7 +41,6 @@ function startAnalytics(): void {
 		});
 	};
 
-	setupConsentBanner(track, initialConsent);
 	track('page_view');
 	trackNavigationTiming(track);
 	trackResourceTiming(track);
@@ -51,31 +48,6 @@ function startAnalytics(): void {
 	trackClicks(track);
 	trackScrollDepth(track);
 	trackClientErrors(track);
-}
-
-function setupConsentBanner(
-	track: (name: AnalyticsEventName, properties?: Record<string, unknown>) => void,
-	initialConsent: AnalyticsConsent | null
-): void {
-	const banner = document.querySelector<HTMLElement>('[data-analytics-consent-banner]');
-
-	if (!banner || initialConsent) {
-		return;
-	}
-
-	banner.hidden = false;
-
-	banner.querySelector('[data-analytics-consent-accept]')?.addEventListener('click', () => {
-		setStoredConsent(window.localStorage, 'granted');
-		window.op('ready');
-		track('click', { analyticsId: 'analytics-consent.accept' });
-		banner.hidden = true;
-	});
-
-	banner.querySelector('[data-analytics-consent-reject]')?.addEventListener('click', () => {
-		setStoredConsent(window.localStorage, 'denied');
-		banner.hidden = true;
-	});
 }
 
 function trackClicks(track: (name: AnalyticsEventName, properties?: Record<string, unknown>) => void): void {
@@ -230,7 +202,7 @@ function truncate(value: string): string {
 	return value.slice(0, 240);
 }
 
-function loadOpenPanelScript(): void {
+function loadOpenPanelScript(openPanelConfig: OpenPanelConfig): void {
 	if (document.querySelector('script[data-openpanel-sdk]')) {
 		return;
 	}
@@ -277,11 +249,6 @@ type OpenPanelQueue = {
 
 declare global {
 	interface Window {
-		__PORTFOLIO_ANALYTICS__?: {
-			clientId: string;
-			apiUrl: string;
-			scriptUrl: string;
-		};
 		op: OpenPanelQueue;
 	}
 }

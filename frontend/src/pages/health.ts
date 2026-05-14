@@ -1,17 +1,15 @@
 import type { APIRoute } from 'astro';
 
 import { buildInfo } from '../lib/build-info';
-import { setPrivateCache } from '../lib/cache';
+import { setPublicDataCache } from '../lib/cache';
 
-export const prerender = false;
-
-const startedAt = Date.now();
+export const prerender = true;
 
 export const GET: APIRoute = () => {
 	const headers = new Headers({
 		'Content-Type': 'application/json; charset=utf-8',
 	});
-	setPrivateCache(headers);
+	setPublicDataCache(headers);
 
 	return new Response(
 		JSON.stringify({
@@ -20,8 +18,6 @@ export const GET: APIRoute = () => {
 			version: buildInfo.version,
 			commit: buildInfo.commit,
 			builtAt: buildInfo.builtAt,
-			uptimeSeconds: Math.floor((Date.now() - startedAt) / 1000),
-			timestamp: new Date().toISOString(),
 		}),
 		{ headers }
 	);

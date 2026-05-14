@@ -17,5 +17,5 @@ export function getOpenPanelConfig(): OpenPanelConfig | null {
 }
 
 function getEnv(name: string): string {
-	return import.meta.env[name] || process.env[name] || '';
+	return import.meta.env[name] || '';
 }
