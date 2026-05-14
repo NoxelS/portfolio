@@ -131,10 +131,7 @@ def load_candidates(redis: Redis, response: object) -> list[dict[str, object]]:
             continue
 
         document = json.loads(decode_redis_value(payload))
-        if isinstance(document, list) and document:
-            parsed = document[0]
-        else:
-            parsed = document
+        parsed = document[0] if isinstance(document[0], dict) else document
         if not isinstance(parsed, dict):
             continue
 

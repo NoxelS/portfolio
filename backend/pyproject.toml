@@ -11,6 +11,7 @@ dependencies = [
     "fastapi>=0.136.1",
     "httpx>=0.28.1",
     "langchain-ollama>=1.1.0",
+    "ntfy>=2.7.1",
     "pydantic-settings>=2.14.1",
     "python-frontmatter>=1.1.0",
     "redis>=6.4.0",
@@ -36,7 +37,7 @@ testpaths = ["tests"]
 pythonpath = ["."]
 
 [tool.ruff]
-line-length = 100
+line-length = 140
 target-version = "py313"
 
 [tool.ruff.lint]

@@ -3,8 +3,7 @@ import logging
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from time import perf_counter
-from time import sleep
+from time import perf_counter, sleep
 
 import frontmatter
 from redis import Redis

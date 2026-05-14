@@ -35,6 +35,12 @@ class Settings(BaseSettings):
     instructions_root: Path = default_instructions_root
     bootstrap_chunk_size: int = 1200
     bootstrap_chunk_overlap: int = 200
+    ntfy_enabled: bool = False
+    ntfy_topic: str = ""
+    ntfy_host: str = "https://ntfy.sh"
+    ntfy_user: str = ""
+    ntfy_password: SecretStr | None = None
+    ntfy_title: str = "Portfolio Sales Assistant"
 
     model_config = SettingsConfigDict(
         env_file=(repo_root / ".env", backend_dir / ".env"),

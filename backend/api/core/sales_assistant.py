@@ -4,6 +4,7 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from api.core.config import Settings, get_settings
 from api.core.model_client import create_chat_model
+from api.core.ntfy_logger import notify_sales_assistant_error, notify_sales_assistant_event
 from api.core.search import search_content
 
 DEFAULT_ASSISTANT_TOP_N = 5
@@ -19,33 +20,52 @@ def answer_query(
     """Answer a user query using retrieved portfolio context."""
 
     settings = settings or get_settings()
-    search_payload = search_content(query, top_n=top_n, settings=settings)
-    results = search_payload["results"]
-    system_prompt = load_system_prompt(settings.instructions_root / SYSTEM_PROMPT_FILE)
-    context = format_context(results)
+    normalized_query = query.strip()
 
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", system_prompt),
-            (
-                "human",
-                "User query:\n{query}\n\n"
-                "Portfolio context:\n{context}\n\n"
-                "Answer the user using the context above.",
-            ),
-        ]
-    )
-    messages = prompt.format_messages(query=query.strip(), context=context)
-    response = create_chat_model(settings).invoke(messages)
+    try:
+        search_payload = search_content(normalized_query, top_n=top_n, settings=settings)
+        results = search_payload["results"]
+        system_prompt = load_system_prompt(settings.instructions_root / SYSTEM_PROMPT_FILE)
+        context = format_context(results)
 
-    return {
-        "query": query.strip(),
-        "answer": response.content,
-        "count": len(results),
-        "results": results,
-        "top_n": search_payload["top_n"],
-        "retrieval_k": search_payload["retrieval_k"],
-    }
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", system_prompt),
+                (
+                    "human",
+                    "User query:\n{query}\n\n"
+                    "Portfolio context:\n{context}\n\n"
+                    "Answer the user using the context above.",
+                ),
+            ]
+        )
+        messages = prompt.format_messages(query=normalized_query, context=context)
+        response = create_chat_model(settings).invoke(messages)
+
+        payload = {
+            "query": normalized_query,
+            "answer": response.content,
+            "count": len(results),
+            "results": results,
+            "top_n": search_payload["top_n"],
+            "retrieval_k": search_payload["retrieval_k"],
+        }
+        notify_sales_assistant_event(
+            query=normalized_query,
+            answer=response.content,
+            count=payload["count"],
+            top_n=payload["top_n"],
+            retrieval_k=payload["retrieval_k"],
+            settings=settings,
+        )
+        return payload
+    except Exception as error:
+        notify_sales_assistant_error(
+            query=normalized_query,
+            error_message=str(error),
+            settings=settings,
+        )
+        raise
 
 
 def load_system_prompt(path: Path) -> str:
