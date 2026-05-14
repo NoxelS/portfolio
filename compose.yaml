@@ -39,12 +39,14 @@ services:
       API_REDIS_URL: ${API_REDIS_URL:-redis://redis:6379}
       API_REDIS_INDEX_NAME: ${API_REDIS_INDEX_NAME:-portfolio_content}
       API_CONTENT_ROOT: ${API_CONTENT_ROOT:-/app/content}
+      API_INSTRUCTIONS_ROOT: ${API_INSTRUCTIONS_ROOT:-/app/instructions}
       API_BOOTSTRAP_CHUNK_SIZE: ${API_BOOTSTRAP_CHUNK_SIZE:-1200}
       API_BOOTSTRAP_CHUNK_OVERLAP: ${API_BOOTSTRAP_CHUNK_OVERLAP:-200}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     volumes:
       - ./content:/app/content:ro
+      - ./instructions:/app/instructions:ro
     healthcheck:
       test:
         [

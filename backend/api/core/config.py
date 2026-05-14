@@ -7,6 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 backend_dir = Path(__file__).resolve().parents[2]
 repo_root = backend_dir.parent
 default_content_root = repo_root / "content"
+default_instructions_root = repo_root / "instructions"
 
 
 class Settings(BaseSettings):
@@ -31,6 +32,7 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379"
     redis_index_name: str = "portfolio_content"
     content_root: Path = default_content_root
+    instructions_root: Path = default_instructions_root
     bootstrap_chunk_size: int = 1200
     bootstrap_chunk_overlap: int = 200
 

@@ -13,9 +13,12 @@ keywords:
   - api-development
 related_projects:
   - project-portfolio-rag-system
+related_experience:
+  - experience-kpmg-data-science-and-analytics
+  - experience-computational-biophysics-research-assistant
 evidence:
-  - Built backend services and AI integrations.
-  - Used for portfolio automation and developer tooling.
+  - Built analytical tooling, machine-learning workflows, and automation in consulting projects.
+  - Used Python in research computing, backend services, and portfolio infrastructure.
 ---
 
-Python is a core language in my backend and AI work, especially for APIs, integrations, and content processing.
+Python is the core language across my data science, research, and backend work. I use it for machine-learning pipelines, analytical tooling, APIs, automation, and content-driven systems.

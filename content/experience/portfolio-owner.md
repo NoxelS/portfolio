@@ -13,7 +13,7 @@ visibility: public
 skills:
   - python
   - fastapi
-  - rag
+  - retrieval-augmented-generation
   - content-strategy
 highlights:
   - Designed a structured knowledge base for portfolio retrieval.
