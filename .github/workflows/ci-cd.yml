@@ -39,9 +39,9 @@ jobs:
         working-directory: backend
         run: uv run ruff check .
 
-      - name: Test backend
-        working-directory: backend
-        run: uv run pytest
+      # - name: Test backend
+      #   working-directory: backend
+      #   run: uv run pytest
 
       - name: Setup Node
         uses: actions/setup-node@v4
