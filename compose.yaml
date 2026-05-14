@@ -1,4 +1,28 @@
 services:
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    environment:
+      API_APP_NAME: ${API_APP_NAME:-Portfolio API}
+      API_ENVIRONMENT: ${API_ENVIRONMENT:-production}
+      API_LOG_LEVEL: ${API_LOG_LEVEL:-INFO}
+      API_CORS_ORIGINS: ${API_CORS_ORIGINS:-["https://noel.fyi"]}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2).read()",
+        ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
   frontend:
     build:
       context: ./frontend
