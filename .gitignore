@@ -6,6 +6,13 @@ dist/
 
 # dependencies
 node_modules/
+.venv/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
 
 # logs
 npm-debug.log*
