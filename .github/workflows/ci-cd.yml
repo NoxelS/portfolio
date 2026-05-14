@@ -82,9 +82,6 @@ jobs:
             BUILD_VERSION=${{ github.sha }}
             COMMIT_SHA=${{ github.sha }}
             BUILT_AT=${{ github.run_id }}
-            PUBLIC_OPENPANEL_CLIENT_ID=${{ vars.PUBLIC_OPENPANEL_CLIENT_ID }}
-            PUBLIC_OPENPANEL_API_URL=${{ vars.PUBLIC_OPENPANEL_API_URL }}
-            PUBLIC_OPENPANEL_SCRIPT_URL=${{ vars.PUBLIC_OPENPANEL_SCRIPT_URL }}
           tags: |
             ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
