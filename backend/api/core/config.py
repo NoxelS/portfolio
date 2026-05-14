@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     redis_index_name: str = "portfolio_content"
     content_root: Path = default_content_root
     instructions_root: Path = default_instructions_root
+    bootstrap_enabled: bool = True
     bootstrap_chunk_size: int = 1200
     bootstrap_chunk_overlap: int = 200
     ntfy_enabled: bool = False

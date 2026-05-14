@@ -13,7 +13,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or get_settings()
     configure_logging(settings.log_level)
 
-    run_bootstrap(settings)
+    if settings.bootstrap_enabled:
+        run_bootstrap(settings)
 
     app = FastAPI(
         title=settings.app_name,
