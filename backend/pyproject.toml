@@ -9,9 +9,18 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.136.1",
+    "httpx>=0.28.1",
+    "langchain-ollama>=1.1.0",
     "pydantic-settings>=2.14.1",
     "uvicorn[standard]>=0.46.0",
 ]
+
+[project.scripts]
+chat-probe = "api.chat_probe:main"
+embed-live = "api.embed_live:main"
+embed-probe = "api.embed_probe:main"
+rag-probe = "api.dev_probe:main"
+rerank-probe = "api.rerank_probe:main"
 
 [build-system]
 requires = ["hatchling"]
