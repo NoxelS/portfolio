@@ -23,9 +23,7 @@ def test_chat() -> None:
     model = create_chat_model(settings)
     msg = model.invoke([HumanMessage(content=PROBE_QUERY)])
     content = msg.content
-    assert isinstance(content, str) and len(content) > 0, (
-        f"Empty or non-string response: {content!r}"
-    )
+    assert isinstance(content, str) and len(content) > 0, f"Empty or non-string response: {content!r}"
     print(f"  chat     | model={settings.llm_model}")
     print(f"            | response={content[:120]!r}...")
 

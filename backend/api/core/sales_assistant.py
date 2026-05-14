@@ -33,9 +33,7 @@ def answer_query(
                 ("system", system_prompt),
                 (
                     "human",
-                    "User query:\n{query}\n\n"
-                    "Portfolio context:\n{context}\n\n"
-                    "Answer the user using the context above.",
+                    "User query:\n{query}\n\nPortfolio context:\n{context}\n\nAnswer the user using the context above.",
                 ),
             ]
         )

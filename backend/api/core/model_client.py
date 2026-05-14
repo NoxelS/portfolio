@@ -191,9 +191,7 @@ def get_available_model_ids(
     if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
         raise ValueError("Unsupported models response format.")
 
-    return [
-        str(model["id"]) for model in payload["data"] if isinstance(model, dict) and "id" in model
-    ]
+    return [str(model["id"]) for model in payload["data"] if isinstance(model, dict) and "id" in model]
 
 
 def serialize_message(message: BaseMessage) -> dict[str, str]:
