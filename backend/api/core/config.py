@@ -6,13 +6,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 backend_dir = Path(__file__).resolve().parents[2]
 repo_root = backend_dir.parent
+default_content_root = repo_root / "content"
 
 
 class Settings(BaseSettings):
     """Runtime settings loaded from environment variables."""
 
     app_name: str = "Portfolio API"
-    log_level: str = "INFO"
+    log_level: str = "DEBUG"
     cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:4321"])
     llm_base_url: str = "https://llm.noel.fyi"
     embeddings_base_url: str = "https://embeddings.noel.fyi"
@@ -27,6 +28,11 @@ class Settings(BaseSettings):
     embeddings_path: str = "/v1/embeddings"
     embedding_prefix: str = "query: "
     embedding_passage_prefix: str = "passage: "
+    redis_url: str = "redis://localhost:6379"
+    redis_index_name: str = "portfolio_content"
+    content_root: Path = default_content_root
+    bootstrap_chunk_size: int = 1200
+    bootstrap_chunk_overlap: int = 200
 
     model_config = SettingsConfigDict(
         env_file=(repo_root / ".env", backend_dir / ".env"),

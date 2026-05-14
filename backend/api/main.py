@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from api.core.bootstrap import run_bootstrap
 from api.core.config import Settings, get_settings
 from api.core.logging import configure_logging
 from api.routes import router
@@ -11,6 +12,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     settings = settings or get_settings()
     configure_logging(settings.log_level)
+
+    run_bootstrap(settings)
 
     app = FastAPI(
         title=settings.app_name,

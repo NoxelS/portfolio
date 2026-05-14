@@ -1,11 +1,27 @@
 services:
+  redis:
+    image: redis/redis-stack:latest
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+      - "${REDIS_INSIGHT_PORT:-8001}:8001"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
   backend:
     build:
       context: ./backend
     restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
     environment:
       API_APP_NAME: ${API_APP_NAME:-Portfolio API}
-      API_LOG_LEVEL: ${API_LOG_LEVEL:-INFO}
+      API_LOG_LEVEL: ${API_LOG_LEVEL:-DEBUG}
       API_CORS_ORIGINS: ${API_CORS_ORIGINS:-["https://noel.fyi"]}
       API_LLM_BASE_URL: ${API_LLM_BASE_URL:-http://ollama:8080}
       API_EMBEDDINGS_BASE_URL: ${API_EMBEDDINGS_BASE_URL:-http://ollama:8080}
@@ -20,8 +36,15 @@ services:
       API_LLM_MODEL: ${API_LLM_MODEL:-SmolLM2-360M-Instruct-Q8_0}
       API_CHAT_COMPLETIONS_PATH: ${API_CHAT_COMPLETIONS_PATH:-/v1/chat/completions}
       API_CHAT_MAX_TOKENS: ${API_CHAT_MAX_TOKENS:-256}
+      API_REDIS_URL: ${API_REDIS_URL:-redis://redis:6379}
+      API_REDIS_INDEX_NAME: ${API_REDIS_INDEX_NAME:-portfolio_content}
+      API_CONTENT_ROOT: ${API_CONTENT_ROOT:-/app/content}
+      API_BOOTSTRAP_CHUNK_SIZE: ${API_BOOTSTRAP_CHUNK_SIZE:-1200}
+      API_BOOTSTRAP_CHUNK_OVERLAP: ${API_BOOTSTRAP_CHUNK_OVERLAP:-200}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./content:/app/content:ro
     healthcheck:
       test:
         [

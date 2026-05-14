@@ -12,6 +12,8 @@ dependencies = [
     "httpx>=0.28.1",
     "langchain-ollama>=1.1.0",
     "pydantic-settings>=2.14.1",
+    "python-frontmatter>=1.1.0",
+    "redis>=6.4.0",
     "uvicorn[standard]>=0.46.0",
 ]
 
