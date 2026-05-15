@@ -7,10 +7,10 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 	<section class="mx-auto flex min-h-[calc(100vh-5rem)] max-w-4xl flex-col justify-center gap-6">
 		<p class="text-sm font-medium uppercase tracking-[0.3em] text-cyan-300/80">Portfolio</p>
 		<h1 class="max-w-2xl text-5xl font-semibold tracking-tight text-slate-50 sm:text-6xl">Noel Schwabenland</h1>
-		<p class="max-w-xl text-lg leading-8 text-slate-300">
+		<p class="text-lg leading-8 text-slate-300">
 			Building a fast, self-hosted portfolio with strong performance, privacy-conscious analytics, and clear technical insight.
 		</p>
-		<p class="max-w-2xl rounded-lg border border-slate-800 bg-amber-600 px-4 py-3 text-sm leading-6 text-slate-300">
+		<p class="rounded-lg border border-slate-800 bg-amber-600 px-4 py-3 text-sm leading-6 text-slate-300">
 			Not impressed with the responses from the assistant? I run all systems on 8GB of memory... Still not impressed?
 		</p>
 		<div id="sales-assistant-root" data-api-base-url={apiBaseUrl}></div>
@@ -115,40 +115,213 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 				return `${(durationMs / 1000).toFixed(1)}s`;
 			}
 
+			const STEP_DESCRIPTIONS = {
+				query: 'The user query is being prepared.',
+				rewrite: 'The query was rewritten into search-friendly terms to improve retrieval.',
+				embedding: 'The query was converted into a vector embedding for semantic search.',
+				retrieval: 'Similar content chunks are being retrieved from the vector database.',
+				merge: 'Results from multiple retrieval passes are being merged and deduplicated.',
+				rerank: 'Retrieved chunks are being reranked by relevance to the query.',
+				filter: 'Low-confidence results below the relevance threshold are being removed.',
+				packing: 'Context is being packed within the available model token budget.',
+				prompt: 'The final prompt is being assembled.',
+				rag_query: 'The full prompt sent to the model for debugging.',
+				generation: 'The model is generating an answer from the packed context.',
+				fallback: 'No relevant context was found — returning the fallback response.',
+			};
+
+			function getStepDescription(stage) {
+				return STEP_DESCRIPTIONS[stage] ?? '';
+			}
+
+			function renderValue(value) {
+				if (value === null || value === undefined) return String(value);
+				if (typeof value === 'object') return JSON.stringify(value, null, 2);
+				return String(value);
+			}
+
+			function renderDebug(debug, container) {
+				if (!debug || typeof debug !== 'object') return;
+
+				for (const [key, value] of Object.entries(debug)) {
+					if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'object') {
+						const label = document.createElement('p');
+						label.className = 'mt-2 text-xs font-medium text-slate-300';
+						label.textContent = key.replace(/_/g, ' ');
+						container.append(label);
+
+						for (const item of value) {
+							if (item && typeof item === 'object' && item.note) {
+								const note = document.createElement('p');
+								note.className = 'text-[11px] text-slate-500 italic';
+								note.textContent = item.note;
+								container.append(note);
+								continue;
+							}
+
+							const card = document.createElement('div');
+							card.className = 'rounded border border-slate-800 bg-slate-950/50 p-2 text-[11px] text-slate-400';
+
+							const title = document.createElement('p');
+							title.className = 'font-medium text-slate-200';
+							title.textContent = item.title ?? item.message ?? '(unnamed)';
+							card.append(title);
+
+							if (item.path) {
+								const line = document.createElement('p');
+								line.className = 'text-slate-500';
+								line.textContent = `path: ${item.path}`;
+								card.append(line);
+							}
+
+							if (item.relevance !== undefined) {
+								const line = document.createElement('p');
+								line.className = 'text-slate-500';
+								line.textContent = `relevance: ${typeof item.relevance === 'number' ? item.relevance.toFixed(2) : item.relevance}`;
+								card.append(line);
+							}
+
+							if (item.rerank_score !== undefined) {
+								const line = document.createElement('p');
+								line.className = 'text-slate-500';
+								line.textContent = `score: ${typeof item.rerank_score === 'number' ? item.rerank_score.toFixed(4) : item.rerank_score}`;
+								card.append(line);
+							}
+
+							if (item.content_preview) {
+								const line = document.createElement('p');
+								line.className = 'mt-1 text-slate-500';
+								line.textContent = item.content_preview;
+								card.append(line);
+							}
+
+							container.append(card);
+						}
+						continue;
+					}
+
+					if (Array.isArray(value) && typeof value[0] === 'string') {
+						const label = document.createElement('p');
+						label.className = 'mt-1 text-xs font-medium text-slate-300';
+						label.textContent = key.replace(/_/g, ' ');
+						container.append(label);
+
+						for (const str of value) {
+							const line = document.createElement('p');
+							line.className = 'text-[11px] text-slate-400';
+							line.textContent = str;
+							container.append(line);
+						}
+						continue;
+					}
+
+					if (typeof value === 'object') {
+						const label = document.createElement('p');
+						label.className = 'mt-1 text-xs font-medium text-slate-300';
+						label.textContent = key.replace(/_/g, ' ');
+						container.append(label);
+
+						const pre = document.createElement('pre');
+						pre.className = 'max-h-32 overflow-auto rounded border border-slate-800 bg-slate-950 p-1.5 text-[11px] text-slate-400';
+						pre.textContent = renderValue(value);
+						container.append(pre);
+						continue;
+					}
+
+					const line = document.createElement('p');
+					line.className = 'text-[11px] text-slate-400';
+					line.textContent = `${key.replace(/_/g, ' ')}: ${renderValue(value)}`;
+					container.append(line);
+				}
+			}
+
 			function renderStatusItem(payload) {
 				const item = document.createElement('li');
 				item.className = 'text-xs text-slate-400';
-				item.dataset.durationMs = String(payload.duration_ms ?? 0);
 
-				item.textContent = formatStepLine(payload, false);
-				return item;
-			}
+				const details = document.createElement('details');
+				details.className = 'group';
+				details.open = false;
 
-			function formatStepLine(payload, completed) {
-				const message = payload.message ?? 'Step';
-				const duration = completed ? formatDuration(Number(payload.duration_ms ?? 0)) : 'working';
-				const parts = [];
+				const summary = document.createElement('summary');
+				summary.className = 'flex cursor-pointer items-center justify-between gap-2 rounded-lg py-1 hover:bg-slate-800/40';
 
-				if (payload.rewritten_query) {
-					parts.push(`rewritten: ${payload.rewritten_query}`);
+				const titleRow = document.createElement('div');
+				titleRow.className = 'flex items-center gap-2';
+
+				const arrow = document.createElement('span');
+				arrow.className = 'text-slate-500 transition-transform group-open:rotate-90';
+				arrow.textContent = '▸';
+
+				const message = document.createElement('span');
+				message.className = 'font-medium text-slate-100';
+				message.textContent = payload.message ?? 'Step';
+
+				titleRow.append(arrow, message);
+
+				const duration = document.createElement('span');
+				duration.className = 'text-[11px] text-slate-500';
+				duration.textContent = payload.duration_ms != null ? formatDuration(payload.duration_ms) : '';
+
+				summary.append(titleRow, duration);
+
+				const body = document.createElement('div');
+				body.className = 'ml-4 mt-1 space-y-1 pb-2';
+
+				const description = document.createElement('p');
+				description.className = 'text-[11px] text-slate-500';
+				description.textContent = getStepDescription(payload.stage);
+
+				if (description.textContent) {
+					body.append(description);
+				}
+
+				if (payload.rewritten_query && payload.stage === 'rewrite') {
+					const line = document.createElement('p');
+					line.className = 'text-[11px] text-slate-400';
+					line.textContent = `rewritten: ${payload.rewritten_query}`;
+					body.append(line);
 				}
 
 				if (payload.model) {
-					parts.push(`model: ${payload.model}`);
+					const line = document.createElement('p');
+					line.className = 'text-[11px] text-slate-400';
+					line.textContent = `model: ${payload.model}`;
+					body.append(line);
 				}
 
 				const counts = payload.counts;
 				if (counts && typeof counts === 'object') {
 					for (const [key, value] of Object.entries(counts)) {
-						parts.push(`${key}: ${value}`);
+						const line = document.createElement('p');
+						line.className = 'text-[11px] text-slate-400';
+						line.textContent = `${key}: ${value}`;
+						body.append(line);
 					}
 				}
 
-				if (parts.length === 0) {
-					parts.push(completed ? duration : 'working');
+				if (payload.debug) {
+					const divider = document.createElement('hr');
+					divider.className = 'my-2 border-slate-800';
+					body.append(divider);
+					renderDebug(payload.debug, body);
 				}
 
-				return `${message} - ${parts.join(' - ')}${completed ? '' : ` - ${duration}`}`;
+				if (payload.rag_query) {
+					const label = document.createElement('p');
+					label.className = 'mt-2 text-xs font-medium text-slate-300';
+					label.textContent = 'Full RAG query:';
+					body.append(label);
+
+					const pre = document.createElement('pre');
+					pre.className = 'mt-1 max-h-48 overflow-auto rounded-lg border border-slate-800 bg-slate-950 p-2 text-[11px] text-slate-300';
+					pre.textContent = payload.rag_query;
+					body.append(pre);
+				}
+
+				details.append(summary, body);
+				item.append(details);
+				return item;
 			}
 
 			function resetStatusLog() {
