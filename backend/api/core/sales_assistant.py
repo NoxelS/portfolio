@@ -688,7 +688,7 @@ def sse_event(event: str, data: str) -> str:
 
     lines = [f"event: {event}"]
     if data:
-        for line in data.splitlines() or [""]:
+        for line in data.split('\n') or [""]:
             lines.append(f"data: {line}")
     else:
         lines.append("data:")
