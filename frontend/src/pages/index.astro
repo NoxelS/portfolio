@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SalesAssistantQuery from '../components/SalesAssistantQuery.jsx';
+const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? '';
 ---
 
 <BaseLayout title="Noel Schwabenland">
@@ -10,6 +10,166 @@ import SalesAssistantQuery from '../components/SalesAssistantQuery.jsx';
 		<p class="max-w-xl text-lg leading-8 text-slate-300">
 			Building a fast, self-hosted portfolio with strong performance, privacy-conscious analytics, and clear technical insight.
 		</p>
-		<SalesAssistantQuery client:load />
+		<div id="sales-assistant-root" data-api-base-url={apiBaseUrl}></div>
+		<script type="module">
+			const root = document.getElementById('sales-assistant-root');
+
+			if (!root) {
+				throw new Error('Sales assistant root missing.');
+			}
+
+			const apiBaseUrl = root.dataset.apiBaseUrl?.replace(/\/$/, '') ?? '';
+			const form = document.createElement('form');
+			form.className = 'w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900/70 p-4 shadow-lg shadow-black/10';
+
+			const label = document.createElement('label');
+			label.className = 'text-sm font-medium text-slate-200';
+			label.htmlFor = 'sales-assistant-query';
+			label.textContent = 'Ask the sales assistant';
+
+			const row = document.createElement('div');
+			row.className = 'flex flex-col gap-3 sm:flex-row';
+
+			const input = document.createElement('input');
+			input.id = 'sales-assistant-query';
+			input.className = 'flex-1 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400';
+			input.type = 'text';
+			input.placeholder = 'Ask about services, pricing, or fit';
+
+			const button = document.createElement('button');
+			button.className = 'rounded-lg bg-cyan-400 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60';
+			button.type = 'submit';
+			button.textContent = 'Send';
+
+			const error = document.createElement('p');
+			error.className = 'mt-3 text-sm text-red-300';
+			error.hidden = true;
+
+			const response = document.createElement('div');
+			response.className = 'mt-4 space-y-3';
+			response.hidden = true;
+
+			const responseLabel = document.createElement('p');
+			responseLabel.className = 'text-xs uppercase tracking-[0.25em] text-slate-400';
+			responseLabel.textContent = 'Response';
+
+			const responseBody = document.createElement('p');
+			responseBody.className = 'mt-1 whitespace-pre-wrap text-slate-100';
+
+			const sourcesLabel = document.createElement('p');
+			sourcesLabel.className = 'text-xs uppercase tracking-[0.25em] text-slate-400';
+			sourcesLabel.textContent = 'Sources';
+
+			const sourcesList = document.createElement('ul');
+			sourcesList.className = 'mt-2 space-y-2';
+
+			const responseSection = document.createElement('div');
+			responseSection.append(responseLabel, responseBody);
+
+			const sourcesSection = document.createElement('div');
+			sourcesSection.append(sourcesLabel, sourcesList);
+
+			response.append(responseSection, sourcesSection);
+			row.append(input, button);
+			form.append(label, row, error);
+			root.replaceChildren(form, response);
+
+			function setError(message) {
+				error.textContent = message;
+				error.hidden = !message;
+			}
+
+			function setLoading(loading) {
+				button.disabled = loading;
+				button.textContent = loading ? 'Sending...' : 'Send';
+			}
+
+			function renderSources(items) {
+				sourcesList.replaceChildren();
+
+				for (const [index, source] of items.entries()) {
+					const li = document.createElement('li');
+					li.className = 'rounded-lg border border-slate-800 bg-slate-950/70 p-3 text-sm text-slate-300';
+
+					const title = document.createElement('p');
+					title.className = 'font-medium text-slate-100';
+					title.textContent = source.title ?? source.path ?? `Source ${index + 1}`;
+
+					li.append(title);
+
+					if (source.path) {
+						const path = document.createElement('p');
+						path.className = 'mt-1 text-slate-400';
+						path.textContent = source.path;
+						li.append(path);
+					}
+
+					if (source.content_type) {
+						const type = document.createElement('p');
+						type.className = 'mt-1 text-slate-500';
+						type.textContent = source.content_type;
+						li.append(type);
+					}
+
+					if (source.relevance != null) {
+						const relevance = document.createElement('p');
+						relevance.className = 'mt-1 text-slate-500';
+						relevance.textContent = `Relevance: ${String(source.relevance)}`;
+						li.append(relevance);
+					}
+
+					if (source.content) {
+						const content = document.createElement('p');
+						content.className = 'mt-2 line-clamp-3 text-slate-400';
+						content.textContent = source.content;
+						li.append(content);
+					}
+
+					sourcesList.append(li);
+				}
+			}
+
+			form.addEventListener('submit', async (event) => {
+				event.preventDefault();
+
+				const query = input.value.trim();
+
+				if (!query) {
+					setError('Enter a question first.');
+					return;
+				}
+
+				if (!apiBaseUrl) {
+					setError('Set PUBLIC_API_BASE_URL in the frontend env.');
+					return;
+				}
+
+				setError('');
+				setLoading(true);
+				response.hidden = true;
+				responseBody.textContent = '';
+				sourcesList.replaceChildren();
+
+				try {
+					const url = new URL(`${apiBaseUrl}/sales-assistant`);
+					url.searchParams.set('query', query);
+
+					const fetched = await fetch(url.toString());
+
+					if (!fetched.ok) {
+						throw new Error(`Request failed with status ${fetched.status}`);
+					}
+
+					const data = await fetched.json();
+					responseBody.textContent = data.answer ?? 'No answer returned.';
+					renderSources(Array.isArray(data.results) ? data.results : []);
+					response.hidden = false;
+				} catch (err) {
+					setError(err instanceof Error ? err.message : 'Something went wrong.');
+				} finally {
+					setLoading(false);
+				}
+			});
+		</script>
 	</section>
 </BaseLayout>
