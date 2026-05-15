@@ -1,3 +1,1 @@
-Rewrite the query "{query}" into a more verbose search query for portfolio retrieval.
-
-Return only the rewritten query.
+The rephrased (not answered) query of "{query}" is: 
