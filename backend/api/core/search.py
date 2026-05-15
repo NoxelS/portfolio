@@ -43,7 +43,13 @@ def search_content(
             rewritten_candidates = search_knn(rewritten_vector, retrieval_k=retrieval_k, settings=settings)
 
     candidates = merge_candidates(raw_candidates, rewritten_candidates)
-    results = rerank_candidates(normalized_query, candidates, top_n=safe_top_n, settings=settings)
+    results = rerank_candidates_dual(
+        normalized_query,
+        rewritten_normalized or None,
+        candidates,
+        top_n=safe_top_n,
+        settings=settings,
+    )
     filtered_results = filter_reranked_results(results, settings=settings)
     return {
         "query": normalized_query,
@@ -132,6 +138,31 @@ def rerank_candidates(
     return results
 
 
+def rerank_candidates_dual(
+    query: str,
+    rewritten_query: str | None,
+    candidates: list[dict[str, object]],
+    *,
+    top_n: int,
+    settings: Settings | None = None,
+) -> list[dict[str, object]]:
+    """Rerank candidates against the original and rewritten query, then merge."""
+
+    if not candidates:
+        return []
+
+    full_top_n = len(candidates)
+    primary_results = rerank_candidates(query, candidates, top_n=full_top_n, settings=settings)
+    secondary_results: list[dict[str, object]] = []
+
+    normalized_rewritten_query = (rewritten_query or "").strip()
+    if normalized_rewritten_query and normalized_rewritten_query != query.strip():
+        secondary_results = rerank_candidates(normalized_rewritten_query, candidates, top_n=full_top_n, settings=settings)
+
+    merged_results = merge_reranked_results(primary_results, secondary_results)
+    return merged_results[:top_n]
+
+
 def merge_candidates(*candidate_sets: list[dict[str, object]]) -> list[dict[str, object]]:
     """Merge candidate lists and deduplicate them by Redis key."""
 
@@ -151,6 +182,42 @@ def merge_candidates(*candidate_sets: list[dict[str, object]]) -> list[dict[str,
     return merged
 
 
+def merge_reranked_results(*result_sets: list[dict[str, object]]) -> list[dict[str, object]]:
+    """Merge reranked results and keep the strongest score per candidate."""
+
+    merged: dict[str, dict[str, object]] = {}
+
+    for result_set in result_sets:
+        for result in result_set:
+            dedupe_key = candidate_dedupe_key(result)
+            if not dedupe_key:
+                continue
+
+            existing = merged.get(dedupe_key)
+            current_score = float(result.get("rerank_score", 0.0))
+            if existing is None:
+                merged_result = dict(result)
+                merged_result["best_rerank_score"] = current_score
+                merged_result["best_relevance"] = float(result.get("relevance", 0.0))
+                merged[dedupe_key] = merged_result
+                continue
+
+            existing_score = float(existing.get("best_rerank_score", existing.get("rerank_score", 0.0)))
+            if current_score > existing_score:
+                updated = dict(result)
+                updated["best_rerank_score"] = current_score
+                updated["best_relevance"] = float(result.get("relevance", 0.0))
+                merged[dedupe_key] = updated
+
+    merged_results = list(merged.values())
+    merged_results.sort(key=lambda item: float(item.get("best_rerank_score", item.get("rerank_score", 0.0))), reverse=True)
+    for result in merged_results:
+        result["rerank_score"] = float(result.get("best_rerank_score", result.get("rerank_score", 0.0)))
+        result["relevance"] = float(result.get("best_relevance", result.get("relevance", 0.0)))
+        result["relevance_percent"] = result["relevance"]
+    return merged_results
+
+
 def filter_reranked_results(
     results: list[dict[str, object]],
     *,
@@ -161,6 +228,13 @@ def filter_reranked_results(
     settings = settings or get_settings()
     threshold = settings.reranker_minimum_relevance_percent
     return [result for result in results if float(result.get("relevance", 0.0)) >= threshold]
+
+
+def candidate_dedupe_key(candidate: dict[str, object]) -> str:
+    """Build a stable dedupe key for a candidate or reranked result."""
+
+    redis_key = str(candidate.get("redis_key", "")).strip()
+    return redis_key or str(candidate.get("path", "")).strip() or str(candidate.get("title", "")).strip()
 
 
 def load_candidates(redis: Redis, response: object) -> list[dict[str, object]]:

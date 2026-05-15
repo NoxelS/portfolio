@@ -9,7 +9,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from api.core.config import Settings, get_settings
 from api.core.model_client import create_chat_model
 from api.core.ntfy_logger import notify_sales_assistant_error, notify_sales_assistant_event
-from api.core.search import embed_query, filter_reranked_results, merge_candidates, rerank_candidates, search_content, search_knn
+from api.core.search import embed_query, filter_reranked_results, merge_candidates, rerank_candidates_dual, search_content, search_knn
 
 DEFAULT_ASSISTANT_TOP_N = 5
 SYSTEM_PROMPT_FILE = "sales-assistant/system.md"
@@ -207,16 +207,27 @@ def stream_answer_query(
         )
 
         rerank_started_at = perf_counter()
-        reranked_results = rerank_candidates(normalized_query, merged_candidates, top_n=safe_top_n, settings=settings)
+        reranked_results = rerank_candidates_dual(
+            normalized_query,
+            rewritten_query,
+            merged_candidates,
+            top_n=safe_top_n,
+            settings=settings,
+        )
         yield sse_event(
             'step',
             json.dumps(
                 step_payload(
-                    'Reranking results',
+                    'Reranking original and rewritten query',
                     stage='rerank',
                     duration_ms=elapsed_ms(rerank_started_at),
                     model=settings.reranker_model,
-                    counts={'input': len(merged_candidates), 'output': len(reranked_results), 'top_n': safe_top_n},
+                    counts={
+                        'input': len(merged_candidates),
+                        'output': len(reranked_results),
+                        'top_n': safe_top_n,
+                        'queries': 2 if rewritten_query.strip() and rewritten_query.strip() != normalized_query else 1,
+                    },
                     rewritten_query=rewritten_query,
                 )
             ),
