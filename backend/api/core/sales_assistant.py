@@ -1,3 +1,5 @@
+import json
+from collections.abc import Iterator
 from pathlib import Path
 
 from langchain_core.prompts import ChatPromptTemplate
@@ -66,6 +68,75 @@ def answer_query(
         raise
 
 
+def stream_answer_query(
+    query: str,
+    *,
+    top_n: int = DEFAULT_ASSISTANT_TOP_N,
+    settings: Settings | None = None,
+) -> Iterator[str]:
+    """Stream an answer and finish with a sources event."""
+
+    settings = settings or get_settings()
+    normalized_query = query.strip()
+
+    try:
+        search_payload = search_content(normalized_query, top_n=top_n, settings=settings)
+        results = search_payload["results"]
+        system_prompt = load_system_prompt(settings.instructions_root / SYSTEM_PROMPT_FILE)
+        context = format_context(results)
+
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", system_prompt),
+                (
+                    "human",
+                    "User query:\n{query}\n\nPortfolio context:\n{context}\n\nAnswer the user using the context above.",
+                ),
+            ]
+        )
+        messages = prompt.format_messages(query=normalized_query, context=context)
+        model = create_chat_model(settings)
+        answer_parts: list[str] = []
+
+        for token in model.stream(messages):
+            if not token:
+                continue
+
+            answer_parts.append(token)
+            yield sse_event("token", token)
+
+        answer = "".join(answer_parts)
+        notify_sales_assistant_event(
+            query=normalized_query,
+            answer=answer,
+            count=len(results),
+            top_n=search_payload["top_n"],
+            retrieval_k=search_payload["retrieval_k"],
+            settings=settings,
+        )
+        yield sse_event(
+            "sources",
+            json.dumps(
+                {
+                    "query": normalized_query,
+                    "count": len(results),
+                    "results": results,
+                    "top_n": search_payload["top_n"],
+                    "retrieval_k": search_payload["retrieval_k"],
+                }
+            ),
+        )
+        yield sse_event("done", "")
+    except Exception as error:
+        notify_sales_assistant_error(
+            query=normalized_query,
+            error_message=str(error),
+            settings=settings,
+        )
+        yield sse_event("error", str(error))
+        raise
+
+
 def load_system_prompt(path: Path) -> str:
     """Load the sales assistant system prompt from disk."""
 
@@ -131,3 +202,15 @@ def summarize_metadata(result: dict[str, object]) -> str:
             continue
         parts.append(f"{key}={value}")
     return "; ".join(parts)
+
+
+def sse_event(event: str, data: str) -> str:
+    """Format a server-sent event frame."""
+
+    lines = [f"event: {event}"]
+    if data:
+        for line in data.splitlines() or [""]:
+            lines.append(f"data: {line}")
+    else:
+        lines.append("data:")
+    return "\n".join(lines) + "\n\n"

@@ -19,6 +19,7 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 			}
 
 			const apiBaseUrl = root.dataset.apiBaseUrl?.replace(/\/$/, '') ?? '';
+			let currentSource;
 			const form = document.createElement('form');
 			form.className = 'w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900/70 p-4 shadow-lg shadow-black/10';
 
@@ -84,6 +85,13 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 				button.textContent = loading ? 'Sending...' : 'Send';
 			}
 
+			function closeStream() {
+				if (currentSource) {
+					currentSource.close();
+					currentSource = undefined;
+				}
+			}
+
 			function renderSources(items) {
 				sourcesList.replaceChildren();
 
@@ -144,31 +152,40 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 					return;
 				}
 
+				closeStream();
+
 				setError('');
 				setLoading(true);
 				response.hidden = true;
 				responseBody.textContent = '';
 				sourcesList.replaceChildren();
 
-				try {
-					const url = new URL(`${apiBaseUrl}/sales-assistant`);
-					url.searchParams.set('query', query);
+				const url = new URL(`${apiBaseUrl}/sales-assistant`);
+				url.searchParams.set('query', query);
 
-					const fetched = await fetch(url.toString());
+				currentSource = new EventSource(url.toString());
 
-					if (!fetched.ok) {
-						throw new Error(`Request failed with status ${fetched.status}`);
-					}
-
-					const data = await fetched.json();
-					responseBody.textContent = data.answer ?? 'No answer returned.';
-					renderSources(Array.isArray(data.results) ? data.results : []);
+				currentSource.addEventListener('token', (event) => {
 					response.hidden = false;
-				} catch (err) {
-					setError(err instanceof Error ? err.message : 'Something went wrong.');
-				} finally {
+					responseBody.textContent += event.data ?? '';
+				});
+
+				currentSource.addEventListener('sources', (event) => {
+					const payload = JSON.parse(event.data);
+					renderSources(Array.isArray(payload.results) ? payload.results : []);
+					response.hidden = false;
+				});
+
+				currentSource.addEventListener('done', () => {
 					setLoading(false);
-				}
+					closeStream();
+				});
+
+				currentSource.addEventListener('error', () => {
+					setLoading(false);
+					setError('Stream failed.');
+					closeStream();
+				});
 			});
 		</script>
 	</section>

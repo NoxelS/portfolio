@@ -1,3 +1,4 @@
+import json
 from collections.abc import Sequence
 from urllib.parse import urljoin
 
@@ -44,6 +45,36 @@ class RemoteChatModel:
         )
         response.raise_for_status()
         return AIMessage(content=parse_chat_content(response.json()))
+
+    def stream(self, messages: Sequence[BaseMessage]):
+        """Stream chat completion deltas from the remote model API."""
+
+        with self.client.stream(
+            "POST",
+            self.url,
+            headers=self.headers,
+            json={
+                "model": self.model,
+                "messages": [serialize_message(message) for message in messages],
+                "temperature": 0,
+                "stream": True,
+                "max_tokens": self.max_tokens,
+            },
+        ) as response:
+            response.raise_for_status()
+            for chunk in response.iter_lines():
+                if not chunk:
+                    continue
+
+                text = chunk.decode("utf-8") if isinstance(chunk, bytes) else str(chunk)
+                if text.startswith("data:"):
+                    text = text.removeprefix("data:").strip()
+
+                if text == "[DONE]":
+                    break
+
+                payload = json.loads(text)
+                yield parse_chat_delta(payload)
 
 
 class RemoteEmbeddingModel:
@@ -223,6 +254,26 @@ def parse_chat_content(payload: object) -> str:
             return payload["content"]
 
     raise ValueError("Unsupported chat completion response format.")
+
+
+def parse_chat_delta(payload: object) -> str:
+    """Parse a streamed chat completion delta payload."""
+
+    if isinstance(payload, dict):
+        choices = payload.get("choices")
+        if isinstance(choices, list) and choices:
+            first = choices[0]
+            if isinstance(first, dict):
+                delta = first.get("delta")
+                if isinstance(delta, dict) and isinstance(delta.get("content"), str):
+                    return delta["content"]
+                if isinstance(first.get("text"), str):
+                    return first["text"]
+
+        if isinstance(payload.get("content"), str):
+            return payload["content"]
+
+    return ""
 
 
 def parse_embedding_vectors(payload: object) -> list[list[float]]:
