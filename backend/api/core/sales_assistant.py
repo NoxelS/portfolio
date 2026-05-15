@@ -8,11 +8,14 @@ from langchain_core.prompts import ChatPromptTemplate
 from api.core.config import Settings, get_settings
 from api.core.model_client import create_chat_model
 from api.core.ntfy_logger import notify_sales_assistant_error, notify_sales_assistant_event
-from api.core.search import MAX_RETRIEVAL_K, MAX_TOP_N, embed_query, rerank_candidates, search_content, search_knn
+from api.core.search import embed_query, filter_reranked_results, merge_candidates, rerank_candidates, search_content, search_knn
 
 DEFAULT_ASSISTANT_TOP_N = 5
 SYSTEM_PROMPT_FILE = "sales-assistant/system.md"
 USER_PROMPT_TEMPLATE_FILE = "sales-assistant/user-template.md"
+QUERY_REWRITE_SYSTEM_PROMPT_FILE = "sales-assistant/query-rewrite-system.md"
+QUERY_REWRITE_TEMPLATE_FILE = "sales-assistant/query-rewrite.md"
+NO_CONTEXT_RESPONSE_FILE = "sales-assistant/no-context-response.md"
 
 
 def answer_query(
@@ -27,8 +30,12 @@ def answer_query(
     normalized_query = query.strip()
 
     try:
-        search_payload = search_content(normalized_query, top_n=top_n, settings=settings)
+        rewritten_query = rewrite_query(normalized_query, settings=settings)
+        search_payload = search_content(normalized_query, top_n=top_n, rewritten_query=rewritten_query, settings=settings)
         results = search_payload["results"]
+        if not results:
+            return build_no_context_payload(normalized_query, rewritten_query, search_payload, settings=settings)
+
         system_prompt = load_system_prompt(settings.instructions_root / SYSTEM_PROMPT_FILE)
         user_prompt_template = load_system_prompt(settings.instructions_root / USER_PROMPT_TEMPLATE_FILE)
         context = format_context(results)
@@ -92,40 +99,108 @@ def stream_answer_query(
             ),
         )
 
-        safe_top_n = max(1, min(top_n, MAX_TOP_N))
-        retrieval_k = min(safe_top_n * 3, MAX_RETRIEVAL_K)
+        safe_top_n = max(1, min(top_n, settings.retrieval_max_top_n))
+        retrieval_k = min(safe_top_n * settings.retrieval_multiplier, settings.retrieval_max_k)
 
-        embedding_started_at = perf_counter()
-        query_vector = embed_query(normalized_query, settings=settings)
+        query_rewrite_system_prompt = load_system_prompt(settings.instructions_root / QUERY_REWRITE_SYSTEM_PROMPT_FILE)
+        query_rewrite_prompt = load_system_prompt(settings.instructions_root / QUERY_REWRITE_TEMPLATE_FILE)
+        rewrite_started_at = perf_counter()
+        rewritten_query = rewrite_query(
+            normalized_query,
+            settings=settings,
+            system_prompt=query_rewrite_system_prompt,
+            prompt_template=query_rewrite_prompt,
+        )
         yield sse_event(
             'step',
             json.dumps(
                 step_payload(
-                    'Embedding your query',
+                    'Rewriting query',
+                    stage='rewrite',
+                    duration_ms=elapsed_ms(rewrite_started_at),
+                    model=settings.llm_model,
+                    rewritten_query=rewritten_query,
+                    counts={'input_chars': len(normalized_query), 'output_chars': len(rewritten_query)},
+                )
+            ),
+        )
+
+        raw_embed_started_at = perf_counter()
+        raw_query_vector = embed_query(normalized_query, settings=settings)
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Embedding original query',
                     stage='embedding',
-                    duration_ms=elapsed_ms(embedding_started_at),
+                    duration_ms=elapsed_ms(raw_embed_started_at),
                     model=settings.embedding_model,
                     counts={'input': 1},
                 )
             ),
         )
 
-        retrieval_started_at = perf_counter()
-        candidates = search_knn(query_vector, retrieval_k=retrieval_k, settings=settings)
+        raw_retrieval_started_at = perf_counter()
+        raw_candidates = search_knn(raw_query_vector, retrieval_k=retrieval_k, settings=settings)
         yield sse_event(
             'step',
             json.dumps(
                 step_payload(
-                    'Retrieving chunks',
+                    'Retrieving raw query chunks',
                     stage='retrieval',
-                    duration_ms=elapsed_ms(retrieval_started_at),
-                    counts={'retrieved': len(candidates), 'requested': retrieval_k},
+                    duration_ms=elapsed_ms(raw_retrieval_started_at),
+                    counts={'retrieved': len(raw_candidates), 'requested': retrieval_k},
+                )
+            ),
+        )
+
+        rewritten_embed_started_at = perf_counter()
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Embedding rewritten query',
+                    stage='embedding',
+                    duration_ms=elapsed_ms(rewritten_embed_started_at),
+                    model=settings.embedding_model,
+                    counts={'input': 1},
+                    rewritten_query=rewritten_query,
+                )
+            ),
+        )
+        rewritten_query_vector = embed_query(rewritten_query, settings=settings)
+        rewritten_retrieval_started_at = perf_counter()
+        rewritten_candidates = search_knn(rewritten_query_vector, retrieval_k=retrieval_k, settings=settings)
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Retrieving rewritten query chunks',
+                    stage='retrieval',
+                    duration_ms=elapsed_ms(rewritten_retrieval_started_at),
+                    counts={'retrieved': len(rewritten_candidates), 'requested': retrieval_k},
+                    rewritten_query=rewritten_query,
+                )
+            ),
+        )
+
+        merge_started_at = perf_counter()
+        merged_candidates = merge_candidates(raw_candidates, rewritten_candidates)
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Merging retrieval results',
+                    stage='merge',
+                    duration_ms=elapsed_ms(merge_started_at),
+                    counts={'raw': len(raw_candidates), 'rewritten': len(rewritten_candidates), 'merged': len(merged_candidates)},
+                    rewritten_query=rewritten_query,
                 )
             ),
         )
 
         rerank_started_at = perf_counter()
-        results = rerank_candidates(normalized_query, candidates, top_n=safe_top_n, settings=settings)
+        reranked_results = rerank_candidates(normalized_query, merged_candidates, top_n=safe_top_n, settings=settings)
         yield sse_event(
             'step',
             json.dumps(
@@ -134,10 +209,65 @@ def stream_answer_query(
                     stage='rerank',
                     duration_ms=elapsed_ms(rerank_started_at),
                     model=settings.reranker_model,
-                    counts={'input': len(candidates), 'output': len(results), 'top_n': safe_top_n},
+                    counts={'input': len(merged_candidates), 'output': len(reranked_results), 'top_n': safe_top_n},
+                    rewritten_query=rewritten_query,
                 )
             ),
         )
+
+        filter_started_at = perf_counter()
+        results = filter_reranked_results(reranked_results, settings=settings)
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Filtering low-confidence results',
+                    stage='filter',
+                    duration_ms=elapsed_ms(filter_started_at),
+                    counts={
+                        'input': len(reranked_results),
+                        'kept': len(results),
+                        'threshold': settings.reranker_minimum_relevance_percent,
+                    },
+                    rewritten_query=rewritten_query,
+                )
+            ),
+        )
+
+        if not results:
+            fallback_answer = load_system_prompt(settings.instructions_root / NO_CONTEXT_RESPONSE_FILE)
+            yield sse_event(
+                'step',
+                json.dumps(
+                    step_payload(
+                        'No relevant context found',
+                        stage='fallback',
+                        duration_ms=0,
+                        counts={'threshold': settings.reranker_minimum_relevance_percent},
+                        rewritten_query=rewritten_query,
+                    )
+                ),
+            )
+            yield sse_event("token", fallback_answer)
+            yield sse_event(
+                "sources",
+                json.dumps(
+                    {
+                        "query": normalized_query,
+                        "rewritten_query": rewritten_query,
+                        "count": 0,
+                        "results": [],
+                        "top_n": safe_top_n,
+                        "retrieval_k": retrieval_k,
+                        "raw_count": len(raw_candidates),
+                        "rewritten_count": len(rewritten_candidates),
+                        "merged_count": len(merged_candidates),
+                        "reranked_count": len(reranked_results),
+                    }
+                ),
+            )
+            yield sse_event("done", "")
+            return
 
         system_prompt = load_system_prompt(settings.instructions_root / SYSTEM_PROMPT_FILE)
         user_prompt_template = load_system_prompt(settings.instructions_root / USER_PROMPT_TEMPLATE_FILE)
@@ -175,6 +305,7 @@ def stream_answer_query(
                     duration_ms=elapsed_ms(generation_started_at),
                     model=settings.llm_model,
                     counts={'input_messages': len(messages)},
+                    rewritten_query=rewritten_query,
                 )
             ),
         )
@@ -197,6 +328,7 @@ def stream_answer_query(
                     duration_ms=elapsed_ms(generation_started_at),
                     model=settings.llm_model,
                     counts={'tokens': token_count, 'output_chars': len(answer)},
+                    rewritten_query=rewritten_query,
                 )
             ),
         )
@@ -213,10 +345,15 @@ def stream_answer_query(
             json.dumps(
                 {
                     "query": normalized_query,
+                    "rewritten_query": rewritten_query,
                     "count": len(results),
                     "results": results,
                     "top_n": safe_top_n,
                     "retrieval_k": retrieval_k,
+                    "raw_count": len(raw_candidates),
+                    "rewritten_count": len(rewritten_candidates),
+                    "merged_count": len(merged_candidates),
+                    "reranked_count": len(reranked_results),
                 }
             ),
         )
@@ -235,6 +372,52 @@ def load_system_prompt(path: Path) -> str:
     """Load the sales assistant system prompt from disk."""
 
     return path.read_text(encoding="utf-8").strip()
+
+
+def rewrite_query(
+    query: str,
+    *,
+    settings: Settings,
+    system_prompt: str | None = None,
+    prompt_template: str | None = None,
+) -> str:
+    """Rewrite a user query for retrieval without changing its meaning."""
+
+    query_rewrite_system_prompt = system_prompt or load_system_prompt(settings.instructions_root / QUERY_REWRITE_SYSTEM_PROMPT_FILE)
+    query_rewrite_template = prompt_template or load_system_prompt(settings.instructions_root / QUERY_REWRITE_TEMPLATE_FILE)
+    rewrite_model = create_chat_model(settings)
+    rewrite_messages = ChatPromptTemplate.from_messages(
+        [
+            ("system", query_rewrite_system_prompt),
+            ("human", query_rewrite_template),
+        ]
+    ).format_messages(query=query)
+    response = rewrite_model.invoke(rewrite_messages)
+    return response.content.strip()
+
+
+def build_no_context_payload(
+    query: str,
+    rewritten_query: str,
+    search_payload: dict[str, object],
+    *,
+    settings: Settings,
+) -> dict[str, object]:
+    """Build a fallback response when no result passes rerank filtering."""
+
+    return {
+        "query": query,
+        "rewritten_query": rewritten_query,
+        "answer": load_system_prompt(settings.instructions_root / NO_CONTEXT_RESPONSE_FILE),
+        "count": 0,
+        "results": [],
+        "top_n": search_payload["top_n"],
+        "retrieval_k": search_payload["retrieval_k"],
+        "raw_count": search_payload.get("raw_count", 0),
+        "rewritten_count": search_payload.get("rewritten_count", 0),
+        "merged_count": search_payload.get("merged_count", 0),
+        "reranked_count": search_payload.get("reranked_count", 0),
+    }
 
 
 def format_context(results: object) -> str:
@@ -316,6 +499,7 @@ def step_payload(
     stage: str,
     duration_ms: int,
     model: str | None = None,
+    rewritten_query: str | None = None,
     counts: dict[str, object] | None = None,
 ) -> dict[str, object]:
     """Build a structured status payload for the UI."""
@@ -327,6 +511,8 @@ def step_payload(
     }
     if model:
         payload['model'] = model
+    if rewritten_query:
+        payload['rewritten_query'] = rewritten_query
     if counts:
         payload['counts'] = counts
     return payload

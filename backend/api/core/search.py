@@ -17,6 +17,7 @@ def search_content(
     query: str,
     *,
     top_n: int = DEFAULT_TOP_N,
+    rewritten_query: str | None = None,
     settings: Settings | None = None,
 ) -> dict[str, object]:
     """Search indexed content chunks and rerank the best candidates."""
@@ -26,20 +27,35 @@ def search_content(
     if not normalized_query:
         raise ValueError("Query must not be empty.")
 
-    safe_top_n = max(1, min(top_n, MAX_TOP_N))
-    retrieval_k = min(safe_top_n * 3, MAX_RETRIEVAL_K)
+    safe_top_n = max(1, min(top_n, settings.retrieval_max_top_n))
+    retrieval_k = min(safe_top_n * settings.retrieval_multiplier, settings.retrieval_max_k)
 
     query_vector = embed_query(normalized_query, settings=settings)
 
-    candidates = search_knn(query_vector, retrieval_k=retrieval_k, settings=settings)
+    raw_candidates = search_knn(query_vector, retrieval_k=retrieval_k, settings=settings)
+    rewritten_candidates: list[dict[str, object]] = []
+    rewritten_normalized = ""
 
+    if rewritten_query:
+        rewritten_normalized = rewritten_query.strip()
+        if rewritten_normalized and rewritten_normalized != normalized_query:
+            rewritten_vector = embed_query(rewritten_normalized, settings=settings)
+            rewritten_candidates = search_knn(rewritten_vector, retrieval_k=retrieval_k, settings=settings)
+
+    candidates = merge_candidates(raw_candidates, rewritten_candidates)
     results = rerank_candidates(normalized_query, candidates, top_n=safe_top_n, settings=settings)
+    filtered_results = filter_reranked_results(results, settings=settings)
     return {
         "query": normalized_query,
+        "rewritten_query": rewritten_normalized or None,
         "top_n": safe_top_n,
         "retrieval_k": retrieval_k,
-        "count": len(results),
-        "results": results,
+        "raw_count": len(raw_candidates),
+        "rewritten_count": len(rewritten_candidates),
+        "merged_count": len(candidates),
+        "reranked_count": len(results),
+        "count": len(filtered_results),
+        "results": filtered_results,
     }
 
 
@@ -114,6 +130,37 @@ def rerank_candidates(
         results.append(candidate)
 
     return results
+
+
+def merge_candidates(*candidate_sets: list[dict[str, object]]) -> list[dict[str, object]]:
+    """Merge candidate lists and deduplicate them by Redis key."""
+
+    merged: list[dict[str, object]] = []
+    seen_keys: set[str] = set()
+
+    for candidate_set in candidate_sets:
+        for candidate in candidate_set:
+            redis_key = str(candidate.get("redis_key", "")).strip()
+            dedupe_key = redis_key or str(candidate.get("path", "")).strip() or str(candidate.get("title", "")).strip()
+            if not dedupe_key or dedupe_key in seen_keys:
+                continue
+
+            seen_keys.add(dedupe_key)
+            merged.append(dict(candidate))
+
+    return merged
+
+
+def filter_reranked_results(
+    results: list[dict[str, object]],
+    *,
+    settings: Settings | None = None,
+) -> list[dict[str, object]]:
+    """Keep only reranked results above the configured relevance threshold."""
+
+    settings = settings or get_settings()
+    threshold = settings.reranker_minimum_relevance_percent
+    return [result for result in results if float(result.get("relevance", 0.0)) >= threshold]
 
 
 def load_candidates(redis: Redis, response: object) -> list[dict[str, object]]:

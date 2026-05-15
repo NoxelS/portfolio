@@ -24,7 +24,6 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 			const apiBaseUrl = root.dataset.apiBaseUrl?.replace(/\/$/, '') ?? '';
 			let currentSource;
 			let currentStatusItems = [];
-			let requestStartedAt = 0;
 			const form = document.createElement('form');
 			form.className = 'w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900/70 p-4 shadow-lg shadow-black/10';
 
@@ -125,22 +124,14 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 				return item;
 			}
 
-			function collapseStatusLog() {
-				for (const item of currentStatusItems) {
-					item.textContent = formatStepLine(
-						{
-							message: item.dataset.message ?? 'Step',
-							duration_ms: Number(item.dataset.durationMs ?? 0),
-						},
-						true,
-					);
-				}
-			}
-
 			function formatStepLine(payload, completed) {
 				const message = payload.message ?? 'Step';
 				const duration = completed ? formatDuration(Number(payload.duration_ms ?? 0)) : 'working';
 				const parts = [];
+
+				if (payload.rewritten_query) {
+					parts.push(`rewritten: ${payload.rewritten_query}`);
+				}
 
 				if (payload.model) {
 					parts.push(`model: ${payload.model}`);
@@ -240,7 +231,6 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 				responseBody.textContent = '';
 				sourcesList.replaceChildren();
 				resetStatusLog();
-				requestStartedAt = performance.now();
 				const url = new URL(`${apiBaseUrl}/sales-assistant`);
 				url.searchParams.set('query', query);
 
@@ -248,12 +238,12 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 
 				currentSource.addEventListener('step', (event) => {
 					const payload = JSON.parse(event.data);
-				const item = renderStatusItem(payload);
-				currentStatusItems.push(item);
-				item.dataset.message = payload.message ?? 'Step';
-				statusList.append(item);
-				response.hidden = false;
-			});
+					const item = renderStatusItem(payload);
+					currentStatusItems.push(item);
+					item.dataset.message = payload.message ?? 'Step';
+					statusList.append(item);
+					response.hidden = false;
+				});
 
 				currentSource.addEventListener('token', (event) => {
 					response.hidden = false;
@@ -267,8 +257,6 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 				});
 
 				currentSource.addEventListener('done', () => {
-					collapseStatusLog();
-					requestStartedAt = 0;
 					setLoading(false);
 					closeStream();
 				});

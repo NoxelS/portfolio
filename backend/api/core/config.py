@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     embedding_model: str = "llm-embedder.Q8_0"
     reranker_model: str = "bge-reranker-v2-m3-Q8_0"
     reranker_path: str = "/rerank"
+    reranker_minimum_relevance_percent: int = 10
     llm_model: str = "SmolLM2-360M-Instruct-Q8_0"
     chat_completions_path: str = "/v1/chat/completions"
     chat_max_tokens: int = 256
@@ -31,6 +32,10 @@ class Settings(BaseSettings):
     embedding_passage_prefix: str = "passage: "
     redis_url: str = "redis://localhost:6379"
     redis_index_name: str = "portfolio_content"
+    assistant_top_n: int = 5
+    retrieval_max_top_n: int = 25
+    retrieval_multiplier: int = 3
+    retrieval_max_k: int = 50
     content_root: Path = default_content_root
     instructions_root: Path = default_instructions_root
     bootstrap_enabled: bool = True
