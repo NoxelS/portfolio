@@ -97,11 +97,11 @@ def stream_answer_query(
 
     try:
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Starting query',
-                    stage='query',
+                    "Starting query",
+                    stage="query",
                     duration_ms=elapsed_ms(started_at),
                 )
             ),
@@ -120,15 +120,15 @@ def stream_answer_query(
             prompt_template=query_rewrite_prompt,
         )
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Rewriting query',
-                    stage='rewrite',
+                    "Rewriting query",
+                    stage="rewrite",
                     duration_ms=elapsed_ms(rewrite_started_at),
                     model=settings.llm_model,
                     rewritten_query=rewritten_query,
-                    counts={'input_chars': len(normalized_query), 'output_chars': len(rewritten_query)},
+                    counts={"input_chars": len(normalized_query), "output_chars": len(rewritten_query)},
                 )
             ),
         )
@@ -136,15 +136,15 @@ def stream_answer_query(
         raw_embed_started_at = perf_counter()
         raw_query_vector = embed_query(normalized_query, settings=settings)
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Embedding original query',
-                    stage='embedding',
+                    "Embedding original query",
+                    stage="embedding",
                     duration_ms=elapsed_ms(raw_embed_started_at),
                     model=settings.embedding_model,
-                    counts={'input': 1},
-                    debug={'vector_stats': compute_vector_stats(raw_query_vector), 'query_text': normalized_query},
+                    counts={"input": 1},
+                    debug={"vector_stats": compute_vector_stats(raw_query_vector), "query_text": normalized_query},
                 )
             ),
         )
@@ -152,30 +152,30 @@ def stream_answer_query(
         raw_retrieval_started_at = perf_counter()
         raw_candidates = search_knn(raw_query_vector, retrieval_k=retrieval_k, settings=settings)
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Retrieving raw query chunks',
-                    stage='retrieval',
+                    "Retrieving raw query chunks",
+                    stage="retrieval",
                     duration_ms=elapsed_ms(raw_retrieval_started_at),
-                    counts={'retrieved': len(raw_candidates), 'requested': retrieval_k},
-                    debug={'candidates': summarize_candidates(raw_candidates)},
+                    counts={"retrieved": len(raw_candidates), "requested": retrieval_k},
+                    debug={"candidates": summarize_candidates(raw_candidates)},
                 )
             ),
         )
 
         rewritten_embed_started_at = perf_counter()
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Embedding rewritten query',
-                    stage='embedding',
+                    "Embedding rewritten query",
+                    stage="embedding",
                     duration_ms=elapsed_ms(rewritten_embed_started_at),
                     model=settings.embedding_model,
-                    counts={'input': 1},
+                    counts={"input": 1},
                     rewritten_query=rewritten_query,
-                    debug={'query_text': rewritten_query},
+                    debug={"query_text": rewritten_query},
                 )
             ),
         )
@@ -183,15 +183,15 @@ def stream_answer_query(
         rewritten_retrieval_started_at = perf_counter()
         rewritten_candidates = search_knn(rewritten_query_vector, retrieval_k=retrieval_k, settings=settings)
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Retrieving rewritten query chunks',
-                    stage='retrieval',
+                    "Retrieving rewritten query chunks",
+                    stage="retrieval",
                     duration_ms=elapsed_ms(rewritten_retrieval_started_at),
-                    counts={'retrieved': len(rewritten_candidates), 'requested': retrieval_k},
+                    counts={"retrieved": len(rewritten_candidates), "requested": retrieval_k},
                     rewritten_query=rewritten_query,
-                    debug={'candidates': summarize_candidates(rewritten_candidates)},
+                    debug={"candidates": summarize_candidates(rewritten_candidates)},
                 )
             ),
         )
@@ -199,13 +199,13 @@ def stream_answer_query(
         merge_started_at = perf_counter()
         merged_candidates = merge_candidates(raw_candidates, rewritten_candidates)
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Merging retrieval results',
-                    stage='merge',
+                    "Merging retrieval results",
+                    stage="merge",
                     duration_ms=elapsed_ms(merge_started_at),
-                    counts={'raw': len(raw_candidates), 'rewritten': len(rewritten_candidates), 'merged': len(merged_candidates)},
+                    counts={"raw": len(raw_candidates), "rewritten": len(rewritten_candidates), "merged": len(merged_candidates)},
                     rewritten_query=rewritten_query,
                 )
             ),
@@ -220,21 +220,21 @@ def stream_answer_query(
             settings=settings,
         )
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Reranking original and rewritten query',
-                    stage='rerank',
+                    "Reranking original and rewritten query",
+                    stage="rerank",
                     duration_ms=elapsed_ms(rerank_started_at),
                     model=settings.reranker_model,
                     counts={
-                        'input': len(merged_candidates),
-                        'output': len(reranked_results),
-                        'top_n': safe_top_n,
-                        'queries': 2 if rewritten_query.strip() and rewritten_query.strip() != normalized_query else 1,
+                        "input": len(merged_candidates),
+                        "output": len(reranked_results),
+                        "top_n": safe_top_n,
+                        "queries": 2 if rewritten_query.strip() and rewritten_query.strip() != normalized_query else 1,
                     },
                     rewritten_query=rewritten_query,
-                    debug={'results': summarize_candidates(reranked_results, max_items=8)},
+                    debug={"results": summarize_candidates(reranked_results, max_items=8)},
                 )
             ),
         )
@@ -242,22 +242,22 @@ def stream_answer_query(
         filter_started_at = perf_counter()
         results = filter_reranked_results(reranked_results, settings=settings)
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Filtering low-confidence results',
-                    stage='filter',
+                    "Filtering low-confidence results",
+                    stage="filter",
                     duration_ms=elapsed_ms(filter_started_at),
                     counts={
-                        'input': len(reranked_results),
-                        'kept': len(results),
-                        'threshold': settings.reranker_minimum_relevance_percent,
+                        "input": len(reranked_results),
+                        "kept": len(results),
+                        "threshold": settings.reranker_minimum_relevance_percent,
                     },
                     rewritten_query=rewritten_query,
                     debug={
-                        'all_results': summarize_candidates(reranked_results, max_items=8),
-                        'kept': [str(c.get("title", "")) for c in results],
-                        'dropped': [str(c.get("title", "")) for c in reranked_results if c not in results],
+                        "all_results": summarize_candidates(reranked_results, max_items=8),
+                        "kept": [str(c.get("title", "")) for c in results],
+                        "dropped": [str(c.get("title", "")) for c in reranked_results if c not in results],
                     },
                 )
             ),
@@ -266,13 +266,13 @@ def stream_answer_query(
         if not results:
             fallback_answer = load_system_prompt(settings.instructions_root / NO_CONTEXT_RESPONSE_FILE)
             yield sse_event(
-                'step',
+                "step",
                 json.dumps(
                     step_payload(
-                        'No relevant context found',
-                        stage='fallback',
+                        "No relevant context found",
+                        stage="fallback",
                         duration_ms=0,
-                        counts={'threshold': settings.reranker_minimum_relevance_percent},
+                        counts={"threshold": settings.reranker_minimum_relevance_percent},
                         rewritten_query=rewritten_query,
                     )
                 ),
@@ -308,30 +308,30 @@ def stream_answer_query(
             settings=settings,
         )
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Packing context',
-                    stage='packing',
+                    "Packing context",
+                    stage="packing",
                     duration_ms=0,
                     counts=context_stats,
                     rewritten_query=rewritten_query,
                     debug={
-                        'included': [str(c.get("title", "")) for c in packed_results],
-                        'skipped': [str(c.get("title", "")) for c in results if c not in packed_results],
+                        "included": [str(c.get("title", "")) for c in packed_results],
+                        "skipped": [str(c.get("title", "")) for c in results if c not in packed_results],
                     },
                 )
             ),
         )
 
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Loading prompt',
-                    stage='prompt',
+                    "Loading prompt",
+                    stage="prompt",
                     duration_ms=0,
-                    counts={'context_items': context_stats['included_chunks']},
+                    counts={"context_items": context_stats["included_chunks"]},
                 )
             ),
         )
@@ -345,18 +345,16 @@ def stream_answer_query(
         messages = prompt.format_messages(query=normalized_query, context=context)
         model = create_chat_model(settings)
 
-        rag_query_str = "\n\n".join(
-            f"<{msg.type}>\n{msg.content}\n</{msg.type}>" for msg in messages
-        )
+        rag_query_str = "\n\n".join(f"<{msg.type}>\n{msg.content}\n</{msg.type}>" for msg in messages)
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'RAG query prepared',
-                    stage='rag_query',
+                    "RAG query prepared",
+                    stage="rag_query",
                     duration_ms=0,
                     rag_query=rag_query_str,
-                    counts={'message_count': len(messages)},
+                    counts={"message_count": len(messages)},
                     rewritten_query=rewritten_query,
                 )
             ),
@@ -367,14 +365,14 @@ def stream_answer_query(
 
         generation_started_at = perf_counter()
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Generating answer',
-                    stage='generation',
+                    "Generating answer",
+                    stage="generation",
                     duration_ms=elapsed_ms(generation_started_at),
                     model=settings.llm_model,
-                    counts={'input_messages': len(messages)},
+                    counts={"input_messages": len(messages)},
                     rewritten_query=rewritten_query,
                     rag_query=rag_query_str,
                 )
@@ -391,14 +389,14 @@ def stream_answer_query(
 
         answer = "".join(answer_parts)
         yield sse_event(
-            'step',
+            "step",
             json.dumps(
                 step_payload(
-                    'Answer complete',
-                    stage='generation',
+                    "Answer complete",
+                    stage="generation",
                     duration_ms=elapsed_ms(generation_started_at),
                     model=settings.llm_model,
-                    counts={'tokens': token_count, 'output_chars': len(answer)},
+                    counts={"tokens": token_count, "output_chars": len(answer)},
                     rewritten_query=rewritten_query,
                 )
             ),
@@ -473,7 +471,7 @@ def deduplicate_query(text: str) -> str:
     if not text:
         return text
 
-    parts = re.split(r'[\?\.]\s*', text)
+    parts = re.split(r"[\?\.]\s*", text)
     seen: set[str] = set()
     unique: list[str] = []
 
@@ -527,15 +525,10 @@ def build_context(
 ) -> tuple[str, dict[str, int], list[dict[str, object]]]:
     """Pack retrieved context into the available model context budget."""
 
-    prompt_overhead_tokens = estimate_tokens(system_prompt) + estimate_tokens(
-        user_prompt_template.format(query=query, context="")
-    )
+    prompt_overhead_tokens = estimate_tokens(system_prompt) + estimate_tokens(user_prompt_template.format(query=query, context=""))
     budget_tokens = max(
         0,
-        settings.chat_model_context_tokens
-        - settings.chat_max_tokens
-        - settings.chat_context_reserved_tokens
-        - prompt_overhead_tokens,
+        settings.chat_model_context_tokens - settings.chat_max_tokens - settings.chat_context_reserved_tokens - prompt_overhead_tokens,
     )
 
     if not results or budget_tokens <= 0:
@@ -688,7 +681,7 @@ def sse_event(event: str, data: str) -> str:
 
     lines = [f"event: {event}"]
     if data:
-        for line in data.split('\n') or [""]:
+        for line in data.split("\n") or [""]:
             lines.append(f"data: {line}")
     else:
         lines.append("data:")
@@ -709,20 +702,20 @@ def step_payload(
     """Build a structured status payload for the UI."""
 
     payload: dict[str, object] = {
-        'stage': stage,
-        'message': message,
-        'duration_ms': duration_ms,
+        "stage": stage,
+        "message": message,
+        "duration_ms": duration_ms,
     }
     if model:
-        payload['model'] = model
+        payload["model"] = model
     if rewritten_query:
-        payload['rewritten_query'] = rewritten_query
+        payload["rewritten_query"] = rewritten_query
     if rag_query:
-        payload['rag_query'] = rag_query
+        payload["rag_query"] = rag_query
     if counts:
-        payload['counts'] = counts
+        payload["counts"] = counts
     if debug:
-        payload['debug'] = debug
+        payload["debug"] = debug
     return payload
 
 
