@@ -113,18 +113,14 @@ jobs:
         env:
           WEBHOOK_SECRET: ${{ secrets.YGGDRASIL_WEBHOOK_SECRET }}
           WEBHOOK_URL: https://hooks.noel.fyi/hooks/deploy
-          REPOSITORY: portfolio
-          IMAGE: ${{ env.IMAGE_NAME }}
-          TAG: ${{ env.IMAGE_TAG }}
+          REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
 
           payload=$(jq -cn \
             --arg repository "$REPOSITORY" \
             --arg ref "$GITHUB_REF" \
-            --arg image "$IMAGE" \
-            --arg tag "$TAG" \
-            '{repository: $repository, ref: $ref, image: $image, tag: $tag}')
+            '{repository: $repository, ref: $ref}')
 
           signature="sha256=$(printf '%s' "$payload" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" -binary | xxd -p -c 256)"
 
