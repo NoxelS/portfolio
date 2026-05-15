@@ -23,10 +23,12 @@ class Settings(BaseSettings):
     embedding_model: str = "llm-embedder.Q8_0"
     reranker_model: str = "bge-reranker-v2-m3-Q8_0"
     reranker_path: str = "/rerank"
-    reranker_minimum_relevance_percent: int = 10
+    reranker_minimum_relevance_percent: float = 0.1
     llm_model: str = "SmolLM2-360M-Instruct-Q8_0"
     chat_completions_path: str = "/v1/chat/completions"
     chat_max_tokens: int = 256
+    chat_model_context_tokens: int = 8192
+    chat_context_reserved_tokens: int = 768
     embeddings_path: str = "/v1/embeddings"
     embedding_prefix: str = "query: "
     embedding_passage_prefix: str = "passage: "

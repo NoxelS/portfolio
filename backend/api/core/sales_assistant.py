@@ -1,5 +1,6 @@
 import json
 from collections.abc import Iterator
+from math import ceil
 from pathlib import Path
 from time import perf_counter
 
@@ -38,7 +39,13 @@ def answer_query(
 
         system_prompt = load_system_prompt(settings.instructions_root / SYSTEM_PROMPT_FILE)
         user_prompt_template = load_system_prompt(settings.instructions_root / USER_PROMPT_TEMPLATE_FILE)
-        context = format_context(results)
+        context, _ = build_context(
+            results,
+            query=normalized_query,
+            system_prompt=system_prompt,
+            user_prompt_template=user_prompt_template,
+            settings=settings,
+        )
 
         prompt = ChatPromptTemplate.from_messages(
             [
@@ -271,6 +278,26 @@ def stream_answer_query(
 
         system_prompt = load_system_prompt(settings.instructions_root / SYSTEM_PROMPT_FILE)
         user_prompt_template = load_system_prompt(settings.instructions_root / USER_PROMPT_TEMPLATE_FILE)
+        context, context_stats = build_context(
+            results,
+            query=normalized_query,
+            system_prompt=system_prompt,
+            user_prompt_template=user_prompt_template,
+            settings=settings,
+        )
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Packing context',
+                    stage='packing',
+                    duration_ms=0,
+                    counts=context_stats,
+                    rewritten_query=rewritten_query,
+                )
+            ),
+        )
+
         yield sse_event(
             'step',
             json.dumps(
@@ -278,11 +305,10 @@ def stream_answer_query(
                     'Loading prompt',
                     stage='prompt',
                     duration_ms=0,
-                    counts={'context_items': len(results)},
+                    counts={'context_items': context_stats['included_chunks']},
                 )
             ),
         )
-        context = format_context(results)
 
         prompt = ChatPromptTemplate.from_messages(
             [
@@ -420,6 +446,99 @@ def build_no_context_payload(
     }
 
 
+def build_context(
+    results: list[dict[str, object]],
+    *,
+    query: str,
+    system_prompt: str,
+    user_prompt_template: str,
+    settings: Settings,
+) -> tuple[str, dict[str, int]]:
+    """Pack retrieved context into the available model context budget."""
+
+    prompt_overhead_tokens = estimate_tokens(system_prompt) + estimate_tokens(
+        user_prompt_template.format(query=query, context="")
+    )
+    budget_tokens = max(
+        0,
+        settings.chat_model_context_tokens
+        - settings.chat_max_tokens
+        - settings.chat_context_reserved_tokens
+        - prompt_overhead_tokens,
+    )
+
+    if not results or budget_tokens <= 0:
+        return (
+            "No matching portfolio context could be packed within the context budget.",
+            {
+                "budget_tokens": budget_tokens,
+                "used_tokens": 0,
+                "included_chunks": 0,
+                "skipped_chunks": len(results),
+                "truncated_chunks": 0,
+            },
+        )
+
+    sections: list[str] = []
+    used_tokens = 0
+    included_chunks = 0
+    skipped_chunks = 0
+    truncated_chunks = 0
+    separator = "\n\n---\n\n"
+
+    for index, result in enumerate(results, start=1):
+        section = format_context_result(index, result)
+        prefix = separator if sections else ""
+        candidate = prefix + section
+        candidate_tokens = estimate_tokens(candidate)
+
+        if used_tokens + candidate_tokens <= budget_tokens:
+            sections.append(section)
+            used_tokens += candidate_tokens
+            included_chunks += 1
+            continue
+
+        remaining_tokens = budget_tokens - used_tokens - estimate_tokens(prefix)
+        if remaining_tokens <= 32:
+            skipped_chunks += 1
+            continue
+
+        truncated_section = truncate_text(section, remaining_tokens)
+        if truncated_section:
+            sections.append(truncated_section)
+            used_tokens += estimate_tokens(prefix + truncated_section)
+            included_chunks += 1
+            truncated_chunks += 1
+        else:
+            skipped_chunks += 1
+        break
+
+    skipped_chunks += max(0, len(results) - included_chunks)
+
+    if not sections:
+        return (
+            "No matching portfolio context could be packed within the context budget.",
+            {
+                "budget_tokens": budget_tokens,
+                "used_tokens": 0,
+                "included_chunks": 0,
+                "skipped_chunks": len(results),
+                "truncated_chunks": 0,
+            },
+        )
+
+    return (
+        separator.join(sections),
+        {
+            "budget_tokens": budget_tokens,
+            "used_tokens": used_tokens,
+            "included_chunks": included_chunks,
+            "skipped_chunks": skipped_chunks,
+            "truncated_chunks": truncated_chunks,
+        },
+    )
+
+
 def format_context(results: object) -> str:
     """Format retrieved search results into prompt context."""
 
@@ -431,29 +550,33 @@ def format_context(results: object) -> str:
         if not isinstance(result, dict):
             continue
 
-        title = str(result.get("title", "Untitled")).strip()
-        content_type = str(result.get("content_type", "unknown")).strip()
-        path = str(result.get("path", "")).strip()
-        content = str(result.get("content", "")).strip()
-        relevance = result.get("relevance")
-        metadata = summarize_metadata(result)
-
-        sections.append(
-            "\n".join(
-                [
-                    f"Result {index}",
-                    f"Title: {title}",
-                    f"Type: {content_type}",
-                    f"Path: {path}",
-                    f"Relevance: {relevance}%" if relevance is not None else "Relevance: n/a",
-                    f"Metadata: {metadata}" if metadata else "Metadata:",
-                    "Content:",
-                    content,
-                ]
-            )
-        )
+        sections.append(format_context_result(index, result))
 
     return "\n\n---\n\n".join(sections)
+
+
+def format_context_result(index: int, result: dict[str, object]) -> str:
+    """Format one retrieved result into prompt context."""
+
+    title = str(result.get("title", "Untitled")).strip()
+    content_type = str(result.get("content_type", "unknown")).strip()
+    path = str(result.get("path", "")).strip()
+    content = str(result.get("content", "")).strip()
+    relevance = result.get("relevance")
+    metadata = summarize_metadata(result)
+
+    return "\n".join(
+        [
+            f"Result {index}",
+            f"Title: {title}",
+            f"Type: {content_type}",
+            f"Path: {path}",
+            f"Relevance: {relevance}%" if relevance is not None else "Relevance: n/a",
+            f"Metadata: {metadata}" if metadata else "Metadata:",
+            "Content:",
+            content,
+        ]
+    )
 
 
 def summarize_metadata(result: dict[str, object]) -> str:
@@ -522,3 +645,25 @@ def elapsed_ms(started_at: float) -> int:
     """Convert elapsed perf_counter seconds to milliseconds."""
 
     return max(0, int((perf_counter() - started_at) * 1000))
+
+
+def estimate_tokens(text: str) -> int:
+    """Estimate tokens without an external tokenizer dependency."""
+
+    return ceil(len(text) / 4)
+
+
+def truncate_text(text: str, token_budget: int) -> str:
+    """Truncate text to fit an estimated token budget."""
+
+    if token_budget <= 0:
+        return ""
+
+    max_chars = token_budget * 4
+    if len(text) <= max_chars:
+        return text
+
+    truncated = text[: max(0, max_chars - len("\n...[truncated]"))].rstrip()
+    if not truncated:
+        return ""
+    return f"{truncated}\n...[truncated]"
