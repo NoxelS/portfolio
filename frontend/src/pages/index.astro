@@ -10,8 +10,9 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 		<p class="text-lg leading-8 text-slate-300">
 			Building a fast, self-hosted portfolio with strong performance, privacy-conscious analytics, and clear technical insight.
 		</p>
-		<p class="rounded-lg border border-slate-800 bg-amber-600 px-4 py-3 text-sm leading-6 text-slate-300">
-			Not impressed with the responses from the assistant? I run all systems on 8GB of memory... Still not impressed?
+		<p class="rounded-lg border border-slate-800 bg-sky-500 px-4 py-3 text-sm leading-6 text-slate-300">
+			Not impressed with the assistant's response? Fair enough.
+			This entire stack, including the RAG pipeline, runs on 8 GB of RAM and a 360M parameter model, which is probably still less memory than your browser needed just to open this page.
 		</p>
 		<div id="sales-assistant-root" data-api-base-url={apiBaseUrl}></div>
 		<script type="module">
@@ -25,7 +26,7 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 			let currentSource;
 			let currentStatusItems = [];
 			const form = document.createElement('form');
-			form.className = 'w-full max-w-2xl rounded-2xl border border-slate-700 bg-slate-900/70 p-4 shadow-lg shadow-black/10';
+			form.className = 'w-full rounded-2xl border border-slate-700 bg-slate-900/70 p-4 shadow-lg shadow-black/10';
 
 			const label = document.createElement('label');
 			label.className = 'text-sm font-medium text-slate-200';
