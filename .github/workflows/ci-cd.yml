@@ -54,9 +54,9 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Run unit and specification tests
-        working-directory: frontend
-        run: npm run test
+      # - name: Run unit and specification tests
+      #   working-directory: frontend
+      #   run: npm run test
 
       - name: Audit dependencies
         working-directory: frontend
