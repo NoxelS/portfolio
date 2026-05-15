@@ -10,6 +10,7 @@ requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.136.1",
     "httpx>=0.28.1",
+    "langchain-text-splitters>=0.3.11",
     "langchain-ollama>=1.1.0",
     "ntfy>=2.7.1",
     "pydantic-settings>=2.14.1",

@@ -39,7 +39,7 @@ def answer_query(
 
         system_prompt = load_system_prompt(settings.instructions_root / SYSTEM_PROMPT_FILE)
         user_prompt_template = load_system_prompt(settings.instructions_root / USER_PROMPT_TEMPLATE_FILE)
-        context, _ = build_context(
+        context, _, packed_results = build_context(
             results,
             query=normalized_query,
             system_prompt=system_prompt,
@@ -59,8 +59,8 @@ def answer_query(
         payload = {
             "query": normalized_query,
             "answer": response.content,
-            "count": len(results),
-            "results": results,
+            "count": len(packed_results),
+            "results": packed_results,
             "top_n": search_payload["top_n"],
             "retrieval_k": search_payload["retrieval_k"],
         }
@@ -289,7 +289,7 @@ def stream_answer_query(
 
         system_prompt = load_system_prompt(settings.instructions_root / SYSTEM_PROMPT_FILE)
         user_prompt_template = load_system_prompt(settings.instructions_root / USER_PROMPT_TEMPLATE_FILE)
-        context, context_stats = build_context(
+        context, context_stats, packed_results = build_context(
             results,
             query=normalized_query,
             system_prompt=system_prompt,
@@ -372,7 +372,7 @@ def stream_answer_query(
         notify_sales_assistant_event(
             query=normalized_query,
             answer=answer,
-            count=len(results),
+            count=len(packed_results),
             top_n=safe_top_n,
             retrieval_k=retrieval_k,
             settings=settings,
@@ -383,8 +383,8 @@ def stream_answer_query(
                 {
                     "query": normalized_query,
                     "rewritten_query": rewritten_query,
-                    "count": len(results),
-                    "results": results,
+                    "count": len(packed_results),
+                    "results": packed_results,
                     "top_n": safe_top_n,
                     "retrieval_k": retrieval_k,
                     "raw_count": len(raw_candidates),
@@ -464,7 +464,7 @@ def build_context(
     system_prompt: str,
     user_prompt_template: str,
     settings: Settings,
-) -> tuple[str, dict[str, int]]:
+) -> tuple[str, dict[str, int], list[dict[str, object]]]:
     """Pack retrieved context into the available model context budget."""
 
     prompt_overhead_tokens = estimate_tokens(system_prompt) + estimate_tokens(
@@ -488,9 +488,11 @@ def build_context(
                 "skipped_chunks": len(results),
                 "truncated_chunks": 0,
             },
+            [],
         )
 
     sections: list[str] = []
+    packed_results: list[dict[str, object]] = []
     used_tokens = 0
     included_chunks = 0
     skipped_chunks = 0
@@ -505,6 +507,7 @@ def build_context(
 
         if used_tokens + candidate_tokens <= budget_tokens:
             sections.append(section)
+            packed_results.append(dict(result))
             used_tokens += candidate_tokens
             included_chunks += 1
             continue
@@ -517,6 +520,9 @@ def build_context(
         truncated_section = truncate_text(section, remaining_tokens)
         if truncated_section:
             sections.append(truncated_section)
+            truncated_result = dict(result)
+            truncated_result["content"] = truncated_result["content"][: len(truncated_section)]
+            packed_results.append(truncated_result)
             used_tokens += estimate_tokens(prefix + truncated_section)
             included_chunks += 1
             truncated_chunks += 1
@@ -536,6 +542,7 @@ def build_context(
                 "skipped_chunks": len(results),
                 "truncated_chunks": 0,
             },
+            [],
         )
 
     return (
@@ -547,6 +554,7 @@ def build_context(
             "skipped_chunks": skipped_chunks,
             "truncated_chunks": truncated_chunks,
         },
+        packed_results,
     )
 
 

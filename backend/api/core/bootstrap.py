@@ -6,6 +6,7 @@ from pathlib import Path
 from time import perf_counter, sleep
 
 import frontmatter
+from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
 from redis import Redis
 from redis.exceptions import ResponseError
 
@@ -394,7 +395,7 @@ def normalize_body(content: str) -> str:
 
 
 def split_text(text: str, *, chunk_size: int, chunk_overlap: int) -> list[str]:
-    """Split text into deterministic overlapping chunks."""
+    """Split markdown into heading-aware overlapping chunks."""
 
     if not text:
         return []
@@ -405,62 +406,33 @@ def split_text(text: str, *, chunk_size: int, chunk_overlap: int) -> list[str]:
     if chunk_overlap >= chunk_size:
         raise ValueError("Chunk overlap must be smaller than chunk size.")
 
-    paragraphs = [paragraph.strip() for paragraph in text.split("\n\n") if paragraph.strip()]
-    if not paragraphs:
-        return [text]
+    header_splitter = MarkdownHeaderTextSplitter(
+        headers_to_split_on=[("#", "h1"), ("##", "h2")],
+        strip_headers=False,
+    )
+    recursive_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
+        separators=["\n## ", "\n### ", "\n\n", "\n", ". ", " ", ""],
+    )
+
+    sections = header_splitter.split_text(text)
+    if not sections:
+        sections = recursive_splitter.create_documents([text])
 
     chunks: list[str] = []
-    current = ""
-    for paragraph in paragraphs:
-        if len(paragraph) > chunk_size:
-            if current:
-                chunks.append(current)
-                current = ""
-            chunks.extend(split_long_paragraph(paragraph, chunk_size=chunk_size, chunk_overlap=chunk_overlap))
+    for section in sections:
+        section_text = section.page_content.strip()
+        if not section_text:
             continue
 
-        candidate = paragraph if not current else f"{current}\n\n{paragraph}"
-        if len(candidate) <= chunk_size:
-            current = candidate
-            continue
+        section_chunks = recursive_splitter.split_text(section_text)
+        for section_chunk in section_chunks:
+            normalized_chunk = section_chunk.strip()
+            if normalized_chunk:
+                chunks.append(normalized_chunk)
 
-        chunks.append(current)
-        current = paragraph
-
-    if current:
-        chunks.append(current)
-
-    return apply_overlap(chunks, chunk_overlap=chunk_overlap)
-
-
-def split_long_paragraph(paragraph: str, *, chunk_size: int, chunk_overlap: int) -> list[str]:
-    """Split an oversized paragraph using a character window."""
-
-    chunks: list[str] = []
-    start = 0
-    while start < len(paragraph):
-        end = min(len(paragraph), start + chunk_size)
-        chunks.append(paragraph[start:end].strip())
-        if end == len(paragraph):
-            break
-        start = end - chunk_overlap
-    return chunks
-
-
-def apply_overlap(chunks: list[str], *, chunk_overlap: int) -> list[str]:
-    """Add a small overlap prefix from the previous chunk to preserve context."""
-
-    if chunk_overlap == 0 or len(chunks) < 2:
-        return chunks
-
-    overlapped = [chunks[0]]
-    for index in range(1, len(chunks)):
-        prefix = chunks[index - 1][-chunk_overlap:].strip()
-        if prefix:
-            overlapped.append(f"{prefix}\n\n{chunks[index]}")
-        else:
-            overlapped.append(chunks[index])
-    return overlapped
+    return chunks or [text]
 
 
 def stringify_iterable(value: object) -> list[str]:
