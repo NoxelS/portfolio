@@ -1,6 +1,7 @@
 import json
 from collections.abc import Iterator
 from pathlib import Path
+from time import perf_counter
 
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -10,7 +11,8 @@ from api.core.ntfy_logger import notify_sales_assistant_error, notify_sales_assi
 from api.core.search import MAX_RETRIEVAL_K, MAX_TOP_N, embed_query, rerank_candidates, search_content, search_knn
 
 DEFAULT_ASSISTANT_TOP_N = 5
-SYSTEM_PROMPT_FILE = "sales-assistant.md"
+SYSTEM_PROMPT_FILE = "sales-assistant/system.md"
+USER_PROMPT_TEMPLATE_FILE = "sales-assistant/user-template.md"
 
 
 def answer_query(
@@ -28,15 +30,13 @@ def answer_query(
         search_payload = search_content(normalized_query, top_n=top_n, settings=settings)
         results = search_payload["results"]
         system_prompt = load_system_prompt(settings.instructions_root / SYSTEM_PROMPT_FILE)
+        user_prompt_template = load_system_prompt(settings.instructions_root / USER_PROMPT_TEMPLATE_FILE)
         context = format_context(results)
 
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", system_prompt),
-                (
-                    "human",
-                    "User query:\n{query}\n\nPortfolio context:\n{context}\n\nAnswer the user using the context above.",
-                ),
+                ("human", user_prompt_template),
             ]
         )
         messages = prompt.format_messages(query=normalized_query, context=context)
@@ -78,49 +78,128 @@ def stream_answer_query(
 
     settings = settings or get_settings()
     normalized_query = query.strip()
+    started_at = perf_counter()
 
     try:
-        yield sse_event('step', json.dumps({'message': 'Starting query'}))
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Starting query',
+                    stage='query',
+                    duration_ms=elapsed_ms(started_at),
+                )
+            ),
+        )
 
         safe_top_n = max(1, min(top_n, MAX_TOP_N))
         retrieval_k = min(safe_top_n * 3, MAX_RETRIEVAL_K)
 
-        yield sse_event('step', json.dumps({'message': 'Embedding your query'}))
+        embedding_started_at = perf_counter()
         query_vector = embed_query(normalized_query, settings=settings)
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Embedding your query',
+                    stage='embedding',
+                    duration_ms=elapsed_ms(embedding_started_at),
+                    model=settings.embedding_model,
+                    counts={'input': 1},
+                )
+            ),
+        )
 
-        yield sse_event('step', json.dumps({'message': 'Retrieving chunks'}))
+        retrieval_started_at = perf_counter()
         candidates = search_knn(query_vector, retrieval_k=retrieval_k, settings=settings)
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Retrieving chunks',
+                    stage='retrieval',
+                    duration_ms=elapsed_ms(retrieval_started_at),
+                    counts={'retrieved': len(candidates), 'requested': retrieval_k},
+                )
+            ),
+        )
 
-        yield sse_event('step', json.dumps({'message': 'Reranking results'}))
+        rerank_started_at = perf_counter()
         results = rerank_candidates(normalized_query, candidates, top_n=safe_top_n, settings=settings)
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Reranking results',
+                    stage='rerank',
+                    duration_ms=elapsed_ms(rerank_started_at),
+                    model=settings.reranker_model,
+                    counts={'input': len(candidates), 'output': len(results), 'top_n': safe_top_n},
+                )
+            ),
+        )
 
         system_prompt = load_system_prompt(settings.instructions_root / SYSTEM_PROMPT_FILE)
-        yield sse_event('step', json.dumps({'message': 'Loading prompt'}))
+        user_prompt_template = load_system_prompt(settings.instructions_root / USER_PROMPT_TEMPLATE_FILE)
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Loading prompt',
+                    stage='prompt',
+                    duration_ms=0,
+                    counts={'context_items': len(results)},
+                )
+            ),
+        )
         context = format_context(results)
 
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", system_prompt),
-                (
-                    "human",
-                    "User query:\n{query}\n\nPortfolio context:\n{context}\n\nAnswer the user using the context above.",
-                ),
+                ("human", user_prompt_template),
             ]
         )
         messages = prompt.format_messages(query=normalized_query, context=context)
         model = create_chat_model(settings)
         answer_parts: list[str] = []
+        token_count = 0
 
-        yield sse_event('step', json.dumps({'message': 'Generating answer'}))
+        generation_started_at = perf_counter()
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Generating answer',
+                    stage='generation',
+                    duration_ms=elapsed_ms(generation_started_at),
+                    model=settings.llm_model,
+                    counts={'input_messages': len(messages)},
+                )
+            ),
+        )
 
         for token in model.stream(messages):
             if not token:
                 continue
 
             answer_parts.append(token)
+            token_count += 1
             yield sse_event("token", token)
 
         answer = "".join(answer_parts)
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'Answer complete',
+                    stage='generation',
+                    duration_ms=elapsed_ms(generation_started_at),
+                    model=settings.llm_model,
+                    counts={'tokens': token_count, 'output_chars': len(answer)},
+                )
+            ),
+        )
         notify_sales_assistant_event(
             query=normalized_query,
             answer=answer,
@@ -229,3 +308,31 @@ def sse_event(event: str, data: str) -> str:
     else:
         lines.append("data:")
     return "\n".join(lines) + "\n\n"
+
+
+def step_payload(
+    message: str,
+    *,
+    stage: str,
+    duration_ms: int,
+    model: str | None = None,
+    counts: dict[str, object] | None = None,
+) -> dict[str, object]:
+    """Build a structured status payload for the UI."""
+
+    payload: dict[str, object] = {
+        'stage': stage,
+        'message': message,
+        'duration_ms': duration_ms,
+    }
+    if model:
+        payload['model'] = model
+    if counts:
+        payload['counts'] = counts
+    return payload
+
+
+def elapsed_ms(started_at: float) -> int:
+    """Convert elapsed perf_counter seconds to milliseconds."""
+
+    return max(0, int((perf_counter() - started_at) * 1000))
