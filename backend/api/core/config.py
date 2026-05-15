@@ -35,9 +35,9 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379"
     redis_index_name: str = "portfolio_content"
     assistant_top_n: int = 8
-    retrieval_max_top_n: int = 40
-    retrieval_multiplier: int = 6
-    retrieval_max_k: int = 120
+    retrieval_max_top_n: int = 25
+    retrieval_multiplier: int = 3
+    retrieval_max_k: int = 75
     content_root: Path = default_content_root
     instructions_root: Path = default_instructions_root
     bootstrap_enabled: bool = True

@@ -138,6 +138,9 @@ def rerank_candidates(
     return results
 
 
+RERANK_CANDIDATE_CAP = 30
+
+
 def rerank_candidates_dual(
     query: str,
     rewritten_query: str | None,
@@ -151,13 +154,14 @@ def rerank_candidates_dual(
     if not candidates:
         return []
 
-    full_top_n = len(candidates)
-    primary_results = rerank_candidates(query, candidates, top_n=full_top_n, settings=settings)
+    capped = candidates[:RERANK_CANDIDATE_CAP]
+    full_top_n = len(capped)
+    primary_results = rerank_candidates(query, capped, top_n=full_top_n, settings=settings)
     secondary_results: list[dict[str, object]] = []
 
     normalized_rewritten_query = (rewritten_query or "").strip()
     if normalized_rewritten_query and normalized_rewritten_query != query.strip():
-        secondary_results = rerank_candidates(normalized_rewritten_query, candidates, top_n=full_top_n, settings=settings)
+        secondary_results = rerank_candidates(normalized_rewritten_query, capped, top_n=full_top_n, settings=settings)
 
     merged_results = merge_reranked_results(primary_results, secondary_results)
     return merged_results[:top_n]

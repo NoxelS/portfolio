@@ -1,4 +1,5 @@
 import json
+import re
 from collections.abc import Iterator
 from math import ceil
 from pathlib import Path
@@ -143,6 +144,7 @@ def stream_answer_query(
                     duration_ms=elapsed_ms(raw_embed_started_at),
                     model=settings.embedding_model,
                     counts={'input': 1},
+                    debug={'vector_stats': compute_vector_stats(raw_query_vector), 'query_text': normalized_query},
                 )
             ),
         )
@@ -157,6 +159,7 @@ def stream_answer_query(
                     stage='retrieval',
                     duration_ms=elapsed_ms(raw_retrieval_started_at),
                     counts={'retrieved': len(raw_candidates), 'requested': retrieval_k},
+                    debug={'candidates': summarize_candidates(raw_candidates)},
                 )
             ),
         )
@@ -172,6 +175,7 @@ def stream_answer_query(
                     model=settings.embedding_model,
                     counts={'input': 1},
                     rewritten_query=rewritten_query,
+                    debug={'query_text': rewritten_query},
                 )
             ),
         )
@@ -187,6 +191,7 @@ def stream_answer_query(
                     duration_ms=elapsed_ms(rewritten_retrieval_started_at),
                     counts={'retrieved': len(rewritten_candidates), 'requested': retrieval_k},
                     rewritten_query=rewritten_query,
+                    debug={'candidates': summarize_candidates(rewritten_candidates)},
                 )
             ),
         )
@@ -229,6 +234,7 @@ def stream_answer_query(
                         'queries': 2 if rewritten_query.strip() and rewritten_query.strip() != normalized_query else 1,
                     },
                     rewritten_query=rewritten_query,
+                    debug={'results': summarize_candidates(reranked_results, max_items=8)},
                 )
             ),
         )
@@ -248,6 +254,11 @@ def stream_answer_query(
                         'threshold': settings.reranker_minimum_relevance_percent,
                     },
                     rewritten_query=rewritten_query,
+                    debug={
+                        'all_results': summarize_candidates(reranked_results, max_items=8),
+                        'kept': [str(c.get("title", "")) for c in results],
+                        'dropped': [str(c.get("title", "")) for c in reranked_results if c not in results],
+                    },
                 )
             ),
         )
@@ -305,6 +316,10 @@ def stream_answer_query(
                     duration_ms=0,
                     counts=context_stats,
                     rewritten_query=rewritten_query,
+                    debug={
+                        'included': [str(c.get("title", "")) for c in packed_results],
+                        'skipped': [str(c.get("title", "")) for c in results if c not in packed_results],
+                    },
                 )
             ),
         )
@@ -329,6 +344,24 @@ def stream_answer_query(
         )
         messages = prompt.format_messages(query=normalized_query, context=context)
         model = create_chat_model(settings)
+
+        rag_query_str = "\n\n".join(
+            f"<{msg.type}>\n{msg.content}\n</{msg.type}>" for msg in messages
+        )
+        yield sse_event(
+            'step',
+            json.dumps(
+                step_payload(
+                    'RAG query prepared',
+                    stage='rag_query',
+                    duration_ms=0,
+                    rag_query=rag_query_str,
+                    counts={'message_count': len(messages)},
+                    rewritten_query=rewritten_query,
+                )
+            ),
+        )
+
         answer_parts: list[str] = []
         token_count = 0
 
@@ -343,6 +376,7 @@ def stream_answer_query(
                     model=settings.llm_model,
                     counts={'input_messages': len(messages)},
                     rewritten_query=rewritten_query,
+                    rag_query=rag_query_str,
                 )
             ),
         )
@@ -430,7 +464,33 @@ def rewrite_query(
         ]
     ).format_messages(query=query)
     response = rewrite_model.invoke(rewrite_messages)
-    return response.content.strip()
+    return deduplicate_query(response.content.strip())
+
+
+def deduplicate_query(text: str) -> str:
+    """Deduplicate repetitive query text from the rewrite step."""
+
+    if not text:
+        return text
+
+    parts = re.split(r'[\?\.]\s*', text)
+    seen: set[str] = set()
+    unique: list[str] = []
+
+    for part in parts:
+        normalized = part.strip().lower()
+        if not normalized:
+            continue
+
+        base = re.sub(r"\'s\b|\bwhat is the|\bwhat does|\bhow does|\bcan you", "", normalized).strip()
+        if base in seen:
+            continue
+
+        seen.add(base)
+        unique.append(part.strip())
+
+    final = "? ".join(unique[:5])
+    return final + "?" if not final.endswith(("?", ".")) else final
 
 
 def build_no_context_payload(
@@ -643,6 +703,8 @@ def step_payload(
     model: str | None = None,
     rewritten_query: str | None = None,
     counts: dict[str, object] | None = None,
+    rag_query: str | None = None,
+    debug: dict[str, object] | None = None,
 ) -> dict[str, object]:
     """Build a structured status payload for the UI."""
 
@@ -655,8 +717,12 @@ def step_payload(
         payload['model'] = model
     if rewritten_query:
         payload['rewritten_query'] = rewritten_query
+    if rag_query:
+        payload['rag_query'] = rag_query
     if counts:
         payload['counts'] = counts
+    if debug:
+        payload['debug'] = debug
     return payload
 
 
@@ -686,3 +752,40 @@ def truncate_text(text: str, token_budget: int) -> str:
     if not truncated:
         return ""
     return f"{truncated}\n...[truncated]"
+
+
+def compute_vector_stats(vector: list[float]) -> dict[str, object]:
+    """Compute debug stats for a vector embedding."""
+
+    if not vector:
+        return {"dimension": 0}
+
+    norm = (sum(v * v for v in vector[:256])) ** 0.5
+    return {
+        "dimension": len(vector),
+        "l2_norm": round(norm, 4),
+        "first_5": [round(v, 6) for v in vector[:5]],
+    }
+
+
+def build_candidate_summary(candidate: dict[str, object]) -> dict[str, object]:
+    """Build a debug summary for one retrieval candidate."""
+
+    content = str(candidate.get("content", "")).strip()
+    return {
+        "title": str(candidate.get("title", "")).strip(),
+        "path": str(candidate.get("path", "")).strip(),
+        "relevance": float(candidate.get("relevance", 0.0)),
+        "rerank_score": float(candidate.get("rerank_score", 0.0)),
+        "content_preview": content[:120] + "..." if len(content) > 120 else content,
+    }
+
+
+def summarize_candidates(candidates: list[dict[str, object]], max_items: int = 6) -> list[dict[str, object]]:
+    """Build a truncated list of candidate debug summaries."""
+
+    summaries = [build_candidate_summary(c) for c in candidates]
+    if len(summaries) > max_items:
+        summaries = summaries[:max_items]
+        summaries.append({"note": f"+ {len(candidates) - max_items} more not shown"})
+    return summaries
