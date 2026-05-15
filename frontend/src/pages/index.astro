@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SalesAssistantQuery from '../components/SalesAssistantQuery.jsx';
 ---
 
 <BaseLayout title="Noel Schwabenland">
@@ -9,5 +10,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 		<p class="max-w-xl text-lg leading-8 text-slate-300">
 			Building a fast, self-hosted portfolio with strong performance, privacy-conscious analytics, and clear technical insight.
 		</p>
+		<SalesAssistantQuery client:load />
 	</section>
 </BaseLayout>

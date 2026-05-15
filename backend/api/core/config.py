@@ -37,8 +37,8 @@ class Settings(BaseSettings):
     bootstrap_chunk_size: int = 1200
     bootstrap_chunk_overlap: int = 200
     ntfy_enabled: bool = False
-    ntfy_topic: str = ""
-    ntfy_host: str = "https://ntfy.sh"
+    ntfy_topic: str = "portfolio-users"
+    ntfy_host: str = "https://ntfy.noel.fyi"
     ntfy_user: str = ""
     ntfy_password: SecretStr | None = None
     ntfy_title: str = "Portfolio Sales Assistant"
