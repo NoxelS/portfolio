@@ -115,8 +115,8 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 			response.append(statusToggle, infoBar, responseSection, sourcesSection);
 			const templates = [
 				'What did you work on in your time at the computational physics department?',
-				'What projects did you work on?',
-				'Why should we hire you as a freelancer?',
+				'What are your favorite projects that you\'ve worked on?',
+				'What are your experiences with machine learning and AI?',
 			];
 
 			const templatesLabel = document.createElement('p');
@@ -466,6 +466,7 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 				sourcesSection.hidden = true;
 				infoBar.hidden = true;
 				statusLoading.hidden = true;
+				statusToggle.open = true;
 				templatesWrapper.hidden = true;
 				const url = new URL(`${apiBaseUrl}/sales-assistant`);
 				url.searchParams.set('query', query);
