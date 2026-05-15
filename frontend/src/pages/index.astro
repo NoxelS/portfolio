@@ -8,39 +8,37 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 		<p class="text-sm font-medium uppercase tracking-[0.3em] text-cyan-300/80">Portfolio</p>
 		<h1 class="max-w-2xl text-5xl font-semibold tracking-tight text-slate-50 sm:text-6xl">Noel Schwabenland</h1>
 		<p class="text-lg leading-8 text-slate-300">
-			Building a fast, self-hosted portfolio with strong performance, privacy-conscious analytics, and clear technical insight.
+			Building a fast, self-hosted RAG-based portfolio with strong performance, privacy, and clear technical insight.
 		</p>
-		<p class="rounded-lg border border-slate-800 bg-sky-500 px-4 py-3 text-sm leading-6 text-slate-300">
-			Not impressed with the assistant's response? Fair enough.
-			This entire stack, including the RAG pipeline, runs on 8 GB of RAM and a 360M parameter model, which is probably still less memory than your browser needed just to open this page.
-		</p>
-		<div id="sales-assistant-root" data-api-base-url={apiBaseUrl}></div>
+		<div id="digital-twin-root" data-api-base-url={apiBaseUrl}></div>
+		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 		<script type="module">
-			const root = document.getElementById('sales-assistant-root');
+			const root = document.getElementById('digital-twin-root');
 
 			if (!root) {
-				throw new Error('Sales assistant root missing.');
+				throw new Error('Digital Twin root missing.');
 			}
 
 			const apiBaseUrl = root.dataset.apiBaseUrl?.replace(/\/$/, '') ?? '';
 			let currentSource;
 			let currentStatusItems = [];
+			let markdownText = '';
 			const form = document.createElement('form');
 			form.className = 'w-full rounded-2xl border border-slate-700 bg-slate-900/70 p-4 shadow-lg shadow-black/10';
 
 			const label = document.createElement('label');
-			label.className = 'text-sm font-medium text-slate-200';
-			label.htmlFor = 'sales-assistant-query';
-			label.textContent = 'Ask the sales assistant';
+			label.className = 'mb-2 block text-sm font-medium text-slate-200 uppercase';
+			label.htmlFor = 'digital-twin-query';
+			label.textContent = 'Ask the Digital Twin';
 
 			const row = document.createElement('div');
 			row.className = 'flex flex-col gap-3 sm:flex-row';
 
 			const input = document.createElement('input');
-			input.id = 'sales-assistant-query';
+			input.id = 'digital-twin-query';
 			input.className = 'flex-1 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400';
 			input.type = 'text';
-			input.placeholder = 'Ask about services, pricing, or fit';
+			input.placeholder = 'Ask about my experience, projects, or skills...';
 
 			const button = document.createElement('button');
 			button.className = 'rounded-lg bg-cyan-400 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60';
@@ -59,19 +57,42 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 			responseLabel.className = 'text-xs uppercase tracking-[0.25em] text-slate-400';
 			responseLabel.textContent = 'Response';
 
-			const statusLabel = document.createElement('p');
-			statusLabel.className = 'text-xs uppercase tracking-[0.25em] text-slate-400';
+			const statusToggle = document.createElement('details');
+			statusToggle.className = 'group';
+			statusToggle.open = true;
+
+			const statusSummary = document.createElement('summary');
+			statusSummary.className = 'flex cursor-pointer items-center gap-2 text-xs uppercase tracking-[0.25em] text-slate-400';
+
+			const statusArrow = document.createElement('span');
+			statusArrow.className = 'text-slate-500 transition-transform group-open:rotate-90';
+			statusArrow.textContent = '▸';
+
+			const statusLabel = document.createElement('span');
 			statusLabel.textContent = 'Status';
+
+			statusSummary.append(statusArrow, statusLabel);
+
+			const statusBody = document.createElement('div');
+			statusBody.className = 'ml-2 mt-2 space-y-2';
 
 			const statusList = document.createElement('ul');
 			statusList.className = 'space-y-2';
 
-			const responseBody = document.createElement('p');
-			responseBody.className = 'mt-1 whitespace-pre-wrap text-slate-100';
+			const statusLoading = document.createElement('p');
+			statusLoading.className = 'text-xs text-slate-300 italic animate-pulse';
+			statusLoading.textContent = 'Doing magical stuff...';
+			statusLoading.hidden = true;
+
+			statusBody.append(statusList, statusLoading);
+			statusToggle.append(statusSummary, statusBody);
+
+			const responseBody = document.createElement('div');
+			responseBody.className = 'prose prose-invert text-sm max-w-none';
 
 			const responseDisclaimer = document.createElement('p');
 			responseDisclaimer.className = 'mt-3 text-sm leading-6 text-slate-400';
-			responseDisclaimer.textContent = 'I do not guarantee any generated response. Concrete numbers should always be checked back with me.';
+			responseDisclaimer.textContent = 'This response was generated by an AI assistant and may not be fully accurate. Do not rely on it without verification. This is only a demo — the AI is not a legal entity. Always talk to me first personally.';
 
 			const sourcesLabel = document.createElement('p');
 			sourcesLabel.className = 'text-xs uppercase tracking-[0.25em] text-slate-400';
@@ -86,12 +107,43 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 			const sourcesSection = document.createElement('div');
 			sourcesSection.append(sourcesLabel, sourcesList);
 
-			const statusSection = document.createElement('div');
-			statusSection.append(statusLabel, statusList);
+			const infoBar = document.createElement('p');
+			infoBar.className = 'rounded-lg border border-yellow-500/30 bg-yellow-400 px-4 py-3 text-sm leading-6 text-slate-800';
+			infoBar.textContent = 'Not impressed with the assistant\'s response? Fair enough. This entire stack, including the RAG pipeline, runs on 8 GB of RAM and a 360M parameter model, which is probably still less memory than your browser needed just to open this page.';
+			infoBar.hidden = true;
 
-			response.append(statusSection, responseSection, sourcesSection);
+			response.append(statusToggle, infoBar, responseSection, sourcesSection);
+			const templates = [
+				'What did you work on in your time at the computational physics department?',
+				'What projects did you work on?',
+				'Why should we hire you as a freelancer?',
+			];
+
+			const templatesLabel = document.createElement('p');
+			templatesLabel.className = 'text-[11px] uppercase tracking-[0.2em] text-slate-500';
+			templatesLabel.textContent = 'Or use a demo prompt';
+
+			const templatesContainer = document.createElement('div');
+			templatesContainer.className = 'flex flex-wrap gap-2';
+
+			const templatesWrapper = document.createElement('div');
+			templatesWrapper.className = 'mt-3 space-y-1';
+
+			for (const text of templates) {
+				const chip = document.createElement('button');
+				chip.type = 'button';
+				chip.className = 'rounded-full border border-slate-700 bg-slate-800/50 px-3 py-1 text-xs text-slate-400 transition hover:border-cyan-400/50 hover:text-cyan-300';
+				chip.textContent = text;
+				chip.addEventListener('click', () => {
+					input.value = text;
+					form.requestSubmit();
+				});
+				templatesContainer.append(chip);
+			}
+
 			row.append(input, button);
-			form.append(label, row, error);
+			templatesWrapper.append(templatesLabel, templatesContainer);
+			form.append(label, row, templatesWrapper, error);
 			root.replaceChildren(form, response);
 
 			function setError(message) {
@@ -382,7 +434,7 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 				}
 			}
 
-			form.addEventListener('submit', async (event) => {
+			form.addEventListener('submit', (event) => {
 				event.preventDefault();
 
 				const query = input.value.trim();
@@ -392,6 +444,10 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 					return;
 				}
 
+				sendQuery(query);
+			});
+
+			async function sendQuery(query) {
 				if (!apiBaseUrl) {
 					setError('Set PUBLIC_API_BASE_URL in the frontend env.');
 					return;
@@ -402,9 +458,15 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 				setError('');
 				setLoading(true);
 				response.hidden = true;
-				responseBody.textContent = '';
+				markdownText = '';
+				responseBody.innerHTML = '';
 				sourcesList.replaceChildren();
 				resetStatusLog();
+				responseSection.hidden = true;
+				sourcesSection.hidden = true;
+				infoBar.hidden = true;
+				statusLoading.hidden = true;
+				templatesWrapper.hidden = true;
 				const url = new URL(`${apiBaseUrl}/sales-assistant`);
 				url.searchParams.set('query', query);
 
@@ -417,30 +479,42 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 					item.dataset.message = payload.message ?? 'Step';
 					statusList.append(item);
 					response.hidden = false;
+					statusLoading.hidden = false;
 				});
 
 				currentSource.addEventListener('token', (event) => {
 					response.hidden = false;
-					responseBody.textContent += event.data ?? '';
+					infoBar.hidden = false;
+					statusLoading.hidden = false;
+					responseSection.hidden = false;
+					markdownText += event.data ?? '';
+					const normalized = markdownText.replace(/([.!?])([A-Z])/g, '$1 $2').replace(/  +/g, '\n\n');
+				responseBody.innerHTML = window.marked.parse(normalized);
 				});
 
 				currentSource.addEventListener('sources', (event) => {
 					const payload = JSON.parse(event.data);
 					renderSources(Array.isArray(payload.results) ? payload.results : []);
 					response.hidden = false;
+					infoBar.hidden = false;
+					statusLoading.hidden = false;
+					sourcesSection.hidden = false;
 				});
 
 				currentSource.addEventListener('done', () => {
 					setLoading(false);
 					closeStream();
+					statusLoading.hidden = true;
+					statusToggle.open = false;
+					templatesWrapper.hidden = false;
 				});
 
 				currentSource.addEventListener('error', () => {
 					setLoading(false);
-					setError('Stream failed.');
+					setError('An error occurred in the backend. Visit uptime.noel.fyi to check if all systems are running.');
 					closeStream();
 				});
-			});
+			}
 		</script>
 	</section>
 </BaseLayout>
