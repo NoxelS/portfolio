@@ -30,7 +30,9 @@ def search_content(
     retrieval_k = min(safe_top_n * 3, MAX_RETRIEVAL_K)
 
     query_vector = embed_query(normalized_query, settings=settings)
+
     candidates = search_knn(query_vector, retrieval_k=retrieval_k, settings=settings)
+
     results = rerank_candidates(normalized_query, candidates, top_n=safe_top_n, settings=settings)
     return {
         "query": normalized_query,

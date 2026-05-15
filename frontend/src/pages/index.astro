@@ -10,6 +10,9 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 		<p class="max-w-xl text-lg leading-8 text-slate-300">
 			Building a fast, self-hosted portfolio with strong performance, privacy-conscious analytics, and clear technical insight.
 		</p>
+		<p class="max-w-2xl rounded-lg border border-slate-800 bg-slate-900/60 px-4 py-3 text-sm leading-6 text-slate-300">
+			I run my own LLM infrastructure. To keep this free and cost-efficient, I only run small models here, so don&apos;t expect Opus-level answers.
+		</p>
 		<div id="sales-assistant-root" data-api-base-url={apiBaseUrl}></div>
 		<script type="module">
 			const root = document.getElementById('sales-assistant-root');
@@ -46,6 +49,18 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 			error.className = 'mt-3 text-sm text-red-300';
 			error.hidden = true;
 
+			const logPanel = document.createElement('div');
+			logPanel.className = 'mt-4 hidden rounded-xl border border-slate-800 bg-slate-950/70 p-3';
+
+			const logTitle = document.createElement('p');
+			logTitle.className = 'text-xs uppercase tracking-[0.25em] text-slate-400';
+			logTitle.textContent = 'Status';
+
+			const logList = document.createElement('ul');
+			logList.className = 'mt-2 space-y-2 text-sm text-slate-300';
+
+			logPanel.append(logTitle, logList);
+
 			const response = document.createElement('div');
 			response.className = 'mt-4 space-y-3';
 			response.hidden = true;
@@ -57,6 +72,10 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 			const responseBody = document.createElement('p');
 			responseBody.className = 'mt-1 whitespace-pre-wrap text-slate-100';
 
+			const responseDisclaimer = document.createElement('p');
+			responseDisclaimer.className = 'mt-3 text-sm leading-6 text-slate-400';
+			responseDisclaimer.textContent = 'I do not guarantee any generated response. Concrete numbers should always be checked back with me.';
+
 			const sourcesLabel = document.createElement('p');
 			sourcesLabel.className = 'text-xs uppercase tracking-[0.25em] text-slate-400';
 			sourcesLabel.textContent = 'Sources';
@@ -65,14 +84,14 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 			sourcesList.className = 'mt-2 space-y-2';
 
 			const responseSection = document.createElement('div');
-			responseSection.append(responseLabel, responseBody);
+			responseSection.append(responseLabel, responseBody, responseDisclaimer);
 
 			const sourcesSection = document.createElement('div');
 			sourcesSection.append(sourcesLabel, sourcesList);
 
 			response.append(responseSection, sourcesSection);
 			row.append(input, button);
-			form.append(label, row, error);
+			form.append(label, row, error, logPanel);
 			root.replaceChildren(form, response);
 
 			function setError(message) {
@@ -83,6 +102,19 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 			function setLoading(loading) {
 				button.disabled = loading;
 				button.textContent = loading ? 'Sending...' : 'Send';
+			}
+
+			function resetStatusLog() {
+				logList.replaceChildren();
+				logPanel.classList.add('hidden');
+			}
+
+			function addStatusLine(message) {
+				logPanel.classList.remove('hidden');
+				const item = document.createElement('li');
+				item.textContent = message;
+				logList.append(item);
+				item.scrollIntoView({ block: 'end' });
 			}
 
 			function closeStream() {
@@ -159,11 +191,16 @@ const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? ''
 				response.hidden = true;
 				responseBody.textContent = '';
 				sourcesList.replaceChildren();
-
+				resetStatusLog();
 				const url = new URL(`${apiBaseUrl}/sales-assistant`);
 				url.searchParams.set('query', query);
 
 				currentSource = new EventSource(url.toString());
+
+				currentSource.addEventListener('step', (event) => {
+					const payload = JSON.parse(event.data);
+					addStatusLine(payload.message);
+				});
 
 				currentSource.addEventListener('token', (event) => {
 					response.hidden = false;

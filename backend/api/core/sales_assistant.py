@@ -7,7 +7,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from api.core.config import Settings, get_settings
 from api.core.model_client import create_chat_model
 from api.core.ntfy_logger import notify_sales_assistant_error, notify_sales_assistant_event
-from api.core.search import search_content
+from api.core.search import MAX_RETRIEVAL_K, MAX_TOP_N, embed_query, rerank_candidates, search_content, search_knn
 
 DEFAULT_ASSISTANT_TOP_N = 5
 SYSTEM_PROMPT_FILE = "sales-assistant.md"
@@ -80,9 +80,22 @@ def stream_answer_query(
     normalized_query = query.strip()
 
     try:
-        search_payload = search_content(normalized_query, top_n=top_n, settings=settings)
-        results = search_payload["results"]
+        yield sse_event('step', json.dumps({'message': 'Starting query'}))
+
+        safe_top_n = max(1, min(top_n, MAX_TOP_N))
+        retrieval_k = min(safe_top_n * 3, MAX_RETRIEVAL_K)
+
+        yield sse_event('step', json.dumps({'message': 'Embedding your query'}))
+        query_vector = embed_query(normalized_query, settings=settings)
+
+        yield sse_event('step', json.dumps({'message': 'Retrieving chunks'}))
+        candidates = search_knn(query_vector, retrieval_k=retrieval_k, settings=settings)
+
+        yield sse_event('step', json.dumps({'message': 'Reranking results'}))
+        results = rerank_candidates(normalized_query, candidates, top_n=safe_top_n, settings=settings)
+
         system_prompt = load_system_prompt(settings.instructions_root / SYSTEM_PROMPT_FILE)
+        yield sse_event('step', json.dumps({'message': 'Loading prompt'}))
         context = format_context(results)
 
         prompt = ChatPromptTemplate.from_messages(
@@ -98,6 +111,8 @@ def stream_answer_query(
         model = create_chat_model(settings)
         answer_parts: list[str] = []
 
+        yield sse_event('step', json.dumps({'message': 'Generating answer'}))
+
         for token in model.stream(messages):
             if not token:
                 continue
@@ -110,8 +125,8 @@ def stream_answer_query(
             query=normalized_query,
             answer=answer,
             count=len(results),
-            top_n=search_payload["top_n"],
-            retrieval_k=search_payload["retrieval_k"],
+            top_n=safe_top_n,
+            retrieval_k=retrieval_k,
             settings=settings,
         )
         yield sse_event(
@@ -121,8 +136,8 @@ def stream_answer_query(
                     "query": normalized_query,
                     "count": len(results),
                     "results": results,
-                    "top_n": search_payload["top_n"],
-                    "retrieval_k": search_payload["retrieval_k"],
+                    "top_n": safe_top_n,
+                    "retrieval_k": retrieval_k,
                 }
             ),
         )
