@@ -33,3 +33,6 @@ pnpm-debug.log*
 !content/**/*.md
 !instructions/*.md
 !instructions/**/*.md
+
+# Ignore rag evaluation outputs
+backend/tests/evaluations/outputs/*.json
