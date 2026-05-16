@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     llm_base_url: str = "https://llm.noel.fyi"
     embeddings_base_url: str = "https://embeddings.noel.fyi"
     reranking_base_url: str = "https://reranking.noel.fyi"
+    http_timeout_seconds: float = 300.0
     llm_bearer_token: SecretStr | None = None
     embedding_model: str = "llm-embedder.Q8_0"
     reranker_model: str = "bge-reranker-v2-m3-Q8_0"

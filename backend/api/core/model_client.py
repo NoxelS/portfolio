@@ -18,6 +18,7 @@ class RemoteChatModel:
         path: str,
         model: str,
         max_tokens: int,
+        timeout_seconds: float,
         headers: dict[str, str] | None = None,
         client: httpx.Client | None = None,
     ) -> None:
@@ -27,7 +28,7 @@ class RemoteChatModel:
         self.max_tokens = max_tokens
         self.headers = headers or {}
         self.url = urljoin(base_url.rstrip("/") + "/", path.lstrip("/"))
-        self.client = client or httpx.Client(timeout=60)
+        self.client = client or httpx.Client(timeout=timeout_seconds)
 
     def invoke(self, messages: Sequence[BaseMessage]) -> AIMessage:
         """Send one chat completion request and return the assistant message."""
@@ -88,6 +89,7 @@ class RemoteEmbeddingModel:
         model: str,
         prefix: str = "",
         passage_prefix: str = "",
+        timeout_seconds: float,
         headers: dict[str, str] | None = None,
         client: httpx.Client | None = None,
     ) -> None:
@@ -98,7 +100,7 @@ class RemoteEmbeddingModel:
         self.passage_prefix = passage_prefix
         self.headers = headers or {}
         self.url = urljoin(base_url.rstrip("/") + "/", path.lstrip("/"))
-        self.client = client or httpx.Client(timeout=60)
+        self.client = client or httpx.Client(timeout=timeout_seconds)
 
     def embed(self, texts: Sequence[str], *, as_passage: bool = False) -> list[list[float]]:
         """Embed texts with the configured remote embedding model."""
@@ -123,6 +125,7 @@ class RemoteRerankerModel:
         base_url: str,
         path: str,
         model: str,
+        timeout_seconds: float,
         headers: dict[str, str] | None = None,
         client: httpx.Client | None = None,
     ) -> None:
@@ -131,7 +134,7 @@ class RemoteRerankerModel:
         self.path = path
         self.headers = headers or {}
         self.url = urljoin(base_url.rstrip("/") + "/", path.lstrip("/"))
-        self.client = client or httpx.Client(timeout=30)
+        self.client = client or httpx.Client(timeout=timeout_seconds)
 
     def rerank(
         self,
@@ -164,6 +167,7 @@ def create_chat_model(settings: Settings | None = None) -> RemoteChatModel:
         base_url=settings.llm_base_url,
         path=settings.chat_completions_path,
         max_tokens=settings.chat_max_tokens,
+        timeout_seconds=settings.http_timeout_seconds,
         headers=get_headers(settings),
     )
 
@@ -178,6 +182,7 @@ def create_embedding_model(settings: Settings | None = None) -> RemoteEmbeddingM
         path=settings.embeddings_path,
         prefix=settings.embedding_prefix,
         passage_prefix=settings.embedding_passage_prefix,
+        timeout_seconds=settings.http_timeout_seconds,
         headers=get_headers(settings),
     )
 
@@ -190,6 +195,7 @@ def create_reranker_model(settings: Settings | None = None) -> RemoteRerankerMod
         model=settings.reranker_model,
         base_url=settings.reranking_base_url,
         path=settings.reranker_path,
+        timeout_seconds=settings.http_timeout_seconds,
         headers=get_headers(settings),
     )
 
@@ -215,7 +221,7 @@ def get_available_model_ids(
     response = httpx.get(
         url,
         headers=get_headers(settings),
-        timeout=20,
+        timeout=settings.http_timeout_seconds,
     )
     response.raise_for_status()
     payload = response.json()

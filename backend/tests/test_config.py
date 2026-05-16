@@ -17,3 +17,7 @@ def test_repo_file_roots_are_not_environment_configurable(monkeypatch) -> None:
 
     assert settings.content_root == default_content_root
     assert settings.instructions_root == default_instructions_root
+
+
+def test_default_http_timeout_is_five_minutes() -> None:
+    assert Settings().http_timeout_seconds == 300.0
