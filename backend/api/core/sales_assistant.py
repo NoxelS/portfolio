@@ -1,6 +1,7 @@
 import json
 import re
 from collections.abc import Iterator
+from dataclasses import dataclass
 from math import ceil
 from pathlib import Path
 from time import perf_counter
@@ -13,11 +14,52 @@ from api.core.ntfy_logger import notify_sales_assistant_error, notify_sales_assi
 from api.core.search import embed_query, filter_reranked_results, merge_candidates, rerank_candidates_dual, search_content, search_knn
 
 DEFAULT_ASSISTANT_TOP_N = 5
-SYSTEM_PROMPT_FILE = "sales-assistant/system.md"
-USER_PROMPT_TEMPLATE_FILE = "sales-assistant/user-template.md"
-QUERY_REWRITE_SYSTEM_PROMPT_FILE = "sales-assistant/query-rewrite-system.md"
-QUERY_REWRITE_TEMPLATE_FILE = "sales-assistant/query-rewrite.md"
-NO_CONTEXT_RESPONSE_FILE = "sales-assistant/no-context-response.md"
+SYSTEM_PROMPT_FILE = "rag-instructions/system.md"
+USER_PROMPT_TEMPLATE_FILE = "rag-instructions/user-template.md"
+QUERY_REWRITE_SYSTEM_PROMPT_FILE = "rag-instructions/query-rewrite-system.md"
+QUERY_REWRITE_TEMPLATE_FILE = "rag-instructions/query-rewrite.md"
+NO_CONTEXT_RESPONSE_FILE = "rag-instructions/no-context-response.md"
+
+
+@dataclass(slots=True)
+class RagAnswer:
+    """Structured RAG answer for API wrappers and offline evaluations."""
+
+    question: str
+    answer: str
+    rewritten_query: str | None
+    sources: list[dict[str, object]]
+    selected_chunks: list[dict[str, object]]
+    metadata: dict[str, object]
+
+
+def answer_rag_question(
+    question: str,
+    *,
+    top_n: int = DEFAULT_ASSISTANT_TOP_N,
+    settings: Settings | None = None,
+) -> RagAnswer:
+    """Run the core RAG flow and return a structured answer."""
+
+    payload = answer_query(question, top_n=top_n, settings=settings)
+    results = payload.get("results", [])
+    selected_chunks = results if isinstance(results, list) else []
+    return RagAnswer(
+        question=str(payload.get("query", question)).strip(),
+        answer=str(payload.get("answer", "")),
+        rewritten_query=payload.get("rewritten_query") if isinstance(payload.get("rewritten_query"), str) else None,
+        sources=build_answer_sources(selected_chunks),
+        selected_chunks=selected_chunks,
+        metadata={
+            "count": payload.get("count", 0),
+            "top_n": payload.get("top_n", top_n),
+            "retrieval_k": payload.get("retrieval_k", 0),
+            "raw_count": payload.get("raw_count", 0),
+            "rewritten_count": payload.get("rewritten_count", 0),
+            "merged_count": payload.get("merged_count", 0),
+            "reranked_count": payload.get("reranked_count", 0),
+        },
+    )
 
 
 def answer_query(
@@ -515,6 +557,27 @@ def build_no_context_payload(
     }
 
 
+def build_answer_sources(results: list[dict[str, object]]) -> list[dict[str, object]]:
+    """Build compact source metadata for citations and evaluations."""
+
+    sources: list[dict[str, object]] = []
+    for result in results:
+        sources.append(
+            {
+                "title": result.get("title", ""),
+                "path": result.get("path", ""),
+                "source_uri": result.get("source_uri", result.get("path", "")),
+                "content_type": result.get("content_type", ""),
+                "section_title": result.get("section_title", ""),
+                "relevance": result.get("relevance", 0.0),
+                "rerank_score": result.get("rerank_score", 0.0),
+                "boost": result.get("boost", 1.0),
+                "boosted_score": result.get("boosted_score", result.get("rerank_score", 0.0)),
+            }
+        )
+    return sources
+
+
 def build_context(
     results: list[dict[str, object]],
     *,
@@ -770,6 +833,9 @@ def build_candidate_summary(candidate: dict[str, object]) -> dict[str, object]:
         "path": str(candidate.get("path", "")).strip(),
         "relevance": float(candidate.get("relevance", 0.0)),
         "rerank_score": float(candidate.get("rerank_score", 0.0)),
+        "boost": float(candidate.get("boost", 1.0)),
+        "metadata_boost": float(candidate.get("metadata_boost", candidate.get("boost", 1.0))),
+        "boosted_score": float(candidate.get("boosted_score", candidate.get("rerank_score", 0.0))),
         "content_preview": content[:120] + "..." if len(content) > 120 else content,
     }
 

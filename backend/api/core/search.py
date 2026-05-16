@@ -11,6 +11,9 @@ from api.core.model_client import create_embedding_model, create_reranker_model
 DEFAULT_TOP_N = 10
 MAX_TOP_N = 25
 MAX_RETRIEVAL_K = 50
+DEFAULT_METADATA_BOOST = 1.0
+MIN_METADATA_BOOST = 0.1
+MAX_METADATA_BOOST = 3.0
 
 
 def search_content(
@@ -133,6 +136,8 @@ def rerank_candidates(
         candidate["rerank_score"] = score
         candidate["relevance"] = score_to_percent(score)
         candidate["relevance_percent"] = candidate["relevance"]
+        candidate["metadata_boost"] = metadata_boost(candidate)
+        candidate["boosted_score"] = boosted_score(score, candidate["metadata_boost"])
         results.append(candidate)
 
     return results
@@ -154,7 +159,8 @@ def rerank_candidates_dual(
     if not candidates:
         return []
 
-    capped = candidates[:RERANK_CANDIDATE_CAP]
+    boosted_candidates = apply_metadata_boosts(candidates)
+    capped = boosted_candidates[:RERANK_CANDIDATE_CAP]
     full_top_n = len(capped)
     primary_results = rerank_candidates(query, capped, top_n=full_top_n, settings=settings)
     secondary_results: list[dict[str, object]] = []
@@ -214,12 +220,47 @@ def merge_reranked_results(*result_sets: list[dict[str, object]]) -> list[dict[s
                 merged[dedupe_key] = updated
 
     merged_results = list(merged.values())
-    merged_results.sort(key=lambda item: float(item.get("best_rerank_score", item.get("rerank_score", 0.0))), reverse=True)
     for result in merged_results:
         result["rerank_score"] = float(result.get("best_rerank_score", result.get("rerank_score", 0.0)))
         result["relevance"] = float(result.get("best_relevance", result.get("relevance", 0.0)))
         result["relevance_percent"] = result["relevance"]
+        result["metadata_boost"] = metadata_boost(result)
+        result["boosted_score"] = boosted_score(result["rerank_score"], result["metadata_boost"])
+    merged_results.sort(key=lambda item: float(item.get("boosted_score", item.get("rerank_score", 0.0))), reverse=True)
     return merged_results
+
+
+def apply_metadata_boosts(candidates: list[dict[str, object]]) -> list[dict[str, object]]:
+    """Order candidates with a gentle metadata boost before the reranker cap."""
+
+    boosted: list[dict[str, object]] = []
+    total = len(candidates)
+    for index, candidate in enumerate(candidates):
+        item = dict(candidate)
+        boost = metadata_boost(item)
+        item["metadata_boost"] = boost
+        item["pre_rerank_score"] = (total - index) * boost
+        boosted.append(item)
+
+    boosted.sort(key=lambda item: float(item.get("pre_rerank_score", 0.0)), reverse=True)
+    return boosted
+
+
+def metadata_boost(candidate: dict[str, object]) -> float:
+    """Read the manual boost field and clamp it to a safe range."""
+
+    value = candidate.get("boost", DEFAULT_METADATA_BOOST)
+    try:
+        boost = float(value)
+    except (TypeError, ValueError):
+        boost = DEFAULT_METADATA_BOOST
+    return min(MAX_METADATA_BOOST, max(MIN_METADATA_BOOST, boost))
+
+
+def boosted_score(rerank_score: float, boost: float) -> float:
+    """Apply manual metadata boost without changing the raw reranker score."""
+
+    return rerank_score * boost
 
 
 def filter_reranked_results(
@@ -281,8 +322,27 @@ def build_rerank_text(candidate: dict[str, object]) -> str:
 
     title = str(candidate.get("title", "")).strip()
     content_type = str(candidate.get("content_type", "")).strip()
+    section_title = str(candidate.get("section_title", "")).strip()
     content = str(candidate.get("content", "")).strip()
-    return f"Title: {title}\nType: {content_type}\n\n{content}".strip()
+    lines = [f"Title: {title}", f"Type: {content_type}"]
+    if section_title:
+        lines.append(f"Section: {section_title}")
+    for label, key in (("Tags", "tags"), ("Technologies", "technologies"), ("Skills", "skills"), ("Keywords", "keywords")):
+        values = stringify_list(candidate.get(key))
+        if values:
+            lines.append(f"{label}: {', '.join(values)}")
+    lines.extend(["", content])
+    return "\n".join(lines).strip()
+
+
+def stringify_list(value: object) -> list[str]:
+    """Convert candidate metadata collections into strings for reranking text."""
+
+    if isinstance(value, list | tuple | set):
+        return [str(item) for item in value if item not in (None, "")]
+    if isinstance(value, str) and value.strip():
+        return [value.strip()]
+    return []
 
 
 def score_to_percent(score: float) -> float:

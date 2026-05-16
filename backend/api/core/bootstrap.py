@@ -1,7 +1,9 @@
 import json
 import logging
+import re
 from collections.abc import Iterable
 from dataclasses import dataclass
+from hashlib import sha256
 from pathlib import Path
 from time import perf_counter, sleep
 
@@ -16,6 +18,10 @@ from api.core.model_client import create_embedding_model
 logger = logging.getLogger(__name__)
 
 CONTENT_KEY_PREFIX = "portfolio:content:"
+CONTENT_SCHEMA_VERSION = "rag-content-v2"
+DEFAULT_BOOST = 1.0
+MIN_BOOST = 0.1
+MAX_BOOST = 3.0
 
 
 @dataclass(slots=True)
@@ -29,7 +35,42 @@ class ContentChunk:
     title: str
     slug: str
     content: str
+    embedding_text: str
     metadata: dict[str, object]
+
+
+@dataclass(slots=True)
+class RawMarkdownDocument:
+    """Markdown source file with optional frontmatter."""
+
+    path: Path
+    relative_path: str
+    metadata: dict[str, object]
+    body: str
+
+
+@dataclass(slots=True)
+class NormalizedDocument:
+    """Markdown document after frontmatter and generated metadata are merged."""
+
+    path: Path
+    relative_path: str
+    document_id: str
+    content_type: str
+    title: str
+    slug: str
+    body: str
+    metadata: dict[str, object]
+    document_hash: str
+
+
+@dataclass(slots=True)
+class SplitChunk:
+    """One split section of a normalized Markdown document."""
+
+    content: str
+    section_title: str
+    heading_path: list[str]
 
 
 def run_bootstrap(settings: Settings | None = None) -> None:
@@ -67,37 +108,10 @@ def load_content_chunks(content_root: Path, *, chunk_size: int, chunk_overlap: i
     """Load markdown documents and expand them into indexable chunks."""
 
     chunks: list[ContentChunk] = []
-    for path in sorted(content_root.glob("**/*.md")):
-        post = frontmatter.load(path)
-        document_id = str(post.metadata.get("id") or path.stem)
-        content_type = path.parent.name.rstrip("s")
-        title = get_document_title(path, post.metadata)
-        slug = str(post.metadata.get("slug") or path.stem)
-        metadata = normalize_metadata(post.metadata)
-        relative_path = path.relative_to(content_root).as_posix()
-        body = normalize_body(post.content)
-        text_chunks = split_text(body, chunk_size=chunk_size, chunk_overlap=chunk_overlap)
-
-        for index, text_chunk in enumerate(text_chunks, start=1):
-            chunk_id = f"{document_id}::{index}"
-            chunk_metadata = {
-                **metadata,
-                "chunk_index": index,
-                "content_type": content_type,
-                "path": relative_path,
-            }
-            chunks.append(
-                ContentChunk(
-                    chunk_id=chunk_id,
-                    document_id=document_id,
-                    content_type=content_type,
-                    path=relative_path,
-                    title=title,
-                    slug=slug,
-                    content=text_chunk,
-                    metadata=chunk_metadata,
-                )
-            )
+    for raw_document in load_markdown_documents(content_root):
+        document = normalize_document(raw_document, content_root=content_root)
+        split_chunks = split_document(document, chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+        chunks.extend(build_chunks(document, split_chunks, chunk_size=chunk_size, chunk_overlap=chunk_overlap))
 
     return chunks
 
@@ -118,7 +132,7 @@ def rebuild_content_index(
     pipeline = redis.pipeline(transaction=False)
     for chunk, vector in zip(chunks, vectors, strict=True):
         key = f"{CONTENT_KEY_PREFIX}{chunk.chunk_id}"
-        payload = build_redis_document(chunk, vector)
+        payload = build_redis_document(chunk, vector, settings=settings)
         pipeline.execute_command("JSON.SET", key, "$", json.dumps(payload))
 
     pipeline.execute()
@@ -220,6 +234,14 @@ def create_index(redis: Redis, index_name: str, vector_dimensions: int) -> None:
         "AS",
         "path",
         "TAG",
+        "$.source_uri",
+        "AS",
+        "source_uri",
+        "TEXT",
+        "$.section_title",
+        "AS",
+        "section_title",
+        "TEXT",
         "$.content",
         "AS",
         "content",
@@ -251,6 +273,10 @@ def create_index(redis: Redis, index_name: str, vector_dimensions: int) -> None:
         "$.priority",
         "AS",
         "priority",
+        "NUMERIC",
+        "$.boost",
+        "AS",
+        "boost",
         "NUMERIC",
         "$.featured",
         "AS",
@@ -296,6 +322,18 @@ def create_index(redis: Redis, index_name: str, vector_dimensions: int) -> None:
         "AS",
         "related_skills",
         "TAG",
+        "$.schema_version",
+        "AS",
+        "schema_version",
+        "TAG",
+        "$.chunk_index",
+        "AS",
+        "chunk_index",
+        "NUMERIC",
+        "$.chunk_count",
+        "AS",
+        "chunk_count",
+        "NUMERIC",
         "$.embedding",
         "AS",
         "embedding",
@@ -311,9 +349,10 @@ def create_index(redis: Redis, index_name: str, vector_dimensions: int) -> None:
     )
 
 
-def build_redis_document(chunk: ContentChunk, vector: list[float]) -> dict[str, object]:
+def build_redis_document(chunk: ContentChunk, vector: list[float], *, settings: Settings | None = None) -> dict[str, object]:
     """Build the JSON document stored for each content chunk."""
 
+    settings = settings or get_settings()
     payload: dict[str, object] = {
         "chunk_id": chunk.chunk_id,
         "document_id": chunk.document_id,
@@ -322,6 +361,8 @@ def build_redis_document(chunk: ContentChunk, vector: list[float]) -> dict[str, 
         "slug": chunk.slug,
         "path": chunk.path,
         "content": chunk.content,
+        "embedding_text": chunk.embedding_text,
+        "embedding_model": settings.embedding_model,
         "embedding": vector,
     }
     payload.update(chunk.metadata)
@@ -331,22 +372,272 @@ def build_redis_document(chunk: ContentChunk, vector: list[float]) -> dict[str, 
 def build_embedding_text(chunk: ContentChunk) -> str:
     """Build the text sent to the embedding model for each chunk."""
 
+    if chunk.embedding_text:
+        return chunk.embedding_text
+
     lines = [
         f"Title: {chunk.title}",
         f"Type: {chunk.content_type}",
         f"Slug: {chunk.slug}",
     ]
+    section_title = stringify_scalar(chunk.metadata.get("section_title"))
+    if section_title:
+        lines.append(f"Section: {section_title}")
+
     category = stringify_scalar(chunk.metadata.get("category"))
     if category:
         lines.append(f"Category: {category}")
 
-    tags = ", ".join(stringify_iterable(chunk.metadata.get("tags")))
-    if tags:
-        lines.append(f"Tags: {tags}")
+    for label, key in (
+        ("Tags", "tags"),
+        ("Categories", "categories"),
+        ("Technologies", "technologies"),
+        ("Skills", "skills"),
+        ("Keywords", "keywords"),
+    ):
+        values = ", ".join(stringify_iterable(chunk.metadata.get(key)))
+        if values:
+            lines.append(f"{label}: {values}")
 
     lines.append("")
+    lines.append("Content:")
     lines.append(chunk.content)
     return "\n".join(lines)
+
+
+def load_markdown_documents(content_root: Path) -> list[RawMarkdownDocument]:
+    """Read Markdown files and parse optional frontmatter."""
+
+    documents: list[RawMarkdownDocument] = []
+    for path in sorted(content_root.glob("**/*.md")):
+        post = frontmatter.load(path)
+        documents.append(
+            RawMarkdownDocument(
+                path=path,
+                relative_path=path.relative_to(content_root).as_posix(),
+                metadata=dict(post.metadata),
+                body=normalize_body(post.content),
+            )
+        )
+    return documents
+
+
+def normalize_document(raw_document: RawMarkdownDocument, *, content_root: Path) -> NormalizedDocument:
+    """Merge frontmatter with generated fallback metadata for one document."""
+
+    metadata = normalize_metadata(raw_document.metadata)
+    body = raw_document.body
+    document_id = build_document_id(raw_document.relative_path, metadata)
+    content_type = build_content_type(raw_document.relative_path)
+    title = build_title(raw_document.path, metadata, body)
+    slug = build_slug(raw_document.path, metadata)
+    document_hash = hash_text(body)
+
+    generated_metadata: dict[str, object] = {
+        "id": document_id,
+        "content_type": content_type,
+        "title": title,
+        "slug": slug,
+        "path": raw_document.relative_path,
+        "source_uri": (content_root.name + "/" + raw_document.relative_path).strip("/"),
+        "visibility": stringify_scalar(metadata.get("visibility")) or "public",
+        "status": stringify_scalar(metadata.get("status")) or "published",
+        "priority": normalize_number(metadata.get("priority"), default=0.0),
+        "boost": normalize_boost(metadata.get("boost")),
+        "document_hash": document_hash,
+        "schema_version": CONTENT_SCHEMA_VERSION,
+    }
+    generated_metadata.update(metadata)
+    generated_metadata.update(
+        {
+            "id": document_id,
+            "content_type": content_type,
+            "title": title,
+            "slug": slug,
+            "path": raw_document.relative_path,
+            "source_uri": (content_root.name + "/" + raw_document.relative_path).strip("/"),
+            "visibility": stringify_scalar(generated_metadata.get("visibility")) or "public",
+            "status": stringify_scalar(generated_metadata.get("status")) or "published",
+            "priority": normalize_number(generated_metadata.get("priority"), default=0.0),
+            "boost": normalize_boost(generated_metadata.get("boost")),
+            "document_hash": document_hash,
+            "schema_version": CONTENT_SCHEMA_VERSION,
+        }
+    )
+
+    return NormalizedDocument(
+        path=raw_document.path,
+        relative_path=raw_document.relative_path,
+        document_id=document_id,
+        content_type=content_type,
+        title=title,
+        slug=slug,
+        body=body,
+        metadata=generated_metadata,
+        document_hash=document_hash,
+    )
+
+
+def split_document(document: NormalizedDocument, *, chunk_size: int, chunk_overlap: int) -> list[SplitChunk]:
+    """Split a normalized document into heading-aware chunks with section metadata."""
+
+    text_chunks = split_text_with_metadata(document.body, chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+    if not text_chunks:
+        return []
+
+    return text_chunks
+
+
+def build_chunks(
+    document: NormalizedDocument,
+    split_chunks: list[SplitChunk],
+    *,
+    chunk_size: int,
+    chunk_overlap: int,
+) -> list[ContentChunk]:
+    """Build indexable chunks with generated chunk metadata and embedding text."""
+
+    total_chunks = len(split_chunks)
+    chunks: list[ContentChunk] = []
+    for index, split_chunk in enumerate(split_chunks, start=1):
+        content_hash = hash_text(split_chunk.content)
+        chunk_id = build_chunk_id(document.document_id, index, content_hash)
+        chunk_metadata = build_chunk_metadata(
+            document,
+            split_chunk,
+            index=index,
+            total_chunks=total_chunks,
+            content_hash=content_hash,
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+        )
+        chunk = ContentChunk(
+            chunk_id=chunk_id,
+            document_id=document.document_id,
+            content_type=document.content_type,
+            path=document.relative_path,
+            title=document.title,
+            slug=document.slug,
+            content=split_chunk.content,
+            embedding_text="",
+            metadata=chunk_metadata,
+        )
+        chunk.embedding_text = build_embedding_text(chunk)
+        chunks.append(chunk)
+    return chunks
+
+
+def build_chunk_metadata(
+    document: NormalizedDocument,
+    split_chunk: SplitChunk,
+    *,
+    index: int,
+    total_chunks: int,
+    content_hash: str,
+    chunk_size: int,
+    chunk_overlap: int,
+) -> dict[str, object]:
+    """Combine document, frontmatter, and chunk-level metadata."""
+
+    return {
+        **document.metadata,
+        "chunk_index": index,
+        "chunk_count": total_chunks,
+        "section_title": split_chunk.section_title,
+        "heading_path": split_chunk.heading_path,
+        "content_hash": content_hash,
+        "document_hash": document.document_hash,
+        "chunking_strategy": f"markdown-v2-chars-{chunk_size}-overlap-{chunk_overlap}",
+    }
+
+
+def build_document_id(relative_path: str, metadata: dict[str, object]) -> str:
+    """Use frontmatter id when present, otherwise derive a stable id from relative path."""
+
+    raw_id = stringify_scalar(metadata.get("id")).strip()
+    if raw_id:
+        return slugify(raw_id)
+    return slugify(Path(relative_path).with_suffix("").as_posix())
+
+
+def build_chunk_id(document_id: str, chunk_index: int, content_hash: str) -> str:
+    """Build a stable chunk id suitable for Redis keys and citations."""
+
+    short_hash = content_hash.removeprefix("sha256:")[:10]
+    return f"{document_id}::{chunk_index:04d}::{short_hash}"
+
+
+def build_content_type(relative_path: str) -> str:
+    """Resolve a content type from the parent directory."""
+
+    parent = Path(relative_path).parent.name or "content"
+    return parent[:-1] if parent.endswith("s") and len(parent) > 1 else parent
+
+
+def build_slug(path: Path, metadata: dict[str, object]) -> str:
+    """Use frontmatter slug when present, otherwise filename stem."""
+
+    raw_slug = stringify_scalar(metadata.get("slug")).strip()
+    return slugify(raw_slug or path.stem)
+
+
+def build_title(path: Path, metadata: dict[str, object], body: str) -> str:
+    """Resolve a human-readable title from metadata, first heading, or filename."""
+
+    for field in ("title", "name", "question"):
+        value = stringify_scalar(metadata.get(field)).strip()
+        if value:
+            return value
+
+    heading = first_markdown_heading(body)
+    if heading:
+        return heading
+
+    return path.stem.replace("-", " ").title()
+
+
+def normalize_boost(value: object) -> float:
+    """Parse and clamp the manual retrieval boost."""
+
+    return min(MAX_BOOST, max(MIN_BOOST, normalize_number(value, default=DEFAULT_BOOST)))
+
+
+def normalize_number(value: object, *, default: float) -> float:
+    """Parse numeric metadata with a default fallback."""
+
+    if isinstance(value, bool):
+        return default
+    if isinstance(value, int | float):
+        return float(value)
+    if isinstance(value, str):
+        try:
+            return float(value.strip())
+        except ValueError:
+            return default
+    return default
+
+
+def hash_text(text: str) -> str:
+    """Return a stable SHA-256 hash for content change detection."""
+
+    return f"sha256:{sha256(text.encode('utf-8')).hexdigest()}"
+
+
+def slugify(value: str) -> str:
+    """Normalize ids and slugs for Redis-safe stable identifiers."""
+
+    normalized = re.sub(r"[^a-zA-Z0-9]+", "-", value.strip()).strip("-").lower()
+    return normalized or "content"
+
+
+def first_markdown_heading(text: str) -> str:
+    """Return the first Markdown heading text from a document body."""
+
+    for line in text.splitlines():
+        match = re.match(r"^#{1,6}\s+(.+?)\s*#*$", line.strip())
+        if match:
+            return match.group(1).strip()
+    return ""
 
 
 def get_document_title(path: Path, metadata: dict[str, object]) -> str:
@@ -397,6 +688,12 @@ def normalize_body(content: str) -> str:
 def split_text(text: str, *, chunk_size: int, chunk_overlap: int) -> list[str]:
     """Split markdown into heading-aware overlapping chunks."""
 
+    return [chunk.content for chunk in split_text_with_metadata(text, chunk_size=chunk_size, chunk_overlap=chunk_overlap)]
+
+
+def split_text_with_metadata(text: str, *, chunk_size: int, chunk_overlap: int) -> list[SplitChunk]:
+    """Split markdown into heading-aware chunks and preserve heading metadata."""
+
     if not text:
         return []
     if chunk_size <= 0:
@@ -420,19 +717,39 @@ def split_text(text: str, *, chunk_size: int, chunk_overlap: int) -> list[str]:
     if not sections:
         sections = recursive_splitter.create_documents([text])
 
-    chunks: list[str] = []
+    chunks: list[SplitChunk] = []
     for section in sections:
         section_text = section.page_content.strip()
         if not section_text:
             continue
 
+        heading_path = build_heading_path(section.metadata)
+        section_title = heading_path[-1] if heading_path else ""
+
         section_chunks = recursive_splitter.split_text(section_text)
         for section_chunk in section_chunks:
             normalized_chunk = section_chunk.strip()
             if normalized_chunk:
-                chunks.append(normalized_chunk)
+                chunks.append(
+                    SplitChunk(
+                        content=normalized_chunk,
+                        section_title=section_title,
+                        heading_path=heading_path,
+                    )
+                )
 
-    return chunks or [text]
+    return chunks or [SplitChunk(content=text, section_title="", heading_path=[])]
+
+
+def build_heading_path(metadata: dict[str, object]) -> list[str]:
+    """Extract an ordered heading path from LangChain markdown split metadata."""
+
+    headings: list[str] = []
+    for key in ("h1", "h2", "h3", "h4", "h5", "h6"):
+        value = stringify_scalar(metadata.get(key)).strip()
+        if value:
+            headings.append(value)
+    return headings
 
 
 def stringify_iterable(value: object) -> list[str]:

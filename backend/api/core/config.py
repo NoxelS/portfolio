@@ -6,8 +6,18 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 backend_dir = Path(__file__).resolve().parents[2]
 repo_root = backend_dir.parent
-default_content_root = repo_root / "content"
-default_instructions_root = repo_root / "instructions"
+
+
+def repo_file_root() -> Path:
+    """Resolve the fixed project data root for local and container runtimes."""
+
+    if (repo_root / "content").exists() or (repo_root / "instructions").exists():
+        return repo_root
+    return backend_dir
+
+
+default_content_root = repo_file_root() / "content"
+default_instructions_root = repo_file_root() / "instructions"
 
 
 class Settings(BaseSettings):
@@ -38,8 +48,6 @@ class Settings(BaseSettings):
     retrieval_max_top_n: int = 25
     retrieval_multiplier: int = 3
     retrieval_max_k: int = 75
-    content_root: Path = default_content_root
-    instructions_root: Path = default_instructions_root
     bootstrap_enabled: bool = True
     bootstrap_chunk_size: int = 500
     bootstrap_chunk_overlap: int = 100
@@ -55,6 +63,18 @@ class Settings(BaseSettings):
         env_prefix="API_",
         extra="ignore",
     )
+
+    @property
+    def content_root(self) -> Path:
+        """Repository content directory; intentionally not environment-configurable."""
+
+        return default_content_root
+
+    @property
+    def instructions_root(self) -> Path:
+        """Repository instruction directory; intentionally not environment-configurable."""
+
+        return default_instructions_root
 
 
 @lru_cache
