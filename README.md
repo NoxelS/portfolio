@@ -6,6 +6,12 @@ Dockerized portfolio frontend and API stack.
 
 Use the dev Compose file to run the frontend, API, and Redis locally while the API connects to remote LLM services by default.
 
+Create your root env file once:
+
+```bash
+cp .env.example .env
+```
+
 ```bash
 docker compose -f compose.dev.yaml --env-file .env up --build
 ```
@@ -22,7 +28,7 @@ Default remote model endpoints:
 - `API_EMBEDDINGS_BASE_URL=https://ai.noel.fyi`
 - `API_RERANKING_BASE_URL=https://ai.noel.fyi`
 
-Override those values in `.env` if the model services are exposed through a LAN or VPN address.
+Override those values in root `.env` if the model services are exposed through a LAN or VPN address.
 
 ## Production Images
 
