@@ -12,6 +12,11 @@ interface Props {
 
 const { title, description, canonicalPath } = Astro.props;
 const openPanelConfig = getOpenPanelConfig();
+const runtimeConfig = {
+	PUBLIC_BUILD_VERSION: process.env.PUBLIC_BUILD_VERSION ?? '',
+	PUBLIC_COMMIT_SHA: process.env.PUBLIC_COMMIT_SHA ?? '',
+	PUBLIC_BUILT_AT: process.env.PUBLIC_BUILT_AT ?? '',
+};
 ---
 
 <!doctype html>
@@ -23,6 +28,9 @@ const openPanelConfig = getOpenPanelConfig();
 		<main class="min-h-screen px-6 py-10 sm:px-10 lg:px-16">
 			<slot />
 		</main>
+		<script define:vars={{ runtimeConfig }}>
+			window.__PORTFOLIO_RUNTIME__ = runtimeConfig;
+		</script>
 		{openPanelConfig && <AnalyticsConsent />}
 		{
 			openPanelConfig && (

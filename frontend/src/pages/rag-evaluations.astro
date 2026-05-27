@@ -5,7 +5,7 @@ if (import.meta.env.PROD) {
 	return new Response(null, { status: 404 });
 }
 
-const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? '';
+const apiBaseUrl = process.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? '';
 ---
 
 <BaseLayout title="RAG Evaluations" canonicalPath="/rag-evaluations">

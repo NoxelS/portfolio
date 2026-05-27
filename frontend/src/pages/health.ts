@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 import { buildInfo } from '../lib/build-info';
 import { setPublicDataCache } from '../lib/cache';
 
-export const prerender = true;
+export const prerender = false;
 
 export const GET: APIRoute = () => {
 	const headers = new Headers({
