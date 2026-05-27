@@ -43,11 +43,33 @@ def main() -> None:
     output_path = resolve_output_path()
     evaluation_results = evaluate_questions(questions, top_n=settings.assistant_top_n, settings=settings)
 
+    answer_ms = sum(result.duration_ms for result in evaluation_results)
+    average_ms = round(answer_ms / len(evaluation_results), 2) if evaluation_results else 0.0
+    slowest = max(evaluation_results, key=lambda result: result.duration_ms, default=None)
+    benchmark = {
+        "settings_ms": settings_ms,
+        "bootstrap_ms": bootstrap_ms,
+        "load_questions_ms": load_ms,
+        "answer_questions_total_ms": answer_ms,
+        "answer_questions_avg_ms": average_ms,
+        "write_results_ms": 0,
+        "total_ms": 0,
+    }
+    summary = {
+        "question_count": len(evaluation_results),
+        "question_files": sorted({result.question_file for result in evaluation_results}),
+        "slowest_question": slowest.answer.question if slowest else "",
+        "slowest_question_ms": slowest.duration_ms if slowest else 0,
+    }
+
     write_started_at = perf_counter()
-    write_json_results(output_path, evaluation_results)
+    write_json_results(output_path, evaluation_results, benchmark=benchmark, summary=summary)
     write_ms = elapsed_ms(write_started_at)
 
     total_ms = elapsed_ms(total_started_at)
+    benchmark["write_results_ms"] = write_ms
+    benchmark["total_ms"] = total_ms
+    write_json_results(output_path, evaluation_results, benchmark=benchmark, summary=summary)
     print_benchmark_summary(
         output_path=output_path,
         question_count=len(evaluation_results),
@@ -115,14 +137,44 @@ def resolve_output_path() -> Path:
     return DEFAULT_OUTPUT_DIR / f"rag-evaluation-{timestamp}.json"
 
 
-def write_json_results(path: Path, results: list[EvaluationResult]) -> None:
+def write_json_results(
+    path: Path,
+    results: list[EvaluationResult],
+    *,
+    benchmark: dict[str, object] | None = None,
+    summary: dict[str, object] | None = None,
+) -> None:
     """Write a structured JSON report that preserves Markdown answers."""
 
     payload = {
         "created_at": datetime.now(UTC).isoformat(),
+        "summary": summary or build_summary(results),
+        "benchmark": benchmark or build_benchmark(results),
         "results": [build_json_result(result) for result in results],
     }
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def build_summary(results: list[EvaluationResult]) -> dict[str, object]:
+    """Build run-level summary metadata for an evaluation report."""
+
+    slowest = max(results, key=lambda result: result.duration_ms, default=None)
+    return {
+        "question_count": len(results),
+        "question_files": sorted({result.question_file for result in results}),
+        "slowest_question": slowest.answer.question if slowest else "",
+        "slowest_question_ms": slowest.duration_ms if slowest else 0,
+    }
+
+
+def build_benchmark(results: list[EvaluationResult]) -> dict[str, object]:
+    """Build fallback benchmark metadata from per-question timings."""
+
+    answer_ms = sum(result.duration_ms for result in results)
+    return {
+        "answer_questions_total_ms": answer_ms,
+        "answer_questions_avg_ms": round(answer_ms / len(results), 2) if results else 0.0,
+    }
 
 
 def build_json_result(result: EvaluationResult) -> dict[str, object]:

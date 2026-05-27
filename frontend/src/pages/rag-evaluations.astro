@@ -1,0 +1,305 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+if (import.meta.env.PROD) {
+	return new Response(null, { status: 404 });
+}
+
+const apiBaseUrl = import.meta.env.PUBLIC_API_BASE_URL?.replace(/\/$/, '') ?? '';
+---
+
+<BaseLayout title="RAG Evaluations" canonicalPath="/rag-evaluations">
+	<section class="mx-auto max-w-7xl space-y-6">
+		<div class="space-y-3">
+			<p class="text-sm font-medium uppercase tracking-[0.3em] text-cyan-300/80">Development Tool</p>
+			<div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+				<div>
+					<h1 class="text-4xl font-semibold tracking-tight text-slate-50 sm:text-5xl">RAG Evaluations</h1>
+					<p class="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+						Inspect offline RAG evaluation runs, generated answers, retrieval sources, scores, boosts, and timings.
+					</p>
+				</div>
+				<a class="text-sm text-cyan-300" href="/">Back to portfolio</a>
+			</div>
+		</div>
+
+		<div id="rag-evaluations-root" data-api-base-url={apiBaseUrl}></div>
+		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+		<script type="module">
+			const root = document.getElementById('rag-evaluations-root');
+
+			if (!root) {
+				throw new Error('RAG evaluations root missing.');
+			}
+
+			const apiBaseUrl = root.dataset.apiBaseUrl?.replace(/\/$/, '') ?? '';
+			let evaluations = [];
+			let activeReport;
+
+			const state = document.createElement('p');
+			state.className = 'rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-300';
+			state.textContent = 'Loading evaluation reports...';
+
+			const controls = document.createElement('div');
+			controls.className = 'grid gap-3 rounded-2xl border border-slate-800 bg-slate-900/70 p-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]';
+			controls.hidden = true;
+
+			const reportSelect = document.createElement('select');
+			reportSelect.className = 'w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-cyan-400';
+
+			const searchInput = document.createElement('input');
+			searchInput.className = 'w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400';
+			searchInput.type = 'search';
+			searchInput.placeholder = 'Search question, answer, source...';
+
+			const fileFilter = document.createElement('select');
+			fileFilter.className = reportSelect.className;
+
+			controls.append(labeledControl('Evaluation run', reportSelect), labeledControl('Search', searchInput), labeledControl('Question file', fileFilter));
+
+			const summary = document.createElement('div');
+			summary.className = 'grid gap-3 sm:grid-cols-2 lg:grid-cols-4';
+			summary.hidden = true;
+
+			const results = document.createElement('div');
+			results.className = 'space-y-4';
+
+			root.replaceChildren(state, controls, summary, results);
+
+			function labeledControl(labelText, control) {
+				const wrapper = document.createElement('label');
+				wrapper.className = 'space-y-1';
+
+				const label = document.createElement('span');
+				label.className = 'block text-xs uppercase tracking-[0.2em] text-slate-500';
+				label.textContent = labelText;
+
+				wrapper.append(label, control);
+				return wrapper;
+			}
+
+			function formatMs(value) {
+				const numeric = Number(value || 0);
+				if (numeric < 1000) return `${numeric}ms`;
+				return `${(numeric / 1000).toFixed(1)}s`;
+			}
+
+			function metricCard(label, value) {
+				const card = document.createElement('div');
+				card.className = 'rounded-2xl border border-slate-800 bg-slate-900/70 p-4';
+
+				const title = document.createElement('p');
+				title.className = 'text-xs uppercase tracking-[0.2em] text-slate-500';
+				title.textContent = label;
+
+				const body = document.createElement('p');
+				body.className = 'mt-2 text-2xl font-semibold text-slate-50';
+				body.textContent = String(value);
+
+				card.append(title, body);
+				return card;
+			}
+
+			function renderSummary(report) {
+				const benchmark = report.benchmark ?? {};
+				const reportSummary = report.summary ?? {};
+				summary.replaceChildren(
+					metricCard('Questions', reportSummary.question_count ?? report.results?.length ?? 0),
+					metricCard('Total', formatMs(benchmark.total_ms)),
+					metricCard('Average', formatMs(benchmark.answer_questions_avg_ms)),
+					metricCard('Bootstrap', formatMs(benchmark.bootstrap_ms)),
+				);
+				summary.hidden = false;
+			}
+
+			function renderFileFilter(report) {
+				const files = [...new Set((report.results ?? []).map((item) => item.question_file).filter(Boolean))].sort();
+				fileFilter.replaceChildren(new Option('All files', ''));
+				for (const file of files) {
+					fileFilter.append(new Option(file, file));
+				}
+			}
+
+			function renderResults() {
+				if (!activeReport) return;
+
+				const query = searchInput.value.trim().toLowerCase();
+				const selectedFile = fileFilter.value;
+				const filtered = (activeReport.results ?? []).filter((item) => {
+					if (selectedFile && item.question_file !== selectedFile) return false;
+					if (!query) return true;
+
+					const haystack = [
+						item.question,
+						item.answer,
+						item.rewritten_query,
+						...(item.sources ?? []).map((source) => `${source.title ?? ''} ${source.path ?? ''} ${source.content_type ?? ''}`),
+					].join(' ').toLowerCase();
+					return haystack.includes(query);
+				});
+
+				results.replaceChildren();
+
+				if (!filtered.length) {
+					const empty = document.createElement('p');
+					empty.className = 'rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-sm text-slate-400';
+					empty.textContent = 'No evaluation results match the current filters.';
+					results.append(empty);
+					return;
+				}
+
+				for (const item of filtered) {
+					results.append(renderResultCard(item));
+				}
+			}
+
+			function renderResultCard(item) {
+				const card = document.createElement('article');
+				card.className = 'overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70 shadow-lg shadow-black/10';
+
+				const header = document.createElement('div');
+				header.className = 'border-b border-slate-800 p-4';
+
+				const meta = document.createElement('p');
+				meta.className = 'text-xs uppercase tracking-[0.2em] text-slate-500';
+				meta.textContent = `${item.question_file ?? 'unknown file'} · ${formatMs(item.duration_ms)}`;
+
+				const question = document.createElement('h2');
+				question.className = 'mt-2 text-xl font-semibold text-slate-50';
+				question.textContent = item.question ?? 'Untitled question';
+
+				header.append(meta, question);
+
+				if (item.rewritten_query) {
+					const rewritten = document.createElement('p');
+					rewritten.className = 'mt-2 text-sm text-slate-400';
+					rewritten.textContent = `Rewritten: ${item.rewritten_query}`;
+					header.append(rewritten);
+				}
+
+				const body = document.createElement('div');
+				body.className = 'space-y-5 p-4';
+
+				const answer = document.createElement('div');
+				answer.className = 'prose prose-invert max-w-none text-sm';
+				answer.innerHTML = window.marked.parse(item.answer ?? '');
+
+				body.append(answer, renderSources(item.sources ?? []), renderChunks(item.top_chunks ?? []));
+				card.append(header, body);
+				return card;
+			}
+
+			function renderSources(sources) {
+				const details = document.createElement('details');
+				details.className = 'rounded-xl border border-slate-800 bg-slate-950/50 p-3';
+
+				const summary = document.createElement('summary');
+				summary.className = 'cursor-pointer text-sm font-medium text-slate-200';
+				summary.textContent = `Sources (${sources.length})`;
+				details.append(summary);
+
+				const list = document.createElement('div');
+				list.className = 'mt-3 grid gap-2 lg:grid-cols-2';
+				for (const source of sources) {
+					list.append(scoreCard(source));
+				}
+				details.append(list);
+				return details;
+			}
+
+			function renderChunks(chunks) {
+				const details = document.createElement('details');
+				details.className = 'rounded-xl border border-slate-800 bg-slate-950/50 p-3';
+
+				const summary = document.createElement('summary');
+				summary.className = 'cursor-pointer text-sm font-medium text-slate-200';
+				summary.textContent = `Top chunks (${chunks.length})`;
+				details.append(summary);
+
+				const list = document.createElement('div');
+				list.className = 'mt-3 grid gap-2 lg:grid-cols-2';
+				for (const chunk of chunks) {
+					list.append(scoreCard(chunk));
+				}
+				details.append(list);
+				return details;
+			}
+
+			function scoreCard(item) {
+				const card = document.createElement('div');
+				card.className = 'rounded-lg border border-slate-800 bg-slate-950 p-3 text-xs text-slate-400';
+
+				const title = document.createElement('p');
+				title.className = 'font-medium text-slate-100';
+				title.textContent = item.title ?? item.path ?? 'Untitled source';
+
+				const path = document.createElement('p');
+				path.className = 'mt-1 text-slate-500';
+				path.textContent = item.path ?? item.source_uri ?? '';
+
+				const scores = document.createElement('p');
+				scores.className = 'mt-2 text-slate-400';
+				scores.textContent = `relevance ${item.relevance ?? 'n/a'} · rerank ${Number(item.rerank_score ?? 0).toFixed(4)} · boost ${item.boost ?? 1}`;
+
+				card.append(title, path, scores);
+				return card;
+			}
+
+			async function loadReports() {
+				if (!apiBaseUrl) {
+					state.textContent = 'Set PUBLIC_API_BASE_URL in the frontend env.';
+					return;
+				}
+
+				const response = await fetch(`${apiBaseUrl}/rag-evaluations`);
+				if (!response.ok) {
+					throw new Error(`Failed to load evaluations: ${response.status}`);
+				}
+
+				const payload = await response.json();
+				evaluations = payload.evaluations ?? [];
+				if (!evaluations.length) {
+					state.textContent = 'No evaluation reports found. Run make evaluate-rag first.';
+					return;
+				}
+
+				reportSelect.replaceChildren();
+				for (const evaluation of evaluations) {
+					const count = evaluation.summary?.question_count ?? 0;
+					reportSelect.append(new Option(`${evaluation.filename} (${count} questions)`, evaluation.filename));
+				}
+
+				controls.hidden = false;
+				state.hidden = true;
+				await loadReport(evaluations[0].filename);
+			}
+
+			async function loadReport(filename) {
+				state.hidden = false;
+				state.textContent = `Loading ${filename}...`;
+
+				const response = await fetch(`${apiBaseUrl}/rag-evaluations/${encodeURIComponent(filename)}`);
+				if (!response.ok) {
+					throw new Error(`Failed to load report: ${response.status}`);
+				}
+
+				activeReport = await response.json();
+				state.hidden = true;
+				renderSummary(activeReport);
+				renderFileFilter(activeReport);
+				renderResults();
+			}
+
+			reportSelect.addEventListener('change', () => loadReport(reportSelect.value).catch(showError));
+			searchInput.addEventListener('input', renderResults);
+			fileFilter.addEventListener('change', renderResults);
+
+			function showError(error) {
+				state.hidden = false;
+				state.textContent = error instanceof Error ? error.message : String(error);
+			}
+
+			loadReports().catch(showError);
+		</script>
+	</section>
+</BaseLayout>

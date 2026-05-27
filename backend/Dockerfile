@@ -7,8 +7,10 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-COPY pyproject.toml uv.lock README.md ./
-COPY api ./api
+COPY backend/pyproject.toml backend/uv.lock backend/README.md ./
+COPY backend/api ./api
+COPY content ./content
+COPY instructions ./instructions
 
 RUN uv sync --frozen --no-dev
 
