@@ -7,7 +7,8 @@ on:
       - main
 
 env:
-  IMAGE_NAME: ghcr.io/noxels/portfolio
+  API_IMAGE_NAME: ghcr.io/noxels/portfolio-api
+  FRONTEND_IMAGE_NAME: ghcr.io/noxels/portfolio-frontend
   IMAGE_TAG: latest
 
 jobs:
@@ -75,7 +76,7 @@ jobs:
         run: npm run report:bundle
 
   publish:
-    name: Publish and Deploy
+    name: Publish Images
     needs: verify
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -96,7 +97,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push image
+      - name: Build and push frontend image
         uses: docker/build-push-action@v6
         with:
           context: ./frontend
@@ -106,27 +107,15 @@ jobs:
             COMMIT_SHA=${{ github.sha }}
             BUILT_AT=${{ github.run_id }}
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.FRONTEND_IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+            ${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}
 
-      - name: Trigger deploy
-        env:
-          WEBHOOK_SECRET: ${{ secrets.YGGDRASIL_WEBHOOK_SECRET }}
-          WEBHOOK_URL: https://hooks.noel.fyi/hooks/deploy
-          REPOSITORY: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-
-          payload=$(jq -cn \
-            --arg repository "$REPOSITORY" \
-            --arg ref "$GITHUB_REF" \
-            '{repository: $repository, ref: $ref}')
-
-          signature="sha256=$(printf '%s' "$payload" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" -binary | xxd -p -c 256)"
-
-          curl --fail-with-body \
-            --request POST \
-            --header "Content-Type: application/json" \
-            --header "X-Hub-Signature-256: $signature" \
-            --data "$payload" \
-            "$WEBHOOK_URL"
+      - name: Build and push API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.API_IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+            ${{ env.API_IMAGE_NAME }}:${{ github.sha }}
