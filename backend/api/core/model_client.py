@@ -217,7 +217,7 @@ def get_available_model_ids(
     """
 
     settings = settings or get_settings()
-    url = (base_url or settings.llm_base_url).rstrip("/") + "/v1/models"
+    url = urljoin((base_url or settings.llm_base_url).rstrip("/") + "/", settings.models_path.lstrip("/"))
     response = httpx.get(
         url,
         headers=get_headers(settings),
@@ -327,10 +327,10 @@ def get_client_kwargs(settings: Settings) -> dict[str, dict[str, str]]:
 def get_headers(settings: Settings) -> dict[str, str]:
     """Return HTTP headers for the remote model API."""
 
-    if settings.llm_bearer_token is None:
+    if settings.openwebui_api_key is None:
         return {}
 
-    token = settings.llm_bearer_token.get_secret_value()
+    token = settings.openwebui_api_key.get_secret_value()
     if not token:
         return {}
 

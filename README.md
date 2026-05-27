@@ -18,9 +18,9 @@ Default dev endpoints:
 
 Default remote model endpoints:
 
-- `API_LLM_BASE_URL=https://llm.noel.fyi`
-- `API_EMBEDDINGS_BASE_URL=https://embeddings.noel.fyi`
-- `API_RERANKING_BASE_URL=https://reranking.noel.fyi`
+- `API_LLM_BASE_URL=https://ai.noel.fyi`
+- `API_EMBEDDINGS_BASE_URL=https://ai.noel.fyi`
+- `API_RERANKING_BASE_URL=https://ai.noel.fyi`
 
 Override those values in `.env` if the model services are exposed through a LAN or VPN address.
 
@@ -34,6 +34,19 @@ Pushes to `main` publish two GHCR images:
 The API image includes `content/` and `instructions/`, so production does not need to mount those directories from the server filesystem.
 
 Runtime environment values are configured on the server through `.env`; CI does not inject deployment-specific environment variables into published images.
+
+For Open WebUI-backed model services, set the server API key in `.env`:
+
+```env
+API_OPENWEBUI_API_KEY=replace-with-open-webui-api-key
+```
+
+If your Open WebUI instance exposes different OpenAI-compatible paths, override these in `.env`:
+
+```env
+API_CHAT_COMPLETIONS_PATH=/openai/chat/completions
+API_MODELS_PATH=/openai/models
+```
 
 ## Server Deployment
 
