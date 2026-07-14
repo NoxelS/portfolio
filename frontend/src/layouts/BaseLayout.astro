@@ -8,9 +8,10 @@ interface Props {
 	title?: string;
 	description?: string;
 	canonicalPath?: string;
+	noindex?: boolean;
 }
 
-const { title, description, canonicalPath } = Astro.props;
+const { title, description, canonicalPath, noindex } = Astro.props;
 const openPanelConfig = getOpenPanelConfig();
 const runtimeConfig = {
 	PUBLIC_BUILD_VERSION: process.env.PUBLIC_BUILD_VERSION ?? '',
@@ -22,10 +23,10 @@ const runtimeConfig = {
 <!doctype html>
 <html lang="en">
 	<head>
-		<SEO title={title} description={description} canonicalPath={canonicalPath} />
+		<SEO title={title} description={description} canonicalPath={canonicalPath} noindex={noindex} />
 	</head>
 	<body>
-		<main class="min-h-screen px-6 py-10 sm:px-10 lg:px-16">
+		<main class="min-h-screen overflow-x-hidden px-3 py-6 sm:px-4 lg:px-6">
 			<slot />
 		</main>
 		<script define:vars={{ runtimeConfig }}>

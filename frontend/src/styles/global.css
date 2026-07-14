@@ -1,16 +1,18 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@import "./theme.css";
+@import "./utilities.css";
 
 @layer base {
 	html {
-		@apply bg-slate-950 text-slate-100 antialiased;
+		@apply bg-canvas text-foreground antialiased;
 	}
 
 	body {
-		@apply min-h-screen bg-slate-950 text-slate-100;
+		@apply min-h-screen bg-canvas text-foreground;
 	}
 
 	a {
-		@apply text-cyan-300 underline decoration-cyan-300/40 underline-offset-4 transition hover:text-cyan-200 hover:decoration-cyan-200;
+		@apply text-accent underline decoration-accent/40 underline-offset-4 transition hover:text-accent-strong hover:decoration-accent-strong;
 	}
 }

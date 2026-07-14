@@ -1,0 +1,96 @@
+@theme {
+	--font-sans: "Helvetica Neue", Helvetica, Arial, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	--font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+	--color-powder-petal-50: oklch(96.10% 0.011 45.72);
+	--color-powder-petal-100: oklch(91.98% 0.024 44.33);
+	--color-powder-petal-200: oklch(84.09% 0.047 45.34);
+	--color-powder-petal-300: oklch(76.10% 0.074 44.63);
+	--color-powder-petal-400: oklch(68.18% 0.101 43.67);
+	--color-powder-petal-500: oklch(60.69% 0.129 42.79);
+	--color-powder-petal-600: oklch(51.68% 0.107 42.93);
+	--color-powder-petal-700: oklch(42.39% 0.085 43.52);
+	--color-powder-petal-800: oklch(32.42% 0.060 44.12);
+	--color-powder-petal-900: oklch(21.57% 0.035 43.37);
+	--color-powder-petal-950: oklch(18.06% 0.025 41.92);
+
+	--color-ghost-white-50: oklch(94.72% 0.042 321.03);
+	--color-ghost-white-100: oklch(89.70% 0.082 320.31);
+	--color-ghost-white-200: oklch(80.34% 0.165 320.76);
+	--color-ghost-white-300: oklch(72.37% 0.238 320.50);
+	--color-ghost-white-400: oklch(66.82% 0.290 320.02);
+	--color-ghost-white-500: oklch(63.87% 0.309 318.42);
+	--color-ghost-white-600: oklch(54.11% 0.261 318.68);
+	--color-ghost-white-700: oklch(43.73% 0.211 318.70);
+	--color-ghost-white-800: oklch(32.85% 0.158 319.31);
+	--color-ghost-white-900: oklch(20.77% 0.100 319.85);
+	--color-ghost-white-950: oklch(17.03% 0.081 321.05);
+
+	--color-thistle-50: oklch(94.96% 0.020 308.23);
+	--color-thistle-100: oklch(90% 0.039 305.64);
+	--color-thistle-200: oklch(79.90% 0.079 304.91);
+	--color-thistle-300: oklch(69.78% 0.121 303.86);
+	--color-thistle-400: oklch(59.93% 0.163 302.73);
+	--color-thistle-500: oklch(50.59% 0.199 299.93);
+	--color-thistle-600: oklch(43.26% 0.167 300.27);
+	--color-thistle-700: oklch(35.50% 0.132 300.08);
+	--color-thistle-800: oklch(27.43% 0.096 300.69);
+	--color-thistle-900: oklch(18.78% 0.054 301.96);
+	--color-thistle-950: oklch(15.92% 0.041 304.20);
+
+	--color-soft-periwinkle-50: oklch(94.21% 0.023 285.95);
+	--color-soft-periwinkle-100: oklch(88.10% 0.048 285.37);
+	--color-soft-periwinkle-200: oklch(76.08% 0.100 283.77);
+	--color-soft-periwinkle-300: oklch(64.14% 0.154 281.14);
+	--color-soft-periwinkle-400: oklch(52.97% 0.205 276.83);
+	--color-soft-periwinkle-500: oklch(43.55% 0.248 269.83);
+	--color-soft-periwinkle-600: oklch(37.25% 0.207 270.38);
+	--color-soft-periwinkle-700: oklch(30.62% 0.167 270.89);
+	--color-soft-periwinkle-800: oklch(23.73% 0.121 272.36);
+	--color-soft-periwinkle-900: oklch(16.46% 0.069 275.71);
+	--color-soft-periwinkle-950: oklch(14.20% 0.051 277.68);
+
+	--color-medium-slate-blue-50: oklch(93.77% 0.027 288.17);
+	--color-medium-slate-blue-100: oklch(87.78% 0.054 287.59);
+	--color-medium-slate-blue-200: oklch(75.27% 0.114 285.60);
+	--color-medium-slate-blue-300: oklch(63.21% 0.173 282.50);
+	--color-medium-slate-blue-400: oklch(52% 0.231 276.90);
+	--color-medium-slate-blue-500: oklch(43.77% 0.271 268.98);
+	--color-medium-slate-blue-600: oklch(37.33% 0.228 269.38);
+	--color-medium-slate-blue-700: oklch(30.63% 0.181 270.44);
+	--color-medium-slate-blue-800: oklch(23.60% 0.133 271.88);
+	--color-medium-slate-blue-900: oklch(16.21% 0.076 276.57);
+	--color-medium-slate-blue-950: oklch(13.62% 0.060 277.26);
+
+	--color-canvas: oklch(100% 0 0);
+	--color-foreground: var(--color-medium-slate-blue-950);
+	--color-muted: var(--color-soft-periwinkle-700);
+	--color-muted-strong: var(--color-soft-periwinkle-800);
+	--color-surface: oklch(99.2% 0.006 82);
+	--color-surface-raised: oklch(98.7% 0.010 82);
+	--color-border: var(--color-medium-slate-blue-100);
+	--color-border-strong: var(--color-medium-slate-blue-300);
+	--color-accent: var(--color-medium-slate-blue-500);
+	--color-accent-strong: var(--color-medium-slate-blue-600);
+	--color-accent-contrast: var(--color-ghost-white-50);
+	--color-danger: var(--color-powder-petal-700);
+	--color-warning: var(--color-powder-petal-500);
+	--color-success: var(--color-soft-periwinkle-600);
+
+	--radius-card: 0;
+	--radius-control: 0;
+	--radius-pill: 0;
+
+	--shadow-surface: 0 1.5rem 4rem -2rem oklch(16.21% 0.076 276.57 / 0.24);
+	--shadow-control: 0 1px 0 oklch(100% 0 0 / 0.75) inset;
+
+	--ease-standard: cubic-bezier(0.2, 0, 0, 1);
+	--ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+	--site-container-inline: clamp(1rem, 4vw, 2rem);
+	--site-section-block: clamp(3rem, 8vw, 7rem);
+	--site-content-width: 72rem;
+	--site-reading-width: 44rem;
+}
