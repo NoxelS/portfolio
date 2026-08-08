@@ -1,88 +1,115 @@
 ---
+/**
+ * Portfolio landing page — top-level route.
+ *
+ * Composes the full-page layout: hero (LandingPage), alternating banner
+ * quotes, and section blocks (Projects, TechStack, Contact, Footer).
+ * The project data constant below is also consumed by ProjectCarousel
+ * once it is wired into the "My Projects" section.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LandingPage from '../components/LandingPage.astro';
 import ProjectCarousel from '../components/ProjectCarousel.astro';
+import BannerQuote from '../components/BannerQuote.astro';
 
 const projects = [
-	{
-		title: 'AI Transformation @ NetCom',
-		description: `### Process automation
+    {
+        title: 'AI Transformation @ NetCom',
+        description: `### Process automation
 
 Lorem ipsum dolor sit amet, **consectetur adipiscing elit**. Integer nec odio praesent libero sed cursus ante dapibus diam.
 
 - Sed nisi nulla, quis sem at nibh elementum imperdiet.
 - Duis sagittis ipsum, praesent mauris fusce nec tellus.`,
-		link: '/projects/project1',
-		logoSrc: '/assets/companies/netcom.jpeg',
-		logoAlt: 'NetCom logo',
-	},
-	{
-		title: 'Data & AI Consulting @ KPMG',
-		description: `### Analytics delivery
+        link: '/projects/project1',
+        logoSrc: '/assets/companies/netcom.jpeg',
+        logoAlt: 'NetCom logo'
+    },
+    {
+        title: 'Data & AI Consulting @ KPMG',
+        description: `### Analytics delivery
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. **Praesent mauris** fusce nec tellus sed augue semper porta.
 
 > Mauris massa vestibulum lacinia arcu eget nulla class aptent taciti sociosqu.`,
-		link: '/projects/project2',
-		logoSrc: '/assets/companies/kpmg.svg',
-		logoAlt: 'KPMG logo',
-	},
-	{
-		title: 'CNN Model Development for Drug Discovery @ UDS',
-		description: `### Research prototype
+        link: '/projects/project2',
+        logoSrc: '/assets/companies/kpmg.svg',
+        logoAlt: 'KPMG logo'
+    },
+    {
+        title: 'CNN Model Development for Drug Discovery @ UDS',
+        description: `### Research prototype
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sodales ligula in libero sed dignissim lacinia nunc.
 
 1. Class aptent taciti sociosqu ad litora torquent.
 2. Curabitur tortor pellentesque nibh aenean quam.`,
-		link: '/projects/project3',
-		logoSrc: '/assets/companies/uds.png',
-		logoAlt: 'Saarland University logo',
-	},
-	{
-		title: 'CMS Product Ownership',
-		description: `### Product operations
+        link: '/projects/project3',
+        logoSrc: '/assets/companies/uds.png',
+        logoAlt: 'Saarland University logo'
+    },
+    {
+        title: 'CMS Product Ownership',
+        description: `### Product operations
 
 Lorem ipsum dolor sit amet, **adipiscing elit**. Sed dignissim lacinia nunc curabitur tortor pellentesque nibh.
 
 Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.`,
-		link: '/projects/project3',
-		logoSrc: '/assets/companies/gip_logo_neg.png',
-		logoAlt: 'GIP Exyr logo',
-	}
+        link: '/projects/project3',
+        logoSrc: '/assets/companies/gip_logo_neg.png',
+        logoAlt: 'GIP Exyr logo'
+    }
 ];
-
 ---
 
 <BaseLayout title="Noel Schwabenland">
-	<LandingPage />
+    <LandingPage />
 
-	<div class="grid gap-8">
-		<!-- Who I Am -->
-		<section id="my-work" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20 gap-4 overflow-hidden">
-			<h4 class="uppercase text-5xl lora">My Work</h4>
-			<p class="text-gray-500 text-lg">Only recent projects are shown here. More information upon request.</p>
-			<div class="mt-4">
-				<ProjectCarousel projects={projects} />
-			</div>
-		</section>
+    <div class="grid gap-8">
+        <BannerQuote
+            quote="Complex problems don't always require complex solutions."
+            subquote="Sometimes the simplest approach is the best. My background in both technical and business domains allows me to bridge the gap between these worlds."
+        />
 
-		<!-- My Background -->
-		<section id="my-background" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
-			<h4 class="uppercase text-5xl lora">My Background</h4>
-			<p class="text-muted-strong">Coming soon.</p>
-		</section>
+        <!-- Who I Am -->
+        <section id="my-work" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20 gap-4 overflow-hidden">
+            <h4 class="uppercase text-5xl lora">What makes me stand out</h4>
+        </section>
 
-		<!-- My Tech Stack -->
-		<section id="my-tech-stack" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
-			<h4 class="uppercase text-5xl lora">My Tech Stack</h4>
-			<p class="text-muted-strong">Coming soon.</p>
-		</section>
+        <BannerQuote
+            quote="Not only theory, but also proven practice."
+            subquote="Even though I have a strong theoretical foundation, I already shipped several projects to real users and stakeholders."
+        />
 
-		<!-- Contact -->
-		<section id="contact" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
-			<h4 class="uppercase text-5xl lora">Contact</h4>
-			<p class="text-muted-strong">Coming soon.</p>
-		</section>
-	</div>
+        <!-- My Projects -->
+        <section id="my-projects" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
+            <h4 class="uppercase text-5xl lora">My Projects</h4>
+        </section>
+
+        <BannerQuote
+            quote="From Ideas and Requirements to Reality."
+            subquote="With a broad skill set and a passion for learning, I help bring ideas to life."
+        />
+
+        <!-- My Tech Stack -->
+        <section id="my-tech-stack" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
+            <h4 class="uppercase text-5xl lora">My Tech Stack</h4>
+        </section>
+
+        <BannerQuote
+            quote="I prefer human interaction."
+            subquote="Even though I work in cooperation with artificial intelligence, I believe that personal connections are irreplaceable. So I always make time for face-to-face meetings and conversations."
+        />
+
+        <!-- Contact -->
+        <section id="contact" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
+            <h4 class="uppercase text-5xl lora">Contact</h4>
+
+        </section>
+
+        <!-- Footer -->
+        <section id="footer" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
+            <h4 class="uppercase text-5xl lora">Footer</h4>
+        </section>
+    </div>
 </BaseLayout>

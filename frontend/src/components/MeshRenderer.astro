@@ -1,0 +1,21 @@
+---
+/**
+ * MeshRenderer — client-side OGL WebGL halftone mesh with Canvas 2D fallback.
+ *
+ * Initialises the animation on the canvas. Uses a plain `<script>` tag so
+ * Astro/Vite bundles it as a client module (identical pattern to
+ * `ProjectCarousel.astro`).
+ *
+ * @component
+ */
+---
+
+<canvas id="mesh-canvas" class="absolute inset-0 h-full w-full" />
+
+<script>
+  import { init } from '../scripts/landing-hero';
+  const landing = document.getElementById('landing-page');
+  const frame = document.getElementById('mesh-frame');
+  const cvs = document.getElementById('mesh-canvas') as HTMLCanvasElement;
+  if (landing && frame && cvs) init(landing, frame, cvs);
+</script>

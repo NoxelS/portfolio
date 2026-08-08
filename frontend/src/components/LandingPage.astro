@@ -11,19 +11,28 @@ import LandingHero from './LandingHero.astro';
 ---
 
 <!-- Full-viewport section shell -->
-<section class="relative flex h-[100vh] w-full flex-col gap-6 border border-accent/20">
+<section id="landing-page" class="relative flex h-[100vh] w-full flex-col gap-6 border border-accent/20">
     <!-- Renders the animated halftone mesh. -->
     <LandingHero />
     <div class="absolute top-1/2 p-8 py-16 flex flex-col gap-8 w-full">
-        <h2 class="text-soft-periwinkle-800 uppercase text-lg font-bold">Full Stack AI Engineer</h2>
-        <h1 class="uppercase text-5xl lora">Noel Pascal Schwabenland</h1>
+        <div class="flex flex-col gap-2">
+            <h2 class="text-soft-periwinkle-800 text-xl">Freelance Full Stack AI Engineer</h2>
+            <h1 class="uppercase text-5xl lora">Noel Pascal Schwabenland</h1>
+        </div>
+
         <h3 class="text-3xl">
-            Lore ipsum dolor sit amet, consectetur adipiscing elit. <br>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            <!-- AI Engineer with real-world multi-disciplinary expertise in full-stack software development, ML Ops, and Data Science.  -->
+            I help companies analyze potential opportunities and drive innovation through strategic technology solutions with 
+            a focus on generative AI, RAG, agentic systems, speech processing, and inference pipelines.
         </h3>
+
         <h5 class="text-soft-periwinkle-700 lora text-lg">Im currently available 20h/week</h5>
-        <div class="flex flex-row gap-4 self-end">
+        
+        <div class="flex flex-row gap-4 self-start">
             <div class="bg-soft-periwinkle-800 text-white px-4 py-2 text-lg rounded-sm uppercase flex flex-row justify-center items-center gap-4">Explore my work
                 <Icon name="iconoir:arrow-down"></Icon>
+            </div>
+            <div class="border-periwinkle-800 border-1 px-4 py-2 text-lg rounded-sm uppercase flex flex-row justify-center items-center gap-4"> Give me a call
             </div>
         </div>
     </div>
