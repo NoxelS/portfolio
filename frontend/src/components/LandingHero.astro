@@ -1,0 +1,617 @@
+---
+/**
+ * LandingHero — animated liquid halftone mesh rendered on a 2D canvas.
+ *
+ * Owns a full-viewport `<div id="mesh-frame">` containing layered radial
+ * gradients, dot-noise grain, and a canvas that paints thousands of deformed
+ * droplet-shaped halftone points whose motion is driven by layered sine waves
+ * and mouse-positioned vortex fields.
+ *
+ * No section shell or identity overlay is included here; those are owned by
+ * the parent `LandingPage` component. The script runs `is:inline` so it never
+ * contributes to Astro's server-side hydration and the animation is purely
+ * client-side.
+ *
+ * @component
+ */
+import { Icon } from 'astro-icon/components';
+---
+
+<div
+    id="mesh-frame"
+    class="absolute top-0 left-0 h-1/2 w-full overflow-hidden bg-black"
+    style="--mesh-background: color-mix(in oklch, var(--color-accent) 55%, black); background: var(--mesh-background);"
+    aria-label="Abstract liquid halftone mesh"
+    role="img"
+>
+    <div class="absolute top-0 left-0 z-10 flex w-full justify-between p-8">
+        <div class="text-white"></div>
+        <div class="text-white">
+            <div class="border border-white  rounded-md px-4 py-2 text-base">Give me a call</div>
+        </div>
+    </div>
+    <div class="mesh-color mesh-color-a"></div>
+    <div class="mesh-color mesh-color-b"></div>
+    <div class="mesh-color mesh-color-c"></div>
+    <canvas id="mesh-canvas" class="absolute inset-0 h-full w-full"></canvas>
+    <div class="mesh-shadow mesh-shadow-a"></div>
+    <div class="mesh-shadow mesh-shadow-b"></div>
+    <div class="mesh-grain"></div>
+    <div class="absolute bottom-0 left-0 z-10 flex w-full justify-between items-end p-8">
+        <div class="text-white opacity-85 text-4xl lora">
+            I build with performance,<br> scalability and maintainability in mind.
+        </div>
+        <div class="flex flex-col gap-2">
+            <div class="text-white uppercase text-sm">My socials</div>
+            <div class="flex flex-row gap-4">
+                <a
+                    href="https://github.com/NoxelS"
+                    aria-label="GitHub profile"
+                    target="_blank"
+                    rel="noreferrer"
+                    class="flex w-8 h-8 items-center justify-center bg-white text-black rounded-md transition hover:bg-white/85"
+                >
+                    <Icon name="mdi:github" class="h-5 w-5" aria-hidden="true" />
+                </a>
+                <a
+                    href="https://www.linkedin.com/in/noel-pascal-schwabenland/"
+                    aria-label="LinkedIn profile"
+                    target="_blank"
+                    rel="noreferrer"
+                    class="flex w-8 h-8 items-center justify-center bg-white text-black rounded-md transition hover:bg-white/85"
+                >
+                    <Icon name="mdi:linkedin" class="h-5 w-5" aria-hidden="true" />
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .mesh-color,
+    .mesh-shadow,
+    .mesh-grain {
+        pointer-events: none;
+        position: absolute;
+    }
+
+    .mesh-color {
+        inset: -24%;
+        opacity: 0.7;
+    }
+
+    .mesh-color-a {
+        background: radial-gradient(ellipse at 18% 22%, color-mix(in oklch, var(--color-ghost-white-500) 64%, transparent) 0%, transparent 58%);
+    }
+
+    .mesh-color-b {
+        background: radial-gradient(ellipse at 82% 24%, color-mix(in oklch, var(--color-powder-petal-500) 58%, transparent) 0%, transparent 56%);
+    }
+
+    .mesh-color-c {
+        background: radial-gradient(ellipse at 48% 86%, color-mix(in oklch, var(--color-soft-periwinkle-950) 72%, transparent) 0%, transparent 62%);
+    }
+
+    .mesh-shadow {
+        inset: -18%;
+        opacity: 0.62;
+    }
+
+    .mesh-shadow-a {
+        background: radial-gradient(ellipse at 36% 56%, rgb(3 7 19 / 0.86) 0%, transparent 46%);
+    }
+
+    .mesh-shadow-b {
+        background: radial-gradient(ellipse at 72% 54%, rgb(5 8 23 / 0.82) 0%, transparent 42%);
+    }
+
+    .mesh-grain {
+        background-image: radial-gradient(circle at center, rgb(255 255 255 / 0.18) 0 0.0625rem, transparent 0.075rem);
+        background-size: 0.45rem 0.45rem;
+        inset: 0;
+        mix-blend-mode: soft-light;
+        opacity: 0.22;
+    }
+</style>
+
+<script is:inline>
+    // --- Initialisation ------------------------------------------------------
+    // Resolve DOM references once. The canvas is never server-rendered, so
+    // these elements exist by the time this script runs.
+    const meshFrame = document.getElementById('mesh-frame');
+    const canvas = document.getElementById('mesh-canvas');
+    const context = canvas.getContext('2d', { alpha: true, desynchronized: true });
+
+    if (!meshFrame || !canvas || !context) {
+        throw new Error('The mesh banner could not be initialized.');
+    }
+
+    // Logical (device-independent) canvas resolution. All deformation and
+    // intensity math operates in this coordinate space; the real canvas is
+    // scaled to it via the cover transform in drawMesh.
+    const width = 1600;
+    const height = 760;
+
+    // Grid step between halftone points (in logical pixels).
+    const spacing = 7.5;
+
+    // Shared mutable point array populated by createPoints.
+    const points = [];
+
+    // Reusable Path2D droplet shape — a soft, rounded teardrop used as the
+    // fill primitive for every halftone point. Defined once and reused via
+    // setTransform to position/scale each instance.
+    const droplet = new Path2D(
+        'M 0 -1 C 0.18 -0.74 0.28 -0.46 0.48 -0.48 C 0.7 -0.5 0.9 -0.34 1 0 C 0.9 0.34 0.7 0.5 0.48 0.48 C 0.28 0.46 0.18 0.74 0 1 C -0.18 0.74 -0.28 0.46 -0.48 0.48 C -0.7 0.5 -0.9 0.34 -1 0 C -0.9 -0.34 -0.7 -0.5 -0.48 -0.48 C -0.28 -0.46 -0.18 -0.74 0 -1 Z'
+    );
+
+    /**
+     * Computes a tangential vortex displacement.
+     *
+     * Given a point (x, y) relative to a vortex centre (cx, cy), returns a
+     * vector perpendicular to the radius, scaled by `strength` and attenuated
+     * by a Gaussian falloff over `radius`. The sign of `strength` determines
+     * swirl direction; the falloff makes the effect vanish far from the
+     * centre so distant points remain unaffected.
+     *
+     * @param x - World-space X of the point.
+     * @param y - World-space Y of the point.
+     * @param cx - X coordinate of the vortex centre.
+     * @param cy - Y coordinate of the vortex centre.
+     * @param radius - Gaussian falloff radius; points outside ~2×radius see
+     *   negligible displacement.
+     * @param strength - Tangential speed multiplier. Positive swirls one way,
+     *   negative the other; magnitude is clamped implicitly by the falloff.
+     * @returns A `{x, y}` offset to add to the point's position.
+     */
+    function vortex(x, y, cx, cy, radius, strength) {
+        const dx = x - cx;
+        const dy = y - cy;
+        const distance = Math.hypot(dx, dy);
+        const falloff = Math.exp(-(distance * distance) / (radius * radius));
+
+        return {
+            x: -dy * strength * falloff,
+            y: dx * strength * falloff
+        };
+    }
+
+    /**
+     * Deforms a point's position using layered sine waves and mouse-driven
+     * vortex fields, producing the organic, fluid-like motion of the mesh.
+     *
+     * The deformation combines three contributions:
+     *
+     * 1. **Layered sine waves** — three spatial harmonics with different
+     *    frequencies, amplitudes and phase offsets create a multi-scale
+     *    undulation. A fourth higher-frequency term adds fine detail. Layer
+     *    index shifts the phase so the two mesh layers move independently.
+     *
+     * 2. **Mouse-driven vortices** — two Gaussian vortex fields whose
+     *    centres orbit near the cursor position. Their sign flips between
+     *    layers so the mesh appears to wrinkle rather than shear uniformly.
+     *
+     * 3. **Central attraction** — a soft pull toward the cursor using an
+     *    exponential falloff, giving the impression that the mesh is
+     *    "sticking" to the cursor.
+     *
+     * All displacements are additive and returned as `{x, y}` offsets added
+     * to the original source position.
+     *
+     * @param x - Source X coordinate in the logical canvas space.
+     * @param y - Source Y coordinate in the logical canvas space.
+     * @param layer - Mesh layer index (0 = primary, 1 = secondary offset).
+     * @param mouseX - Normalised cursor X in [-1, 1].
+     * @param mouseY - Normalised cursor Y in [-1, 1].
+     * @returns `{x, y}` — the deformed world-space position.
+     */
+    function deform(x, y, layer = 0, mouseX = 0, mouseY = 0) {
+        const nx = x / width;
+        const ny = y / height;
+        const wave1 = Math.sin(nx * 12 + ny * 7 + layer * 0.7 + mouseX * 1.8);
+        const wave2 = Math.sin(nx * 5 - ny * 13 - layer * 0.45 + mouseY * 1.5);
+        const wave3 = Math.cos(nx * 18 + ny * 4.5 + (mouseX - mouseY) * 1.2);
+        let dx = 24 * wave1 + 11 * wave2 + 6 * wave3 + 4 * Math.sin(nx * 42 - ny * 31 + mouseX * 1.6);
+        let dy =
+            18 * Math.sin(nx * 8.2 - ny * 5.5 + mouseY * 1.4) +
+            10 * Math.cos(nx * 4 + ny * 12.5 + mouseX * 1.1) +
+            4 * Math.cos(nx * 34 + ny * 39 + mouseY * 1.5);
+        const leftVortex = vortex(x, y, 425 + mouseX * 80, 350 + mouseY * 50, 410, layer === 0 ? 0.13 : -0.08);
+        const rightVortex = vortex(x, y, 1290 - mouseX * 70, 400 - mouseY * 55, 460, layer === 0 ? -0.12 : 0.075);
+
+        dx += leftVortex.x + rightVortex.x;
+        dy += leftVortex.y + rightVortex.y;
+
+        const centreX = 880 + mouseX * 45;
+        const centreY = 330 + mouseY * 35;
+        const cdx = x - centreX;
+        const cdy = y - centreY;
+        const centreDistance = Math.hypot(cdx, cdy);
+        const centreFalloff = Math.exp(-(centreDistance * centreDistance) / (350 * 350));
+
+        return {
+            x: x + dx + cdx * 0.13 * centreFalloff,
+            y: y + dy + cdy * 0.08 * centreFalloff
+        };
+    }
+
+    function heatRegion(nx, ny, cx, cy, radiusX, radiusY, strength) {
+        const dx = (nx - cx) / radiusX;
+        const dy = (ny - cy) / radiusY;
+
+        return Math.exp(-(dx * dx + dy * dy)) * strength;
+    }
+
+    /**
+     * Evaluates the intensity (brightness) field at a point in the mesh.
+     *
+     * The field is built from a sum of Gaussian "heat regions" centred at
+     * various (x, y) locations with different radii and strengths, plus a
+     * subtle sine/cosine ripple and a linear ambient gradient that brightens
+     * the top-left corner. Layer shifts the horizontal positions of the
+     * Gaussian centres to desynchronise the two mesh layers.
+     *
+     * The result is clamped to [0, 1] and used to determine whether a point
+     * is visible (`intensity > threshold`) and to derive its radius, colour,
+     * and opacity.
+     *
+     * @param x - Source X coordinate (logical pixels).
+     * @param y - Source Y coordinate (logical pixels).
+     * @param layer - Layer index (0 or 1).
+     * @returns A value in [0, 1] representing local brightness.
+     */
+    function intensity(x, y, layer = 0) {
+        const nx = x / width;
+        const ny = y / height;
+        const layerShift = layer * 0.035;
+        const field =
+            heatRegion(nx, ny, 0.1 + layerShift, 0.18, 0.17, 0.14, 0.82) +
+            heatRegion(nx, ny, 0.18 - layerShift, 0.48, 0.1, 0.12, 0.36) +
+            heatRegion(nx, ny, 0.28 - layerShift, 0.7, 0.15, 0.16, 0.72) +
+            heatRegion(nx, ny, 0.48 + layerShift, 0.34, 0.18, 0.13, 0.66) +
+            heatRegion(nx, ny, 0.54 - layerShift, 0.58, 0.11, 0.1, 0.34) +
+            heatRegion(nx, ny, 0.66 - layerShift, 0.78, 0.16, 0.15, 0.7) +
+            heatRegion(nx, ny, 0.84 + layerShift, 0.26, 0.14, 0.13, 0.76) +
+            heatRegion(nx, ny, 0.93 - layerShift, 0.66, 0.12, 0.15, 0.52) -
+            heatRegion(nx, ny, 0.38, 0.48, 0.22, 0.24, 0.22) -
+            heatRegion(nx, ny, 0.74, 0.48, 0.2, 0.22, 0.18) +
+            0.07 * (Math.sin(nx * 18 + ny * 8 + layer) + Math.cos(nx * 11 - ny * 20)) +
+            0.035 * Math.sin(nx * 38 - ny * 29 + layer * 1.7);
+        const ambient = 0.08 + 0.08 * (1 - ny) + 0.04 * (1 - nx);
+
+        return Math.max(0, Math.min(1, field + ambient));
+    }
+
+    /**
+     * Returns the HSL colour string for a halftone point.
+     *
+     * Hue is mapped linearly from normalised X (cyan-to-teal range, 181°–190°).
+     * Saturation decreases slightly towards the right edge. Lightness combines
+     * the point's computed brightness with a top-down gradient and a layer
+     * offset (the secondary layer renders slightly darker to create depth).
+     *
+     * @param x - Source X coordinate (logical pixels).
+     * @param y - Source Y coordinate (logical pixels).
+     * @param brightness - Value in [0, 1] from `intensity`.
+     * @param layer - Layer index (0 or 1).
+     * @returns An HSL colour string suitable for `fillStyle`.
+     */
+    function colourAt(x, y, brightness, layer) {
+        const nx = x / width;
+        const ny = y / height;
+        const lightness = 45 + brightness * 39 + (1 - ny) * 5 - layer * 7;
+        const saturation = 18 + (1 - nx) * 13;
+
+        return `hsl(${181 + nx * 9} ${saturation}% ${lightness}%)`;
+    }
+
+    /**
+     * Populates the global `points` array with halftone point descriptors.
+     *
+     * Iterates a rectilinear grid over the logical canvas (with a 40 px
+     * padding on all sides) and evaluates `intensity` at each cell. Points
+     * whose intensity falls below a per-layer threshold are skipped — this
+     * prunes the secondary layer more aggressively so it appears more
+     * translucent and sparse.
+     *
+     * Layer 1 is offset by half a cell (`spacing / 2`) to interleave with
+     * layer 0, creating a finer, more organic visual texture.
+     *
+     * Each kept point records its source coordinates, layer, radius (derived
+     * from brightness via a power curve), HSL colour, and alpha — all of
+     * which are consumed by `drawMesh`.
+     *
+     * @param layer - Layer index (0 = primary, 1 = secondary).
+     */
+    function createPoints(layer) {
+        const offsetX = layer === 0 ? 0 : spacing / 2;
+        const offsetY = layer === 0 ? 0 : spacing / 2;
+
+        for (let y = -40; y <= height + 40; y += spacing) {
+            for (let x = -40; x <= width + 40; x += spacing) {
+                const sourceX = x + offsetX;
+                const sourceY = y + offsetY;
+                const value = intensity(sourceX, sourceY, layer);
+
+                if (value < (layer === 0 ? 0.08 : 0.19)) {
+                    continue;
+                }
+
+                points.push({
+                    sourceX,
+                    sourceY,
+                    layer,
+                    radius: layer === 0 ? 2 + Math.pow(value, 1.45) * 5.8 : 1.55 + Math.pow(value, 0.2) * 3.9,
+                    color: colourAt(sourceX, sourceY, value, layer),
+                    alpha: layer === 0 ? 0.2 + value * 0.72 : 0.08 + value * 0.3
+                });
+            }
+        }
+    }
+
+    let canvasSizeChanged = false;
+
+    /**
+     * Resizes the physical canvas to match the DOM container at the correct
+     * device pixel ratio. Only writes to `canvas.width` / `canvas.height`
+     * when the pixel dimensions actually differ from the current values,
+     * preventing unnecessary bitmap allocation.
+     *
+     * Side effect: sets `canvasSizeChanged = true` whenever the canvas is
+     * resized so `drawMesh` knows it must re-render.
+     */
+    function resizeCanvas() {
+        const bounds = canvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+        const pixelWidth = Math.max(1, Math.round(bounds.width * dpr));
+        const pixelHeight = Math.max(1, Math.round(bounds.height * dpr));
+
+        if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+            canvas.width = pixelWidth;
+            canvas.height = pixelHeight;
+            canvasSizeChanged = true;
+        }
+    }
+
+    /**
+     * Computes a scale factor that makes the logical canvas cover the
+     * entire physical canvas (no letterboxing), then centres the result.
+     *
+     * The callback receives (scale, offsetX, offsetY) and should apply
+     * the transform before any rendering. This ensures the mesh always
+     * fills the viewport regardless of aspect ratio changes.
+     *
+     * @param callback - Function invoked with (scale, offsetX, offsetY).
+     */
+    function withCoverTransform(callback) {
+        const scale = Math.max(canvas.width / width, canvas.height / height);
+        const offsetX = (canvas.width - width * scale) / 2;
+        const offsetY = (canvas.height - height * scale) / 2;
+
+        callback(scale, offsetX, offsetY);
+    }
+
+    /**
+     * Renders the halftone mesh onto the canvas.
+     *
+     * Exits early if the canvas has not been resized (avoids redundant draws).
+     * Clears the existing frame, then for each precomputed point it applies
+     * the `deform` function to get the current displaced position and calls
+     * `context.setTransform` to scale, translate, and fill the shared
+     * `droplet` Path2D. Points are drawn in layer-1 order (sparse) first,
+     * then layer-0 order (dense), so the denser layer overlays the sparser
+     * one.
+     *
+     * The `withCoverTransform` helper ensures the logical coordinate space
+     * is scaled to cover the entire physical canvas (no letterboxing),
+     * centred with equal padding on all sides.
+     *
+     * @param mouseX - Normalised cursor X in [-1, 1] (passed from animation loop).
+     * @param mouseY - Normalised cursor Y in [-1, 1].
+     */
+    function drawMesh(mouseX = 0, mouseY = 0) {
+        if (!canvasSizeChanged) {
+            return;
+        }
+
+        canvasSizeChanged = false;
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        withCoverTransform((scale, offsetX, offsetY) => {
+            for (const point of points) {
+                const warped = deform(point.sourceX, point.sourceY, point.layer, mouseX, mouseY);
+                context.setTransform(
+                    scale * point.radius,
+                    0,
+                    0,
+                    scale * point.radius,
+                    offsetX + warped.x * scale,
+                    offsetY + warped.y * scale
+                );
+                context.fillStyle = point.color;
+                context.globalAlpha = point.alpha;
+                context.fill(droplet);
+            }
+        });
+
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.globalAlpha = 1;
+    }
+
+    // --- Initial render ------------------------------------------------------
+    // Build both layers (secondary first so the primary layer paints on top)
+    // then resize and draw the first frame.
+    createPoints(1);
+    createPoints(0);
+    resizeCanvas();
+    drawMesh();
+
+    // --- Animation state machine ---------------------------------------------
+    // `targetX/Y` are the raw cursor position (set by pointermove/leave).
+    // `currentX/Y` are the eased values consumed by `deform`. The separation
+    // lets us decouple event input from animation output so the mesh glides
+    // smoothly to its target instead of snapping to the cursor.
+    let targetX = 0.5;
+    let targetY = 0.5;
+    let currentX = 0.5;
+    let currentY = 0.5;
+    let animationFrameId = null;
+    let lastDrawTime = 0;
+    const easing = 0.04;
+    const redrawInterval = 33;
+    const settleThreshold = 0.0007;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let meshIsVisible = true;
+    let pageIsVisible = document.visibilityState === 'visible';
+
+    function canAnimateMesh() {
+        return meshIsVisible && pageIsVisible && !reducedMotion.matches;
+    }
+
+    function requestMeshUpdate() {
+        if (canAnimateMesh() && animationFrameId === null) {
+            animationFrameId = requestAnimationFrame(updateMeshFromMouse);
+        }
+    }
+
+    function pauseMesh() {
+        if (animationFrameId !== null) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+    }
+
+    // --- Event observers ---------------------------------------------------
+    // All observers are wired here. They share a common pattern:
+    //   1. Update shared state (target, visibility, etc.).
+    //   2. If animation is permitted, resize the canvas, re-render the current
+    //      frame, and (re)start the animation loop.
+    //   3. Otherwise, pause the loop.
+    // This keeps the animation responsive while being respectful of user
+    // preferences (reduced motion) and browser constraints (page hidden).
+
+    // Cursor-tracking: updates normalised target coordinates on every
+    // pointer move. Bound passive so the event loop is never blocked.
+    meshFrame.addEventListener('pointermove', event => {
+        const bounds = meshFrame.getBoundingClientRect();
+        targetX = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
+        targetY = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
+
+        requestMeshUpdate();
+    }, { passive: true });
+
+    // Cursor leave: resets the target to centre so the mesh relaxes back
+    // to its resting state when the user moves away.
+    meshFrame.addEventListener('pointerleave', () => {
+        targetX = 0.5;
+        targetY = 0.5;
+        requestMeshUpdate();
+    }, { passive: true });
+
+    // ResizeObserver: re-renders the mesh whenever the frame container
+    // changes size (e.g. window resize, rotation, panel split).
+    const resizeObserver = new ResizeObserver(() => {
+        resizeCanvas();
+
+        if (canAnimateMesh()) {
+            drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2);
+        }
+    });
+
+    resizeObserver.observe(meshFrame);
+
+    // IntersectionObserver: pauses the animation when the mesh scrolls out
+    // of the viewport and resumes when it re-enters. threshold: 0 means we
+    // fire as soon as a single pixel is visible.
+    const visibilityObserver = new IntersectionObserver(
+        ([entry]) => {
+            meshIsVisible = entry.isIntersecting;
+
+            if (canAnimateMesh()) {
+                resizeCanvas();
+                drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2);
+                requestMeshUpdate();
+            } else {
+                pauseMesh();
+            }
+        },
+        { threshold: 0 }
+    );
+
+    visibilityObserver.observe(meshFrame);
+
+    // Page visibility API: freezes the loop when the user switches tabs or
+    // locks the screen, preventing background CPU/GPU drain.
+    document.addEventListener('visibilitychange', () => {
+        pageIsVisible = document.visibilityState === 'visible';
+
+        if (canAnimateMesh()) {
+            resizeCanvas();
+            drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2);
+            requestMeshUpdate();
+        } else {
+            pauseMesh();
+        }
+    });
+
+    // prefers-reduced-motion: pauses or resumes the animation when the user
+    // toggles their OS-level accessibility preference without a page reload.
+    reducedMotion.addEventListener('change', () => {
+        if (canAnimateMesh()) {
+            resizeCanvas();
+            drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2);
+        } else {
+            pauseMesh();
+        }
+    });
+
+    /**
+     * Animation-frame callback that smoothly animates the mesh toward the
+     * current mouse target.
+     *
+     * On each frame it:
+     *
+     * 1. Checks `canAnimateMesh()` — aborts immediately if the mesh is not
+     *    currently visible, the page is hidden, or the user prefers reduced
+     *    motion. This is the single authority that decides whether the
+     *    animation loop keeps running.
+     *
+     * 2. Eases `currentX`/`currentY` toward `targetX`/`targetY` with a
+     *    fixed factor of 0.04, producing smooth deceleration as the cursor
+     *    approaches its destination.
+     *
+     * 3. Renders every `redrawInterval` ms (≈30 fps) by toggling
+     *    `canvasSizeChanged` and invoking `drawMesh`. The threshold-based
+     *    redraw keeps FPS high when the canvas is resizing.
+     *
+     * 4. Self-terminates when the cursor has settled (both axes within
+     *    `settleThreshold` of the target), cancelling the rAF and freeing
+     *    the main thread until the next pointer event.
+     *
+     * @param timestamp - High-resolution timestamp from `requestAnimationFrame`.
+     */
+    function updateMeshFromMouse(timestamp) {
+        if (!canAnimateMesh()) {
+            animationFrameId = null;
+            return;
+        }
+
+        currentX += (targetX - currentX) * easing;
+        currentY += (targetY - currentY) * easing;
+
+        if (timestamp - lastDrawTime >= redrawInterval) {
+            canvasSizeChanged = true;
+            drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2);
+            lastDrawTime = timestamp;
+        }
+
+        if (Math.abs(targetX - currentX) < settleThreshold && Math.abs(targetY - currentY) < settleThreshold) {
+            animationFrameId = null;
+            return;
+        }
+
+        animationFrameId = requestAnimationFrame(updateMeshFromMouse);
+    }
+</script>
