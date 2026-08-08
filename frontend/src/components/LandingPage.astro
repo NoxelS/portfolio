@@ -1,0 +1,250 @@
+<div class="h-14"></div>
+<!-- Landing Page Placeholder -->
+<section class="relative flex h-[calc(100vh-3rem)] w-full flex-col gap-6 border border-accent/20 px-3 pr-80 sm:px-4 lg:px-6">
+    <div
+        id="mesh-frame"
+        class="absolute top-0 left-0 h-1/2 w-full overflow-hidden bg-black"
+        style="--mesh-background: color-mix(in oklch, var(--color-accent) 55%, black); background: var(--mesh-background);"
+        aria-label="Abstract liquid halftone mesh"
+        role="img"
+    >
+        <div class="mesh-color mesh-color-a"></div>
+        <div class="mesh-color mesh-color-b"></div>
+        <div class="mesh-color mesh-color-c"></div>
+        <canvas id="mesh-canvas" class="absolute inset-0 h-full w-full"></canvas>
+        <div class="mesh-shadow mesh-shadow-a"></div>
+        <div class="mesh-shadow mesh-shadow-b"></div>
+        <div class="mesh-grain"></div>
+    </div>
+</section>
+
+<style>
+    .mesh-color,
+    .mesh-shadow,
+    .mesh-grain {
+        pointer-events: none;
+        position: absolute;
+    }
+
+    .mesh-color {
+        inset: -24%;
+        opacity: 0.7;
+    }
+
+    .mesh-color-a {
+        background: radial-gradient(ellipse at 18% 22%, color-mix(in oklch, var(--color-ghost-white-500) 64%, transparent) 0%, transparent 58%);
+    }
+
+    .mesh-color-b {
+        background: radial-gradient(ellipse at 82% 24%, color-mix(in oklch, var(--color-powder-petal-500) 58%, transparent) 0%, transparent 56%);
+    }
+
+    .mesh-color-c {
+        background: radial-gradient(ellipse at 48% 86%, color-mix(in oklch, var(--color-soft-periwinkle-950) 72%, transparent) 0%, transparent 62%);
+    }
+
+    .mesh-shadow {
+        inset: -18%;
+        opacity: 0.62;
+    }
+
+    .mesh-shadow-a {
+        background: radial-gradient(ellipse at 36% 56%, rgb(3 7 19 / 0.86) 0%, transparent 46%);
+    }
+
+    .mesh-shadow-b {
+        background: radial-gradient(ellipse at 72% 54%, rgb(5 8 23 / 0.82) 0%, transparent 42%);
+    }
+
+    .mesh-grain {
+        background-image: radial-gradient(circle at center, rgb(255 255 255 / 0.18) 0 0.0625rem, transparent 0.075rem);
+        background-size: 0.45rem 0.45rem;
+        inset: 0;
+        mix-blend-mode: soft-light;
+        opacity: 0.22;
+    }
+</style>
+
+<script is:inline>
+    const canvas = document.getElementById('mesh-canvas');
+    const context = canvas.getContext('2d', { alpha: true });
+    const width = 1600;
+    const height = 760;
+    const spacing = 7.5;
+    const points = [];
+    const droplet = new Path2D(
+        'M 0 -1 C 0.18 -0.74 0.28 -0.46 0.48 -0.48 C 0.7 -0.5 0.9 -0.34 1 0 C 0.9 0.34 0.7 0.5 0.48 0.48 C 0.28 0.46 0.18 0.74 0 1 C -0.18 0.74 -0.28 0.46 -0.48 0.48 C -0.7 0.5 -0.9 0.34 -1 0 C -0.9 -0.34 -0.7 -0.5 -0.48 -0.48 C -0.28 -0.46 -0.18 -0.74 0 -1 Z'
+    );
+
+    function vortex(x, y, cx, cy, radius, strength) {
+        const dx = x - cx;
+        const dy = y - cy;
+        const distance = Math.hypot(dx, dy);
+        const falloff = Math.exp(-(distance * distance) / (radius * radius));
+
+        return {
+            x: -dy * strength * falloff,
+            y: dx * strength * falloff,
+        };
+    }
+
+    function deform(x, y, layer = 0, mouseX = 0, mouseY = 0) {
+        const nx = x / width;
+        const ny = y / height;
+        const wave1 = Math.sin(nx * 12 + ny * 7 + layer * 0.7 + mouseX * 1.8);
+        const wave2 = Math.sin(nx * 5 - ny * 13 - layer * 0.45 + mouseY * 1.5);
+        const wave3 = Math.cos(nx * 18 + ny * 4.5 + (mouseX - mouseY) * 1.2);
+        let dx = 24 * wave1 + 11 * wave2 + 6 * wave3;
+        let dy = 18 * Math.sin(nx * 8.2 - ny * 5.5 + mouseY * 1.4) + 10 * Math.cos(nx * 4 + ny * 12.5 + mouseX * 1.1);
+        const leftVortex = vortex(x, y, 425 + mouseX * 80, 350 + mouseY * 50, 410, layer === 0 ? 0.13 : -0.08);
+        const rightVortex = vortex(x, y, 1290 - mouseX * 70, 400 - mouseY * 55, 460, layer === 0 ? -0.12 : 0.075);
+
+        dx += leftVortex.x + rightVortex.x;
+        dy += leftVortex.y + rightVortex.y;
+
+        const centreX = 880 + mouseX * 45;
+        const centreY = 330 + mouseY * 35;
+        const cdx = x - centreX;
+        const cdy = y - centreY;
+        const centreDistance = Math.hypot(cdx, cdy);
+        const centreFalloff = Math.exp(-(centreDistance * centreDistance) / (350 * 350));
+
+        return {
+            x: x + dx + cdx * 0.13 * centreFalloff,
+            y: y + dy + cdy * 0.08 * centreFalloff,
+        };
+    }
+
+    function intensity(x, y, layer = 0) {
+        const nx = x / width;
+        const ny = y / height;
+        const field = Math.sin(nx * 21 + ny * 15 + layer) + 0.7 * Math.sin(nx * 13 - ny * 24) + 0.48 * Math.cos(nx * 32 + ny * 6);
+        const ridges = 0.5 + 0.5 * Math.sin(field * 3.2);
+        const edgeBoost = 0.5 + 0.34 * (1 - nx) + 0.26 * Math.abs(nx - 0.5) * 2;
+
+        return Math.max(0, Math.min(1, ridges * edgeBoost));
+    }
+
+    function colourAt(x, y, brightness, layer) {
+        const nx = x / width;
+        const ny = y / height;
+        const lightness = 45 + brightness * 39 + (1 - ny) * 5 - layer * 7;
+        const saturation = 18 + (1 - nx) * 13;
+
+        return `hsl(${181 + nx * 9} ${saturation}% ${lightness}%)`;
+    }
+
+    function createPoints(layer) {
+        const offsetX = layer === 0 ? 0 : spacing / 2;
+        const offsetY = layer === 0 ? 0 : spacing / 2;
+
+        for (let y = -40; y <= height + 40; y += spacing) {
+            for (let x = -40; x <= width + 40; x += spacing) {
+                const sourceX = x + offsetX;
+                const sourceY = y + offsetY;
+                const value = intensity(sourceX, sourceY, layer);
+
+                if (value < (layer === 0 ? 0.08 : 0.19)) {
+                    continue;
+                }
+
+                points.push({
+                    sourceX,
+                    sourceY,
+                    layer,
+                    radius: layer === 0 ? 2 + Math.pow(value, 1.45) * 5.8 : 1.55 + Math.pow(value, 0.2) * 3.9,
+                    color: colourAt(sourceX, sourceY, value, layer),
+                    alpha: layer === 0 ? 0.2 + value * 0.72 : 0.08 + value * 0.3,
+                });
+            }
+        }
+    }
+
+    function resizeCanvas() {
+        const bounds = canvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+        const pixelWidth = Math.max(1, Math.round(bounds.width * dpr));
+        const pixelHeight = Math.max(1, Math.round(bounds.height * dpr));
+
+        if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+            canvas.width = pixelWidth;
+            canvas.height = pixelHeight;
+        }
+    }
+
+    function withCoverTransform(callback) {
+        const scale = Math.max(canvas.width / width, canvas.height / height);
+        const offsetX = (canvas.width - width * scale) / 2;
+        const offsetY = (canvas.height - height * scale) / 2;
+
+        context.save();
+        context.translate(offsetX, offsetY);
+        context.scale(scale, scale);
+        callback();
+        context.restore();
+    }
+
+    function drawDroplet(x, y, radius, color, alpha) {
+        context.save();
+        context.translate(x, y);
+        context.scale(radius, radius);
+        context.fillStyle = color;
+        context.globalAlpha = alpha;
+        context.fill(droplet);
+        context.restore();
+    }
+
+    function drawMesh(mouseX = 0, mouseY = 0) {
+        resizeCanvas();
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        withCoverTransform(() => {
+            for (const point of points) {
+                const warped = deform(point.sourceX, point.sourceY, point.layer, mouseX, mouseY);
+                drawDroplet(warped.x, warped.y, point.radius, point.color, point.alpha);
+            }
+        });
+    }
+
+    createPoints(1);
+    createPoints(0);
+    drawMesh();
+
+    let targetX = 0.5;
+    let targetY = 0.5;
+    let currentX = 0.5;
+    let currentY = 0.5;
+    let animationFrameId = null;
+    let lastDrawTime = 0;
+    const easing = 0.04;
+    const redrawInterval = 33;
+    const settleThreshold = 0.0007;
+
+    window.addEventListener('mousemove', event => {
+        targetX = event.clientX / window.innerWidth;
+        targetY = event.clientY / window.innerHeight;
+
+        if (animationFrameId === null) {
+            animationFrameId = requestAnimationFrame(updateMeshFromMouse);
+        }
+    });
+
+    window.addEventListener('resize', () => drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2));
+
+    function updateMeshFromMouse(timestamp) {
+        currentX += (targetX - currentX) * easing;
+        currentY += (targetY - currentY) * easing;
+
+        if (timestamp - lastDrawTime >= redrawInterval) {
+            drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2);
+            lastDrawTime = timestamp;
+        }
+
+        if (Math.abs(targetX - currentX) < settleThreshold && Math.abs(targetY - currentY) < settleThreshold) {
+            animationFrameId = null;
+            return;
+        }
+
+        animationFrameId = requestAnimationFrame(updateMeshFromMouse);
+    }
+</script>
