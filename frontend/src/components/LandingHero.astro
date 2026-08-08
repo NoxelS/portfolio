@@ -19,7 +19,7 @@ import MeshRenderer from './MeshRenderer.astro';
 
 <div
     id="mesh-frame"
-    class="absolute top-0 left-0 h-1/2 w-full overflow-hidden bg-black"
+    class="absolute top-0 left-0 h-[50svh] w-full overflow-hidden bg-black md:h-1/2"
     style="--mesh-background: color-mix(in oklch, var(--color-accent) 55%, black); background: var(--mesh-background);"
     aria-label="Abstract liquid halftone mesh"
     role="img"
@@ -40,7 +40,7 @@ import MeshRenderer from './MeshRenderer.astro';
     <div class="mesh-shadow mesh-shadow-b"></div>
     <div class="mesh-grain"></div>
     <div class="absolute bottom-0 left-0 z-10 flex w-full justify-between items-end p-8">
-        <div class="text-white opacity-85 text-4xl lora">
+        <div class="lora text-display-sm text-white opacity-85 md:leading-none">
             I build with scalability, <br> maintainability and performance in mind.
         </div>
         <div class="flex flex-col gap-2">

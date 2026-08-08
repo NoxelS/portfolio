@@ -38,9 +38,9 @@ const renderedProjects = await Promise.all(
 								)}
 							</div>
 							<h5 class="lora text-2xl leading-tight text-gray-950">{project.title}</h5>
-							<div class="project-description rich-text text-sm" set:html={project.descriptionHtml} />
+							<div class="project-description rich-text text-base leading-6" set:html={project.descriptionHtml} />
 						</div>
-						<a href={project.link} class="mt-8 inline-flex w-fit flex-row items-center justify-center gap-4 rounded-sm bg-soft-periwinkle-800 px-4 py-2 text-lg uppercase text-white transition hover:bg-soft-periwinkle-900">
+						<a href={project.link} class="mt-8 inline-flex w-fit flex-row items-center justify-center gap-3 rounded-sm bg-soft-periwinkle-800 px-4 py-2 text-sm font-semibold uppercase tracking-[0.08em] text-white transition hover:bg-soft-periwinkle-900">
 							View Project
 							<span aria-hidden="true">→</span>
 						</a>

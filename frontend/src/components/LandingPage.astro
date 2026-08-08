@@ -11,22 +11,22 @@ import ActionLink from './ActionLink.astro';
 ---
 
 <!-- Full-viewport section shell -->
-<section id="landing-page" class="relative flex h-[100vh] w-full flex-col gap-6 border border-accent/20">
+<section id="landing-page" class="relative flex min-h-[100svh] w-full flex-col gap-6">
     <!-- Renders the animated halftone mesh. -->
     <LandingHero />
-    <div class="absolute top-1/2 p-8 py-16 flex flex-col gap-8 w-full">
+    <div class="relative mt-[50svh] flex w-full flex-col gap-6 p-8 py-12 md:gap-8 md:py-16">
         <div class="flex flex-col gap-2">
-            <h2 class="text-soft-periwinkle-800 text-xl">Freelance Full Stack AI Engineer</h2>
-            <h1 class="uppercase text-5xl lora">Noel Pascal Schwabenland</h1>
+            <p class="text-eyebrow text-soft-periwinkle-800">Freelance Full Stack AI Engineer</p>
+            <h1 class="lora text-display-lg tracking-[-0.02em] uppercase text-balance">Noel Pascal Schwabenland</h1>
         </div>
 
-        <h3 class="text-3xl">
+        <p class="max-w-3/4 text-copy-lg text-muted-strong">
             <!-- AI Engineer with real-world multi-disciplinary expertise in full-stack software development, ML Ops, and Data Science.  -->
             I help companies analyze potential opportunities and drive innovation through strategic technology solutions with 
             a focus on generative AI, RAG, agentic systems, speech processing, and inference pipelines.
-        </h3>
+        </p>
 
-        <h5 class="text-soft-periwinkle-700 lora text-lg">Im currently available 20h/week</h5>
+        <p class="text-caption">I'm currently available 20h/week</p>
         
         <div class="flex flex-row flex-wrap gap-4 self-start">
             <ActionLink href="#my-projects" icon="iconoir:arrow-down">Explore my work</ActionLink>

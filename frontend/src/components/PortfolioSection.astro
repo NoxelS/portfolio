@@ -14,10 +14,10 @@ type Props = {
 const { id, title, eyebrow, description, class: className = '' } = Astro.props;
 ---
 
-<section id={id} class:list={['grid gap-[clamp(2rem,5vw,4rem)] border border-accent/20 px-[var(--site-container-inline)] py-[var(--site-section-block)]', className]}>
-	<div class="grid max-w-[var(--site-reading-width)] gap-3.5">
+<section id={id} class:list={['grid gap-8 px-4 py-12 md:gap-12 md:px-8 md:py-16 lg:gap-16 lg:py-24', className]}>
+	<div class="grid max-w-2xl gap-4">
 		{eyebrow && <p class="text-eyebrow">{eyebrow}</p>}
-		<h2 class="lora text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.95] uppercase text-foreground">{title}</h2>
+		<h2 class="lora text-display-md uppercase text-foreground">{title}</h2>
 		{description && <p class="text-lg leading-relaxed text-muted-strong">{description}</p>}
 	</div>
 	<div class="min-w-0"><slot /></div>

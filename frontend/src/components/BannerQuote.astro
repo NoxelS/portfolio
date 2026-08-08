@@ -15,7 +15,7 @@ const { quote, subquote } = Astro.props;
 ---
 
 <!-- Editorial callout block between page sections -->
-<aside class="grid gap-6 border border-accent/20 px-[var(--site-container-inline)] py-[clamp(2rem,5vw,4rem)] lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.78fr)] lg:items-end lg:gap-16" aria-label="Portfolio statement">
-    <h2 class="lora text-[clamp(2.25rem,5vw,4.25rem)] leading-[0.98] uppercase text-foreground">{quote}</h2>
-    <p class="max-w-[42rem] text-lg leading-relaxed text-muted-strong">{subquote}</p>
+<aside class="grid gap-6 bg-gray-800/3 px-4 py-8 md:px-8 md:py-16 lg:grid-cols-5 lg:items-end lg:gap-16" aria-label="Portfolio statement">
+    <h2 class="lora text-display-md uppercase text-foreground lg:col-span-3">{quote}</h2>
+    <p class="max-w-2xl text-lg leading-relaxed text-muted-strong lg:col-span-2">{subquote}</p>
 </aside>

@@ -1,6 +1,22 @@
 @theme {
-	--font-sans: "Helvetica Neue", Helvetica, Arial, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	--font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	--font-serif: "Lora", Georgia, "Times New Roman", Times, serif;
 	--font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+	--spacing: 0.25rem;
+
+	--text-copy-sm: 0.875rem;
+	--text-copy-sm--line-height: 1.5;
+	--text-copy-md: 1rem;
+	--text-copy-md--line-height: 1.5;
+	--text-copy-lg: clamp(1.3125rem, 2vw, 1.75rem);
+	--text-copy-lg--line-height: 1.28;
+
+	--text-display-sm: clamp(1.5rem, 2vw, 3rem);
+	--text-display-sm--line-height: 1.05;
+	--text-display-md: clamp(2.25rem, 4.5vw, 3.5rem);
+	--text-display-md--line-height: 0.98;
+	--text-display-lg: clamp(2.25rem, 4vw, 3.75rem);
+	--text-display-lg--line-height: 0.98;
 
 	--color-powder-petal-50: oklch(96.10% 0.011 45.72);
 	--color-powder-petal-100: oklch(91.98% 0.024 44.33);
@@ -86,11 +102,4 @@
 
 	--ease-standard: cubic-bezier(0.2, 0, 0, 1);
 	--ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-:root {
-	--site-container-inline: clamp(1rem, 4vw, 2rem);
-	--site-section-block: clamp(3rem, 8vw, 7rem);
-	--site-content-width: 72rem;
-	--site-reading-width: 44rem;
 }
