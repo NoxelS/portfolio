@@ -15,9 +15,13 @@
   "dependencies": {
     "@astrojs/node": "^10.1.1",
     "@astrojs/sitemap": "^3.7.2",
+    "@glidejs/glide": "^3.7.1",
+    "@iconify-json/iconoir": "^1.2.11",
+    "@iconify-json/mdi": "^1.2.3",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^6.3.1",
+    "astro-icon": "^1.1.5",
     "marked": "^18.0.3",
     "tailwindcss": "^4.3.0",
     "web-vitals": "^5.2.0"

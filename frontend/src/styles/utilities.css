@@ -1,3 +1,7 @@
+@utility lora {
+	font-family: "Lora", Georgia, "Times New Roman", Times, serif;
+}
+
 @utility link {
 	color: var(--color-accent);
 	text-decoration-line: underline;

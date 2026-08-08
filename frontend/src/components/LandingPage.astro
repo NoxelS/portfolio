@@ -1,6 +1,9 @@
-<div class="h-14"></div>
+---
+import { Icon } from 'astro-icon/components';
+---
+
 <!-- Landing Page Placeholder -->
-<section class="relative flex h-[calc(100vh-3rem)] w-full flex-col gap-6 border border-accent/20 px-3 pr-80 sm:px-4 lg:px-6">
+<section class="relative flex h-[100vh] w-full flex-col gap-6 border border-accent/20">
     <div
         id="mesh-frame"
         class="absolute top-0 left-0 h-1/2 w-full overflow-hidden bg-black"
@@ -8,6 +11,12 @@
         aria-label="Abstract liquid halftone mesh"
         role="img"
     >
+        <div class="absolute top-0 left-0 z-10 flex w-full justify-between p-8">
+            <div class="text-white"></div>
+            <div class="text-white">
+                <div class="border border-white  rounded-md px-4 py-2 text-base">Give me a call</div>
+            </div>
+        </div>
         <div class="mesh-color mesh-color-a"></div>
         <div class="mesh-color mesh-color-b"></div>
         <div class="mesh-color mesh-color-c"></div>
@@ -15,8 +24,50 @@
         <div class="mesh-shadow mesh-shadow-a"></div>
         <div class="mesh-shadow mesh-shadow-b"></div>
         <div class="mesh-grain"></div>
+        <div class="absolute bottom-0 left-0 z-10 flex w-full justify-between items-end p-8">
+            <div class="text-white opacity-85 text-4xl lora">
+                I build with performance,<br> scalability and maintainability in mind.
+            </div>
+            <div class="flex flex-col gap-2">
+                <div class="text-white uppercase text-sm">My socials</div>
+                <div class="flex flex-row gap-4">
+                    <a
+                        href="https://github.com/NoxelS"
+                        aria-label="GitHub profile"
+                        target="_blank"
+                        rel="noreferrer"
+                        class="flex w-8 h-8 items-center justify-center bg-white text-black rounded-md transition hover:bg-white/85"
+                    >
+                        <Icon name="mdi:github" class="h-5 w-5" aria-hidden="true" />
+                    </a>
+                    <a
+                        href="https://www.linkedin.com/in/noel-pascal-schwabenland/"
+                        aria-label="LinkedIn profile"
+                        target="_blank"
+                        rel="noreferrer"
+                        class="flex w-8 h-8 items-center justify-center bg-white text-black rounded-md transition hover:bg-white/85"
+                    >
+                        <Icon name="mdi:linkedin" class="h-5 w-5" aria-hidden="true" />
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="absolute top-1/2 p-8 py-16 flex flex-col gap-8 w-full">
+        <h2 class="text-soft-periwinkle-800 uppercase text-lg font-bold">Data Scientist & AI Engineer</h2>
+        <h1 class="uppercase text-5xl lora">Noel Pascal Schwabenland</h1>
+        <h3 class="text-3xl">
+            Lore ipsum dolor sit amet, consectetur adipiscing elit. <br>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </h3>
+        <h5 class="text-soft-periwinkle-700 lora text-lg">Im currently available 20h/week</h5>
+        <div class="flex flex-row gap-4 self-end">
+            <div class="bg-soft-periwinkle-800 text-white px-4 py-2 text-lg rounded-sm uppercase flex flex-row justify-center items-center gap-4">Explore my work
+                <Icon name="iconoir:arrow-down"></Icon>
+            </div>
+        </div>
     </div>
 </section>
+
 
 <style>
     .mesh-color,
@@ -66,8 +117,13 @@
 </style>
 
 <script is:inline>
+    const meshFrame = document.getElementById('mesh-frame');
     const canvas = document.getElementById('mesh-canvas');
-    const context = canvas.getContext('2d', { alpha: true });
+    const context = canvas.getContext('2d', { alpha: true, desynchronized: true });
+
+    if (!meshFrame || !canvas || !context) {
+        throw new Error('The mesh banner could not be initialized.');
+    }
     const width = 1600;
     const height = 760;
     const spacing = 7.5;
@@ -84,7 +140,7 @@
 
         return {
             x: -dy * strength * falloff,
-            y: dx * strength * falloff,
+            y: dx * strength * falloff
         };
     }
 
@@ -94,8 +150,11 @@
         const wave1 = Math.sin(nx * 12 + ny * 7 + layer * 0.7 + mouseX * 1.8);
         const wave2 = Math.sin(nx * 5 - ny * 13 - layer * 0.45 + mouseY * 1.5);
         const wave3 = Math.cos(nx * 18 + ny * 4.5 + (mouseX - mouseY) * 1.2);
-        let dx = 24 * wave1 + 11 * wave2 + 6 * wave3;
-        let dy = 18 * Math.sin(nx * 8.2 - ny * 5.5 + mouseY * 1.4) + 10 * Math.cos(nx * 4 + ny * 12.5 + mouseX * 1.1);
+        let dx = 24 * wave1 + 11 * wave2 + 6 * wave3 + 4 * Math.sin(nx * 42 - ny * 31 + mouseX * 1.6);
+        let dy =
+            18 * Math.sin(nx * 8.2 - ny * 5.5 + mouseY * 1.4) +
+            10 * Math.cos(nx * 4 + ny * 12.5 + mouseX * 1.1) +
+            4 * Math.cos(nx * 34 + ny * 39 + mouseY * 1.5);
         const leftVortex = vortex(x, y, 425 + mouseX * 80, 350 + mouseY * 50, 410, layer === 0 ? 0.13 : -0.08);
         const rightVortex = vortex(x, y, 1290 - mouseX * 70, 400 - mouseY * 55, 460, layer === 0 ? -0.12 : 0.075);
 
@@ -111,18 +170,37 @@
 
         return {
             x: x + dx + cdx * 0.13 * centreFalloff,
-            y: y + dy + cdy * 0.08 * centreFalloff,
+            y: y + dy + cdy * 0.08 * centreFalloff
         };
+    }
+
+    function heatRegion(nx, ny, cx, cy, radiusX, radiusY, strength) {
+        const dx = (nx - cx) / radiusX;
+        const dy = (ny - cy) / radiusY;
+
+        return Math.exp(-(dx * dx + dy * dy)) * strength;
     }
 
     function intensity(x, y, layer = 0) {
         const nx = x / width;
         const ny = y / height;
-        const field = Math.sin(nx * 21 + ny * 15 + layer) + 0.7 * Math.sin(nx * 13 - ny * 24) + 0.48 * Math.cos(nx * 32 + ny * 6);
-        const ridges = 0.5 + 0.5 * Math.sin(field * 3.2);
-        const edgeBoost = 0.5 + 0.34 * (1 - nx) + 0.26 * Math.abs(nx - 0.5) * 2;
+        const layerShift = layer * 0.035;
+        const field =
+            heatRegion(nx, ny, 0.1 + layerShift, 0.18, 0.17, 0.14, 0.82) +
+            heatRegion(nx, ny, 0.18 - layerShift, 0.48, 0.1, 0.12, 0.36) +
+            heatRegion(nx, ny, 0.28 - layerShift, 0.7, 0.15, 0.16, 0.72) +
+            heatRegion(nx, ny, 0.48 + layerShift, 0.34, 0.18, 0.13, 0.66) +
+            heatRegion(nx, ny, 0.54 - layerShift, 0.58, 0.11, 0.1, 0.34) +
+            heatRegion(nx, ny, 0.66 - layerShift, 0.78, 0.16, 0.15, 0.7) +
+            heatRegion(nx, ny, 0.84 + layerShift, 0.26, 0.14, 0.13, 0.76) +
+            heatRegion(nx, ny, 0.93 - layerShift, 0.66, 0.12, 0.15, 0.52) -
+            heatRegion(nx, ny, 0.38, 0.48, 0.22, 0.24, 0.22) -
+            heatRegion(nx, ny, 0.74, 0.48, 0.2, 0.22, 0.18) +
+            0.07 * (Math.sin(nx * 18 + ny * 8 + layer) + Math.cos(nx * 11 - ny * 20)) +
+            0.035 * Math.sin(nx * 38 - ny * 29 + layer * 1.7);
+        const ambient = 0.08 + 0.08 * (1 - ny) + 0.04 * (1 - nx);
 
-        return Math.max(0, Math.min(1, ridges * edgeBoost));
+        return Math.max(0, Math.min(1, field + ambient));
     }
 
     function colourAt(x, y, brightness, layer) {
@@ -154,11 +232,13 @@
                     layer,
                     radius: layer === 0 ? 2 + Math.pow(value, 1.45) * 5.8 : 1.55 + Math.pow(value, 0.2) * 3.9,
                     color: colourAt(sourceX, sourceY, value, layer),
-                    alpha: layer === 0 ? 0.2 + value * 0.72 : 0.08 + value * 0.3,
+                    alpha: layer === 0 ? 0.2 + value * 0.72 : 0.08 + value * 0.3
                 });
             }
         }
     }
+
+    let canvasSizeChanged = false;
 
     function resizeCanvas() {
         const bounds = canvas.getBoundingClientRect();
@@ -169,6 +249,7 @@
         if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
             canvas.width = pixelWidth;
             canvas.height = pixelHeight;
+            canvasSizeChanged = true;
         }
     }
 
@@ -177,37 +258,42 @@
         const offsetX = (canvas.width - width * scale) / 2;
         const offsetY = (canvas.height - height * scale) / 2;
 
-        context.save();
-        context.translate(offsetX, offsetY);
-        context.scale(scale, scale);
-        callback();
-        context.restore();
-    }
-
-    function drawDroplet(x, y, radius, color, alpha) {
-        context.save();
-        context.translate(x, y);
-        context.scale(radius, radius);
-        context.fillStyle = color;
-        context.globalAlpha = alpha;
-        context.fill(droplet);
-        context.restore();
+        callback(scale, offsetX, offsetY);
     }
 
     function drawMesh(mouseX = 0, mouseY = 0) {
-        resizeCanvas();
+        if (!canvasSizeChanged) {
+            return;
+        }
+
+        canvasSizeChanged = false;
+        context.setTransform(1, 0, 0, 1, 0, 0);
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        withCoverTransform(() => {
+        withCoverTransform((scale, offsetX, offsetY) => {
             for (const point of points) {
                 const warped = deform(point.sourceX, point.sourceY, point.layer, mouseX, mouseY);
-                drawDroplet(warped.x, warped.y, point.radius, point.color, point.alpha);
+                context.setTransform(
+                    scale * point.radius,
+                    0,
+                    0,
+                    scale * point.radius,
+                    offsetX + warped.x * scale,
+                    offsetY + warped.y * scale
+                );
+                context.fillStyle = point.color;
+                context.globalAlpha = point.alpha;
+                context.fill(droplet);
             }
         });
+
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.globalAlpha = 1;
     }
 
     createPoints(1);
     createPoints(0);
+    resizeCanvas();
     drawMesh();
 
     let targetX = 0.5;
@@ -219,23 +305,100 @@
     const easing = 0.04;
     const redrawInterval = 33;
     const settleThreshold = 0.0007;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let meshIsVisible = true;
+    let pageIsVisible = document.visibilityState === 'visible';
 
-    window.addEventListener('mousemove', event => {
-        targetX = event.clientX / window.innerWidth;
-        targetY = event.clientY / window.innerHeight;
+    function canAnimateMesh() {
+        return meshIsVisible && pageIsVisible && !reducedMotion.matches;
+    }
 
-        if (animationFrameId === null) {
+    function requestMeshUpdate() {
+        if (canAnimateMesh() && animationFrameId === null) {
             animationFrameId = requestAnimationFrame(updateMeshFromMouse);
+        }
+    }
+
+    function pauseMesh() {
+        if (animationFrameId !== null) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+    }
+
+    meshFrame.addEventListener('pointermove', event => {
+        const bounds = meshFrame.getBoundingClientRect();
+        targetX = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
+        targetY = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
+
+        requestMeshUpdate();
+    }, { passive: true });
+
+    meshFrame.addEventListener('pointerleave', () => {
+        targetX = 0.5;
+        targetY = 0.5;
+        requestMeshUpdate();
+    }, { passive: true });
+
+    const resizeObserver = new ResizeObserver(() => {
+        resizeCanvas();
+
+        if (canAnimateMesh()) {
+            drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2);
         }
     });
 
-    window.addEventListener('resize', () => drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2));
+    resizeObserver.observe(meshFrame);
+
+    const visibilityObserver = new IntersectionObserver(
+        ([entry]) => {
+            meshIsVisible = entry.isIntersecting;
+
+            if (canAnimateMesh()) {
+                resizeCanvas();
+                drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2);
+                requestMeshUpdate();
+            } else {
+                pauseMesh();
+            }
+        },
+        { threshold: 0 }
+    );
+
+    visibilityObserver.observe(meshFrame);
+
+    document.addEventListener('visibilitychange', () => {
+        pageIsVisible = document.visibilityState === 'visible';
+
+        if (canAnimateMesh()) {
+            resizeCanvas();
+            drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2);
+            requestMeshUpdate();
+        } else {
+            pauseMesh();
+        }
+    });
+
+    reducedMotion.addEventListener('change', () => {
+        if (canAnimateMesh()) {
+            resizeCanvas();
+            drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2);
+        } else {
+            pauseMesh();
+        }
+    });
 
     function updateMeshFromMouse(timestamp) {
+        if (!canAnimateMesh()) {
+            animationFrameId = null;
+            return;
+        }
+
         currentX += (targetX - currentX) * easing;
         currentY += (targetY - currentY) * easing;
 
         if (timestamp - lastDrawTime >= redrawInterval) {
+            canvasSizeChanged = true;
             drawMesh((currentX - 0.5) * 2, (currentY - 0.5) * 2);
             lastDrawTime = timestamp;
         }

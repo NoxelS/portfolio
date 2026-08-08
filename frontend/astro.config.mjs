@@ -2,6 +2,7 @@
 import tailwindcss from '@tailwindcss/vite';
 import node from '@astrojs/node';
 import sitemap from '@astrojs/sitemap';
+import icon from 'astro-icon';
 import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
@@ -17,5 +18,5 @@ export default defineConfig({
 	vite: {
 		plugins: [tailwindcss()],
 	},
-	integrations: [sitemap()],
+	integrations: [sitemap(), icon({ include: { mdi: ['github', 'linkedin'], iconoir: ['arrow-down'] } })],
 });

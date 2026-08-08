@@ -1,39 +1,87 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LandingPage from '../components/LandingPage.astro';
+import ProjectCarousel from '../components/ProjectCarousel.astro';
+
+const projects = [
+	{
+		title: 'AI Transformation @ NetCom',
+		description: `### Process automation
+
+Lorem ipsum dolor sit amet, **consectetur adipiscing elit**. Integer nec odio praesent libero sed cursus ante dapibus diam.
+
+- Sed nisi nulla, quis sem at nibh elementum imperdiet.
+- Duis sagittis ipsum, praesent mauris fusce nec tellus.`,
+		link: '/projects/project1',
+		logoSrc: '/assets/companies/netcom.jpeg',
+		logoAlt: 'NetCom logo',
+	},
+	{
+		title: 'Data & AI Consulting @ KPMG',
+		description: `### Analytics delivery
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. **Praesent mauris** fusce nec tellus sed augue semper porta.
+
+> Mauris massa vestibulum lacinia arcu eget nulla class aptent taciti sociosqu.`,
+		link: '/projects/project2',
+		logoSrc: '/assets/companies/kpmg.svg',
+		logoAlt: 'KPMG logo',
+	},
+	{
+		title: 'CNN Model Development for Drug Discovery @ UDS',
+		description: `### Research prototype
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sodales ligula in libero sed dignissim lacinia nunc.
+
+1. Class aptent taciti sociosqu ad litora torquent.
+2. Curabitur tortor pellentesque nibh aenean quam.`,
+		link: '/projects/project3',
+		logoSrc: '/assets/companies/uds.png',
+		logoAlt: 'Saarland University logo',
+	},
+	{
+		title: 'CMS Product Ownership',
+		description: `### Product operations
+
+Lorem ipsum dolor sit amet, **adipiscing elit**. Sed dignissim lacinia nunc curabitur tortor pellentesque nibh.
+
+Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.`,
+		link: '/projects/project3',
+		logoSrc: '/assets/companies/gip_logo_neg.png',
+		logoAlt: 'GIP Exyr logo',
+	}
+];
+
 ---
 
 <BaseLayout title="Noel Schwabenland">
 	<LandingPage />
 
-	<div class="grid gap-8 my-8">
+	<div class="grid gap-8">
 		<!-- Who I Am -->
-		<section id="who-i-am" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
-			<h2 class="mb-4 text-3xl font-semibold text-foreground">Who I Am</h2>
-			<p class="text-muted-strong">Coming soon.</p>
-		</section>
-
-		<!-- My Work -->
-		<section id="my-work" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
-			<h2 class="mb-4 text-3xl font-semibold text-foreground">My Work</h2>
-			<p class="text-muted-strong">Coming soon.</p>
+		<section id="my-work" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20 gap-4 overflow-hidden">
+			<h4 class="uppercase text-5xl lora">My Work</h4>
+			<p class="text-gray-500 text-lg">Only recent projects are shown here. More information upon request.</p>
+			<div class="mt-4">
+				<ProjectCarousel projects={projects} />
+			</div>
 		</section>
 
 		<!-- My Background -->
 		<section id="my-background" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
-			<h2 class="mb-4 text-3xl font-semibold text-foreground">My Background</h2>
+			<h4 class="uppercase text-5xl lora">My Background</h4>
 			<p class="text-muted-strong">Coming soon.</p>
 		</section>
 
 		<!-- My Tech Stack -->
 		<section id="my-tech-stack" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
-			<h2 class="mb-4 text-3xl font-semibold text-foreground">My Tech Stack</h2>
+			<h4 class="uppercase text-5xl lora">My Tech Stack</h4>
 			<p class="text-muted-strong">Coming soon.</p>
 		</section>
 
 		<!-- Contact -->
 		<section id="contact" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
-			<h2 class="mb-4 text-3xl font-semibold text-foreground">Contact</h2>
+			<h4 class="uppercase text-5xl lora">Contact</h4>
 			<p class="text-muted-strong">Coming soon.</p>
 		</section>
 	</div>

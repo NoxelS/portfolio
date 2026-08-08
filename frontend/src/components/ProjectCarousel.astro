@@ -1,0 +1,135 @@
+---
+import '@glidejs/glide/dist/css/glide.core.min.css';
+import { marked } from 'marked';
+
+type Project = {
+	title: string;
+	description: string;
+	link: string;
+	logoSrc?: string;
+	logoAlt?: string;
+};
+
+type Props = {
+	projects: Project[];
+};
+
+const { projects } = Astro.props;
+
+const renderedProjects = await Promise.all(
+	projects.map(async (project) => ({
+		...project,
+		descriptionHtml: await marked.parse(project.description),
+	})),
+);
+---
+
+<div class="project-carousel glide" aria-label="Featured projects carousel">
+	<div class="glide__track overflow-visible" data-glide-el="track">
+		<ul class="glide__slides py-14 sm:py-16">
+			{renderedProjects.map((project) => (
+				<li class="glide__slide">
+					<article class="project-card flex h-full min-h-72 flex-col justify-between rounded-2xl border border-gray-300 bg-white/80 p-6 shadow-[0_24px_70px_rgba(75,85,99,0.16)] backdrop-blur transition duration-300 sm:p-8">
+						<div class="stack">
+							<div class="flex min-h-14 items-center justify-between gap-4">
+								<p class="text-meta text-gray-500">Selected work</p>
+								{project.logoSrc && (
+									<div class="project-logo" role="img" aria-label={project.logoAlt ?? `${project.title} logo`} style={`background-image: url(${project.logoSrc});`}></div>
+								)}
+							</div>
+							<h5 class="lora text-2xl leading-tight text-gray-950">{project.title}</h5>
+							<div class="project-description rich-text text-sm" set:html={project.descriptionHtml} />
+						</div>
+						<a href={project.link} class="mt-8 inline-flex w-fit flex-row items-center justify-center gap-4 rounded-sm bg-soft-periwinkle-800 px-4 py-2 text-lg uppercase text-white transition hover:bg-soft-periwinkle-900">
+							View Project
+							<span aria-hidden="true">→</span>
+						</a>
+					</article>
+				</li>
+			))}
+		</ul>
+	</div>
+
+	<div class="mt-2 flex items-center justify-between gap-4" data-glide-el="controls">
+		<button class="focus-ring rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50" type="button" data-glide-dir="<" aria-label="Show previous project">
+			Previous
+		</button>
+		<button class="focus-ring rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50" type="button" data-glide-dir=">" aria-label="Show next project">
+			Next
+		</button>
+	</div>
+</div>
+
+<script>
+	import Glide from '@glidejs/glide';
+
+	document.querySelectorAll<HTMLElement>('.project-carousel.glide').forEach((carousel) => {
+		if (carousel.dataset.glideMounted === 'true') return;
+
+		new Glide(carousel, {
+			type: 'carousel',
+			perView: 1.45,
+			focusAt: 'center',
+			gap: 28,
+			peek: 0,
+			breakpoints: {
+				900: {
+					perView: 1.25,
+					peek: 0,
+				},
+				640: {
+					perView: 1,
+					peek: 24,
+				},
+			},
+		}).mount();
+
+		carousel.dataset.glideMounted = 'true';
+	});
+</script>
+
+<style>
+	.project-carousel :global(.glide__slides) {
+		align-items: stretch;
+	}
+
+	.project-carousel :global(.glide__slide) {
+		height: auto;
+		opacity: 0.45;
+		transform: scale(0.88);
+		transition:
+			transform 280ms ease,
+			opacity 280ms ease;
+	}
+
+	.project-carousel :global(.glide__slide--active) {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	.project-carousel :global(.glide__slide--active) .project-card {
+		border-color: var(--color-gray-400);
+		box-shadow: 0 32px 90px rgb(75 85 99 / 0.24);
+	}
+
+	.project-logo {
+		width: 10rem;
+		height: 4rem;
+		border-radius: 0.125rem;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: contain;
+		filter: grayscale(1);
+	}
+
+	.project-description :global(:where(h1, h2, h3, h4, h5, h6)) {
+		font-family: "Lora", Georgia, "Times New Roman", Times, serif;
+	}
+
+	@media (max-width: 640px) {
+		.project-carousel :global(.glide__slide) {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+</style>
