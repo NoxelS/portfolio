@@ -11,6 +11,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import LandingPage from '../components/LandingPage.astro';
 import ProjectCarousel from '../components/ProjectCarousel.astro';
 import BannerQuote from '../components/BannerQuote.astro';
+import PortfolioSection from '../components/PortfolioSection.astro';
 
 const projects = [
     {
@@ -72,9 +73,12 @@ Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.`,
         />
 
         <!-- Who I Am -->
-        <section id="my-work" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20 gap-4 overflow-hidden">
-            <h4 class="uppercase text-5xl lora">What makes me stand out</h4>
-        </section>
+        <PortfolioSection
+            id="my-work"
+            eyebrow="How I work"
+            title="What makes me stand out"
+            description="A flexible section shell for your positioning, process, or selected differentiators."
+        />
 
         <BannerQuote
             quote="Not only theory, but also proven practice."
@@ -82,9 +86,14 @@ Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.`,
         />
 
         <!-- My Projects -->
-        <section id="my-projects" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
-            <h4 class="uppercase text-5xl lora">My Projects</h4>
-        </section>
+        <PortfolioSection
+            id="my-projects"
+            eyebrow="Selected work"
+            title="My Projects"
+            description="Project cards are data-driven, so this section is ready for real case-study content."
+        >
+            <ProjectCarousel projects={projects} />
+        </PortfolioSection>
 
         <BannerQuote
             quote="From Ideas and Requirements to Reality."
@@ -92,9 +101,12 @@ Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.`,
         />
 
         <!-- My Tech Stack -->
-        <section id="my-tech-stack" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
-            <h4 class="uppercase text-5xl lora">My Tech Stack</h4>
-        </section>
+        <PortfolioSection
+            id="my-tech-stack"
+            eyebrow="Capabilities"
+            title="My Tech Stack"
+            description="Use this area for the tools, systems, and working principles you want to foreground."
+        />
 
         <BannerQuote
             quote="I prefer human interaction."
@@ -102,14 +114,14 @@ Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.`,
         />
 
         <!-- Contact -->
-        <section id="contact" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
-            <h4 class="uppercase text-5xl lora">Contact</h4>
-
-        </section>
+        <PortfolioSection
+            id="contact"
+            eyebrow="Start a conversation"
+            title="Contact"
+            description="A dedicated contact block, ready for your preferred form, calendar link, or direct details."
+        />
 
         <!-- Footer -->
-        <section id="footer" class="px-3 py-[var(--site-section-block)] sm:px-4 lg:px-6 border border-accent/20">
-            <h4 class="uppercase text-5xl lora">Footer</h4>
-        </section>
+        <PortfolioSection id="footer" title="Noel Schwabenland" />
     </div>
 </BaseLayout>

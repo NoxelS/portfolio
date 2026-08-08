@@ -1,0 +1,24 @@
+---
+/**
+ * Shared framed section for the landing page. It keeps spacing and hierarchy
+ * consistent while allowing each portfolio block to supply its own design.
+ */
+type Props = {
+	id: string;
+	title: string;
+	eyebrow?: string;
+	description?: string;
+	class?: string;
+};
+
+const { id, title, eyebrow, description, class: className = '' } = Astro.props;
+---
+
+<section id={id} class:list={['grid gap-[clamp(2rem,5vw,4rem)] border border-accent/20 px-[var(--site-container-inline)] py-[var(--site-section-block)]', className]}>
+	<div class="grid max-w-[var(--site-reading-width)] gap-3.5">
+		{eyebrow && <p class="text-eyebrow">{eyebrow}</p>}
+		<h2 class="lora text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.95] uppercase text-foreground">{title}</h2>
+		{description && <p class="text-lg leading-relaxed text-muted-strong">{description}</p>}
+	</div>
+	<div class="min-w-0"><slot /></div>
+</section>

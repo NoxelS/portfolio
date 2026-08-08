@@ -6,8 +6,8 @@
  * tagline, CTA). Delegates the animated halftone mesh to LandingHero, which
  * owns its own markup, styles, and inline canvas script — see LandingHero.astro.
  */
-import { Icon } from 'astro-icon/components';
 import LandingHero from './LandingHero.astro';
+import ActionLink from './ActionLink.astro';
 ---
 
 <!-- Full-viewport section shell -->
@@ -28,12 +28,9 @@ import LandingHero from './LandingHero.astro';
 
         <h5 class="text-soft-periwinkle-700 lora text-lg">Im currently available 20h/week</h5>
         
-        <div class="flex flex-row gap-4 self-start">
-            <div class="bg-soft-periwinkle-800 text-white px-4 py-2 text-lg rounded-sm uppercase flex flex-row justify-center items-center gap-4">Explore my work
-                <Icon name="iconoir:arrow-down"></Icon>
-            </div>
-            <div class="border-periwinkle-800 border-1 px-4 py-2 text-lg rounded-sm uppercase flex flex-row justify-center items-center gap-4"> Give me a call
-            </div>
+        <div class="flex flex-row flex-wrap gap-4 self-start">
+            <ActionLink href="#my-projects" icon="iconoir:arrow-down">Explore my work</ActionLink>
+            <ActionLink href="#contact" variant="secondary">Give me a call</ActionLink>
         </div>
     </div>
 </section>
