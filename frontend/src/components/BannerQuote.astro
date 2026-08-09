@@ -2,20 +2,30 @@
 /**
  * BannerQuote — editorial callout between page sections.
  *
- * Renders a styled headline + paragraph pair used as visual breathing room
- * between content blocks on the portfolio landing page.
+ * Renders a personal principle between content blocks on the portfolio
+ * landing page.
  *
  * @component
- * @prop {string} quote - The headline text.
- * @prop {string} subquote - Supporting description displayed beneath the headline.
+ * @prop {string} quote - The guiding principle.
+ * @prop {string} subquote - Supporting perspective.
  */
 
-const { quote, subquote } = Astro.props;
+const { quote, subquote } = Astro.props as {
+    quote: string;
+    subquote: string;
+};
 
 ---
 
-<!-- Editorial callout block between page sections -->
-<aside class="grid gap-6 bg-gray-800/3 px-4 py-8 md:px-8 md:py-16 lg:grid-cols-5 lg:items-end lg:gap-16" aria-label="Portfolio statement">
-    <h2 class="lora text-display-md uppercase text-foreground lg:col-span-3">{quote}</h2>
-    <p class="max-w-2xl text-lg leading-relaxed text-muted-strong lg:col-span-2">{subquote}</p>
+<!-- Personal principle between page sections -->
+<aside class="-mx-4 w-[calc(100%+2rem)] min-w-0 bg-gray-950 px-4 py-10 md:-mx-8 md:w-[calc(100%+4rem)] md:px-8 md:py-14" aria-label="Portfolio principle">
+	<div class="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(14rem,1fr)] lg:gap-12">
+        <blockquote>
+            <p class="lora max-w-4xl text-3xl leading-[1.08] text-white sm:text-4xl lg:text-5xl">{quote}</p>
+        </blockquote>
+        <div class="lg:max-w-sm lg:justify-self-end lg:self-end">
+            <p class="text-base leading-relaxed text-white">{subquote}</p>
+        </div>
+    </div>
+    <slot />
 </aside>

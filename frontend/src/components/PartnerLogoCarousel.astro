@@ -1,0 +1,71 @@
+---
+/**
+ * PartnerLogoCarousel — a low motion logo strip for the portfolio banners.
+ */
+type Partner = {
+    src: string;
+    alt: string;
+    className?: string;
+};
+
+const { partners } = Astro.props as { partners: Partner[] };
+const carouselPartners = [...partners, ...partners, ...partners];
+---
+
+<div class="overflow-hidden pl-5 sm:pl-7" data-partner-logo-carousel aria-label="Companies I have worked with">
+    <div class="flex gap-10 will-change-transform" data-partner-logo-track>
+        {carouselPartners.map((partner, index) => (
+            <div class="group flex h-12 w-36 shrink-0 items-center justify-center" data-partner-logo-item aria-hidden={index >= partners.length ? 'true' : undefined}>
+                <img
+                    src={partner.src}
+                    alt={index < partners.length ? partner.alt : ''}
+                    class:list={[
+                        'max-h-10 max-w-full opacity-80 transition-opacity duration-300 group-hover:opacity-100',
+                        partner.className ?? 'grayscale invert mix-blend-screen',
+                    ]}
+                    loading="lazy"
+                />
+            </div>
+        ))}
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll<HTMLElement>('[data-partner-logo-carousel]').forEach((carousel) => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const track = carousel.querySelector<HTMLElement>('[data-partner-logo-track]');
+        const items = track?.querySelectorAll<HTMLElement>('[data-partner-logo-item]');
+        if (!track || !items || items.length < 3) return;
+
+        const groupSize = items.length / 3;
+        let loopWidth = 0;
+        let offset = 0;
+        let previousTime = performance.now();
+
+        const resetLoop = () => {
+            loopWidth = items[groupSize].offsetLeft;
+            offset = -loopWidth;
+            track.style.transform = `translateX(${offset}px)`;
+        };
+
+        const move = (time: number) => {
+            const elapsed = Math.min(time - previousTime, 64);
+            previousTime = time;
+
+            if (!document.hidden && loopWidth > 0) {
+                offset += elapsed * 0.02;
+                if (offset >= 0) offset -= loopWidth;
+                track.style.transform = `translateX(${offset}px)`;
+            }
+
+            window.requestAnimationFrame(move);
+        };
+
+        window.requestAnimationFrame(() => {
+            resetLoop();
+            new ResizeObserver(resetLoop).observe(carousel);
+            window.requestAnimationFrame(move);
+        });
+    });
+</script>
