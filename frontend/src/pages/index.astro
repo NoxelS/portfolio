@@ -13,6 +13,7 @@ import PortfolioSection from '../components/PortfolioSection.astro';
 import StandoutStory from '../components/StandoutStory.astro';
 import PartnerLogoCarousel from '../components/PartnerLogoCarousel.astro';
 import TechStack from '../components/TechStack.astro';
+import ContactOptions from '../components/ContactOptions.astro';
 import { getAllTags, getSortedProjects } from '../data/projects';
 
 const projects = getSortedProjects();
@@ -81,19 +82,20 @@ const projectTags = getAllTags();
         </PortfolioSection>
 
         <BannerQuote
-            quote="I prefer human interaction."
-            subquote="Even though I work in cooperation with AI agents, I believe that personal connections are irreplaceable. So I always make time for face-to-face meetings and conversations."
+            quote="Nothing beats a real conversation."
+            subquote="Even though I work with AI agents, I believe that personal connections are irreplaceable. So I always make time for face-to-face meetings and conversations."
         />
 
         <!-- Contact -->
         <PortfolioSection
             id="contact"
             eyebrow="Start a conversation"
-            title="Contact"
-            description="A dedicated contact block, ready for your preferred form, calendar link, or direct details."
-        />
+            title="Let's build awesome things together"
+            description="Have a project, idea, or opportunity in mind? The first conversation is always free and comes with no obligation. Let's talk through your goals, see whether we're a good fit, and explore how we can create something valuable together."
+        >
+            <ContactOptions />
+        </PortfolioSection>
 
         <!-- Footer -->
-        <PortfolioSection id="footer" title="Noel Schwabenland" />
     </div>
 </BaseLayout>

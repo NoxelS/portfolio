@@ -1,0 +1,132 @@
+---
+/**
+ * ContactOptions — direct contact details alongside a free scheduling embed.
+ *
+ * Values can be passed explicitly or configured with PUBLIC_CONTACT_EMAIL,
+ * PUBLIC_CONTACT_PHONE, PUBLIC_CONTACT_PHONE_SECONDARY, and PUBLIC_KOALENDAR_URL.
+ */
+import { Icon } from 'astro-icon/components';
+import ActionLink from './ActionLink.astro';
+import MeshRenderer from './MeshRenderer.astro';
+
+type Props = {
+    email?: string;
+    phone?: string;
+    phoneSecondary?: string;
+    koalendarUrl?: string;
+};
+
+const { email, phone, phoneSecondary, koalendarUrl } = Astro.props;
+const contactEmail = email ?? import.meta.env.PUBLIC_CONTACT_EMAIL ?? '';
+const contactPhone = phone ?? import.meta.env.PUBLIC_CONTACT_PHONE ?? '';
+const contactPhoneSecondary = phoneSecondary ?? import.meta.env.PUBLIC_CONTACT_PHONE_SECONDARY ?? '';
+const bookingUrl = koalendarUrl ?? import.meta.env.PUBLIC_KOALENDAR_URL ?? '';
+const scheduleUrl = bookingUrl || 'https://koalendar.com/e/noel-pascal-schwabenland-kennenlernen';
+const phoneHref = contactPhone.replace(/[^+\d]/g, '');
+const phoneSecondaryHref = contactPhoneSecondary.replace(/[^+\d]/g, '');
+---
+
+<div class="grid w-full min-w-0 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,900px)] lg:gap-8">
+    <article id="contact-direct-mesh-frame" class="relative grid min-w-0 content-start gap-8 overflow-hidden bg-gray-950 p-8">
+        <div class="absolute inset-0 overflow-hidden opacity-75" aria-hidden="true">
+            <MeshRenderer canvasId="contact-direct-mesh-canvas" frameId="contact-direct-mesh-frame" client:load />
+        </div>
+        <div class="relative z-10 grid gap-4">
+            <p class="text-eyebrow text-white">Direct contact</p>
+            <h3 class="lora text-2xl leading-none uppercase text-white sm:text-3xl">Give me a direct call</h3>
+            <p class="text-base leading-relaxed text-white">
+                I'm always available on european business hours (8-18 CET), so feel free to give me a direct call.
+            </p>
+        </div>
+
+        <div class="relative z-10 grid gap-3">
+            {
+                contactPhone ? (
+                    <div class="grid gap-2">
+                        <p class="text-xs font-semibold uppercase tracking-[0.08em] text-white">My German Business Number</p>
+                        <a
+                            href={`tel:${phoneHref}`}
+                            class="focus-ring group flex min-w-0 items-center gap-4 border-0 bg-white px-4 py-3 text-foreground no-underline transition-[background-color] duration-150 hover:bg-surface"
+                        >
+                            <span role="img" aria-label="Germany" class="text-xl leading-none">
+                                🇩🇪
+                            </span>
+                            <Icon name="iconoir:phone" class="h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+                            <span class="min-w-0 text-base">{contactPhone}</span>
+                        </a>
+                    </div>
+                ) : null
+            }
+            {
+                contactPhoneSecondary ? (
+                    <div class="grid gap-2">
+                        <p class="text-xs font-semibold uppercase tracking-[0.08em] text-white">My Italian Business Number</p>
+                        <a
+                            href={`tel:${phoneSecondaryHref}`}
+                            class="focus-ring group flex min-w-0 items-center gap-4 border-0 bg-white px-4 py-3 text-foreground no-underline transition-[background-color] duration-150 hover:bg-surface"
+                        >
+                            <span role="img" aria-label="Italy" class="text-xl leading-none">
+                                🇮🇹
+                            </span>
+                            <Icon name="iconoir:phone" class="h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+                            <span class="min-w-0 text-base">{contactPhoneSecondary}</span>
+                        </a>
+                    </div>
+                ) : null
+            }
+            <h3 class="mt-5 lora text-2xl leading-none uppercase text-white sm:text-3xl">Or write me an E-Mail</h3>
+            <p class="text-base leading-relaxed text-white">Please already state the reason for your inquiry and include your contact details.</p>
+            {
+                contactEmail ? (
+                    <a
+                        href={`mailto:${contactEmail}`}
+                        class="focus-ring group flex min-w-0 items-center gap-4 border-0 bg-white px-4 py-3 text-foreground no-underline transition-[background-color] duration-150 hover:bg-surface"
+                    >
+                        <Icon name="iconoir:mail" class="h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+                        <span class="min-w-0 break-words text-base">{contactEmail}</span>
+                    </a>
+                ) : (
+                    <p class="text-sm leading-relaxed text-white">
+                        Add an email address with <code class="code-inline">PUBLIC_CONTACT_EMAIL</code>.
+                    </p>
+                )
+            }
+            <div class="mt-5 grid gap-3">
+                <h3 class="lora text-2xl leading-none uppercase text-white sm:text-3xl">You can also schedule a call</h3>
+                <p class="text-base leading-relaxed text-white">Choose a convenient time for a free call directly in my calendar.</p>
+                <ActionLink href={scheduleUrl} target="_blank" rel="noreferrer" variant="inverse" icon="iconoir:calendar"> Schedule a call </ActionLink>
+            </div>
+        </div>
+    </article>
+
+    <article class="grid min-w-0 content-start gap-8 p-8 lg:max-w-[1200px] w-full lg:justify-self-end">
+        <div class="grid gap-4">
+            <p class="text-eyebrow text-muted">Choose a time that works</p>
+            <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">Schedule a meeting</h3>
+            <p class="text-base leading-relaxed text-muted-strong">Book a free call or meeting through Koalendar. Pick any available time and I’ll be there.</p>
+        </div>
+
+        <div class="div">
+            <!-- Koalendar Inline Embed Start -->
+            <div id="inline-widget-noel-pascal-schwabenland-kennenlernen"></div>
+            <!-- Koalendar Inline Embed Start -->
+            <div id="inline-widget-noel-pascal-schwabenland-kennenlernen"></div>
+            <script is:inline>
+                window.Koalendar =
+                    window.Koalendar ||
+                    function () {
+                        (Koalendar.props = Koalendar.props || []).push(arguments);
+                    };
+            </script>
+            <script is:inline async src="https://koalendar.com/assets/widget.js"></script>
+            <script is:inline>
+                Koalendar('inline', {
+                    url: 'https://koalendar.com/e/noel-pascal-schwabenland-kennenlernen',
+                    selector: '#inline-widget-noel-pascal-schwabenland-kennenlernen'
+                });
+            </script>
+            <!-- Koalendar Inline Embed End -->
+            <!-- Koalendar Inline Embed End -->
+        </div>
+    </article>
+</div>

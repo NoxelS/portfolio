@@ -8,50 +8,47 @@
  * @component
  */
 
-const { canvasId, frameId, interactionId = frameId } = Astro.props as {
-  canvasId: string;
-  frameId: string;
-  interactionId?: string;
+const {
+    canvasId,
+    frameId,
+    interactionId = frameId
+} = Astro.props as {
+    canvasId: string;
+    frameId: string;
+    interactionId?: string;
 };
-
 ---
 
-<div
-  data-mesh-instance
-  data-frame-id={frameId}
-  data-interaction-id={interactionId}
-  class="absolute inset-0"
->
-  <canvas id={canvasId} class="absolute inset-0 h-full w-full" aria-hidden="true" />
+<div data-mesh-instance data-frame-id={frameId} data-interaction-id={interactionId} class="absolute inset-0">
+    <canvas id={canvasId} class="absolute inset-0 h-full w-full" aria-hidden="true"></canvas>
 </div>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-mesh-instance]:not([data-mesh-bound])').forEach((instance) => {
-    const canvas = instance.querySelector('canvas') as HTMLCanvasElement | null;
-    const frame = instance.dataset.frameId
-      ? document.getElementById(instance.dataset.frameId)
-      : null;
-    const interaction = instance.dataset.interactionId
-      ? document.getElementById(instance.dataset.interactionId)
-      : null;
+    document.querySelectorAll<HTMLElement>('[data-mesh-instance]:not([data-mesh-bound])').forEach(instance => {
+        const canvas = instance.querySelector('canvas') as HTMLCanvasElement | null;
+        const frame = instance.dataset.frameId ? document.getElementById(instance.dataset.frameId) : null;
+        const interaction = instance.dataset.interactionId ? document.getElementById(instance.dataset.interactionId) : null;
 
-    if (!frame || !interaction || !canvas) return;
+        if (!frame || !interaction || !canvas) return;
 
-    instance.dataset.meshBound = 'true';
-    let initialised = false;
-    const start = async () => {
-      if (initialised) return;
-      initialised = true;
-      const { init } = await import('../scripts/landing-hero');
-      init(interaction, frame, canvas);
-    };
+        instance.dataset.meshBound = 'true';
+        let initialised = false;
+        const start = async () => {
+            if (initialised) return;
+            initialised = true;
+            const { init } = await import('../scripts/landing-hero');
+            init(interaction, frame, canvas);
+        };
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        observer.disconnect();
-        void start();
-      }
-    }, { threshold: 0 });
-    observer.observe(frame);
-  });
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    observer.disconnect();
+                    void start();
+                }
+            },
+            { threshold: 0 }
+        );
+        observer.observe(frame);
+    });
 </script>
