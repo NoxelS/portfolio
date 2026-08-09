@@ -9,16 +9,21 @@ type Props = {
 	eyebrow?: string;
 	description?: string;
 	class?: string;
+	noPadding?: boolean;
 };
 
-const { id, title, eyebrow, description, class: className = '' } = Astro.props;
+const { id, title, eyebrow, description, class: className = '', noPadding } = Astro.props;
+
+const sectionGaps = noPadding ? '' : 'md:gap-12 lg:gap-16 gap-8';
+const slotPadding = noPadding ? '' : 'py-4';
+
 ---
 
-<section id={id} class:list={['grid min-w-0 grid-cols-1 gap-8 py-12 md:gap-12 md:py-16 lg:gap-16 lg:py-18', className]}>
+<section id={id} class:list={['grid min-w-0 grid-cols-1 py-12 md:py-16 lg:py-18', sectionGaps, className]}>
 	<div class="grid gap-4">
 		{eyebrow && <p class="text-eyebrow">{eyebrow}</p>}
 		<h2 class="lora text-display-md uppercase text-foreground max-w-full lg:max-w-1/2">{title}</h2>
 		{description && <p class="text-lg leading-relaxed text-muted-strong">{description}</p>}
 	</div>
-	<div class="py-4 w-full"><slot /></div>
+	<div class={`w-full ${slotPadding}`}><slot /></div>
 </section>

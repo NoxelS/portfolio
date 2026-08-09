@@ -1,135 +1,214 @@
 ---
 import '@glidejs/glide/dist/css/glide.core.min.css';
-import { marked } from 'marked';
-
-type Project = {
-	title: string;
-	description: string;
-	link: string;
-	logoSrc?: string;
-	logoAlt?: string;
-};
+import type { Project } from '../data/projects';
+import ActionLink from './ActionLink.astro';
 
 type Props = {
-	projects: Project[];
+    projects: Project[];
+    tags: string[];
 };
 
-const { projects } = Astro.props;
-
-const renderedProjects = await Promise.all(
-	projects.map(async (project) => ({
-		...project,
-		descriptionHtml: await marked.parse(project.description),
-	})),
-);
+const { projects, tags } = Astro.props;
 ---
 
-<div class="project-carousel glide" aria-label="Featured projects carousel">
-	<div class="glide__track overflow-visible" data-glide-el="track">
-		<ul class="glide__slides py-14 sm:py-16">
-			{renderedProjects.map((project) => (
-				<li class="glide__slide">
-					<article class="project-card flex h-full min-h-72 flex-col justify-between rounded-2xl border border-gray-300 bg-white/80 p-6 shadow-[0_24px_70px_rgba(75,85,99,0.16)] backdrop-blur transition duration-300 sm:p-8">
-						<div class="stack">
-							<div class="flex min-h-14 items-center justify-between gap-4">
-								<p class="text-meta text-gray-500">Selected work</p>
-								{project.logoSrc && (
-									<div class="project-logo" role="img" aria-label={project.logoAlt ?? `${project.title} logo`} style={`background-image: url(${project.logoSrc});`}></div>
-								)}
-							</div>
-							<h5 class="lora text-2xl leading-tight text-gray-950">{project.title}</h5>
-							<div class="project-description rich-text text-base leading-6" set:html={project.descriptionHtml} />
-						</div>
-						<a href={project.link} class="mt-8 inline-flex w-fit flex-row items-center justify-center gap-3 rounded-sm bg-soft-periwinkle-800 px-4 py-2 text-sm font-semibold uppercase tracking-[0.08em] text-white transition hover:bg-soft-periwinkle-900">
-							View Project
-							<span aria-hidden="true">→</span>
-						</a>
-					</article>
-				</li>
-			))}
-		</ul>
-	</div>
+<div class="grid gap-8" data-project-carousel>
+    <div class="flex flex-col-reverse gap-2 items-end">
+        <span class="order-last ml-auto text-sm text-gray-600 uppercase">Filter by</span>
+        <div class="flex items-center gap-2" aria-label="Filter projects by tag" data-project-filters>
+            {
+                tags.map(tag => (
+                    <button
+                        class:list={[
+                            'focus-ring inline-flex cursor-pointer items-center gap-1.5 border px-3 py-2 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] transition-[background-color,color,border-color] duration-150 ease-[var(--ease-standard)]',
+                            tag === 'Highlighted'
+                                ? 'border-transparent bg-soft-periwinkle-800 text-white hover:bg-soft-periwinkle-900 hover:text-white'
+                                : 'border-soft-periwinkle-800 bg-transparent text-soft-periwinkle-800 hover:bg-surface hover:text-soft-periwinkle-900',
+                        ]}
+                        type="button"
+                        data-project-filter={tag}
+                        aria-pressed={tag === 'Highlighted' ? 'true' : 'false'}
+                    >
+                        <span class:list={{ hidden: tag !== 'Highlighted' }} aria-hidden="true">✓</span>
+                        {tag}
+                    </button>
+                ))
+            }
+        </div>
+    </div>
 
-	<div class="mt-2 flex items-center justify-between gap-4" data-glide-el="controls">
-		<button class="focus-ring rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50" type="button" data-glide-dir="<" aria-label="Show previous project">
-			Previous
-		</button>
-		<button class="focus-ring rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50" type="button" data-glide-dir=">" aria-label="Show next project">
-			Next
-		</button>
-	</div>
+    <div class="project-carousel glide min-w-0" aria-label="Projects carousel" data-project-glide>
+        <div class="glide__track overflow-visible" data-glide-el="track">
+            <ul class="glide__slides items-stretch py-4" data-project-slides>
+                {
+                    projects.map(project => (
+                        <li
+                            class="glide__slide flex h-auto"
+                            data-project-tags={JSON.stringify(project.tags)}
+                        >
+                            <article class="relative flex h-full w-full flex-col gap-4 border border-gray-300 bg-white p-6 sm:p-8">
+                                <header class="grid grid-cols-[minmax(0,1fr)_7rem] items-start gap-5">
+                                    <div class="flex flex-row gap-3 relative w-max items-center">
+                                        <h3 class="lora text-2xl leading-tight text-gray-950 sm:text-3xl">{project.title}</h3>
+                                    </div>
+                                    <div class="grid justify-items-end gap-3 absolute right-0 top-0 p-6 sm:p-8">
+                                        {project.logoSrc && (
+                                            <div
+                                                class="flex h-14 w-28 items-center justify-end"
+                                                role="img"
+                                                aria-label={project.logoAlt ?? `${project.title} logo`}
+                                            >
+                                                <img class="max-h-full max-w-full object-contain grayscale" src={project.logoSrc} alt="" />
+                                            </div>
+                                        )}
+                                    </div>
+                                </header>
+
+                                <p class="text-copy-md p-0 m-0 leading-relaxed text-gray-700">{project.summary}</p>
+
+                                <ol class="grid gap-6 md:grid-cols-3 md:gap-0" aria-label={`${project.title} case-study steps`}>
+                                    {project.steps.map((step, index) => (
+                                        <li class="relative grid grid-cols-[1.75rem_minmax(0,1fr)] gap-3 md:grid-cols-1 md:gap-4 md:pr-6">
+                                            {index < project.steps.length - 1 && (
+                                                <>
+                                                    <div
+                                                        class="absolute left-[0.8125rem] top-7 h-[calc(100%-0.5rem)] border-l border-dotted border-gray-400 md:hidden"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <div
+                                                        class="absolute left-7 right-0 top-[0.8125rem] hidden border-t border-dotted border-gray-400 md:block"
+                                                        aria-hidden="true"
+                                                    />
+                                                </>
+                                            )}
+                                            <span class="relative z-10 flex h-7 w-7 items-center justify-center border border-gray-500 bg-white text-sm font-semibold text-gray-950">
+                                                {index + 1}
+                                            </span>
+                                            <div class="grid gap-2">
+                                                <h4 class="lora text-lg leading-tight text-gray-950">{step.label}</h4>
+                                                <p class="text-copy-sm leading-relaxed text-gray-700">{step.content}</p>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ol>
+
+                                <div class="mt-auto flex flex-wrap gap-2 self-end" aria-label={`${project.title} tags`}>
+                                    {project.tags.map(tag => (
+                                        <span class="border border-gray-400 px-2.5 py-1 text-sm text-gray-700">{tag}</span>
+                                    ))}
+                                </div>
+                            </article>
+                        </li>
+                    ))
+                }
+            </ul>
+        </div>
+        <p class="hidden py-3 pl-4 text-copy-md text-gray-700" data-project-empty role="status">
+            No projects match the selected tags. Select one or more tags to see projects.
+        </p>
+
+        <div class="mt-4 flex items-center justify-between gap-4 pt-5" data-glide-el="controls">
+            <button
+                class="focus-ring cursor-pointer border border-soft-periwinkle-800 px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-soft-periwinkle-800 transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-surface hover:text-soft-periwinkle-900 disabled:cursor-not-allowed disabled:opacity-40"
+                type="button"
+                data-glide-dir="<"
+                data-project-control
+                aria-label="Show previous project"
+            >
+                Previous
+            </button>
+            <p class="text-copy-sm text-center text-gray-700 uppercase" aria-live="polite" data-project-count>{projects.length} projects shown</p>
+            <button
+                class="focus-ring cursor-pointer border border-soft-periwinkle-800 px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-soft-periwinkle-800 transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-surface hover:text-soft-periwinkle-900 disabled:cursor-not-allowed disabled:opacity-40"
+                type="button"
+                data-glide-dir=">"
+                data-project-control
+                aria-label="Show next project"
+            >
+                Next
+            </button>
+        </div>
+    </div>
+
+    <div class="flex flex-row gap-4">
+        <ActionLink href="#tech-stack" variant="primary" icon="iconoir:arrow-down" class="w-fit"> See my tech stack </ActionLink>
+        <ActionLink href="#contact" variant="secondary" icon="iconoir:arrow-down" class="w-fit"> Contact me about a project </ActionLink>
+    </div>
 </div>
 
 <script>
-	import Glide from '@glidejs/glide';
+    import Glide from '@glidejs/glide';
 
-	document.querySelectorAll<HTMLElement>('.project-carousel.glide').forEach((carousel) => {
-		if (carousel.dataset.glideMounted === 'true') return;
+    document.querySelectorAll<HTMLElement>('[data-project-carousel]').forEach(carousel => {
+        if (carousel.dataset.projectCarouselMounted === 'true') return;
 
-		new Glide(carousel, {
-			type: 'carousel',
-			perView: 1.45,
-			focusAt: 'center',
-			gap: 28,
-			peek: 0,
-			breakpoints: {
-				900: {
-					perView: 1.25,
-					peek: 0,
-				},
-				640: {
-					perView: 1,
-					peek: 24,
-				},
-			},
-		}).mount();
+        const glideRoot = carousel.querySelector<HTMLElement>('[data-project-glide]');
+        const slides = carousel.querySelector<HTMLUListElement>('[data-project-slides]');
+        const filters = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-project-filter]'));
+        const controls = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-project-control]'));
+        const count = carousel.querySelector<HTMLElement>('[data-project-count]');
+        const emptyState = carousel.querySelector<HTMLElement>('[data-project-empty]');
+        if (!glideRoot || !slides || !count || !emptyState) return;
 
-		carousel.dataset.glideMounted = 'true';
-	});
+        const allSlides = Array.from(slides.children) as HTMLLIElement[];
+        const selectedTags = new Set(['Highlighted']);
+        let glide: Glide | undefined;
+
+        const updateFilterButtons = () => {
+            filters.forEach(filter => {
+                const tag = filter.dataset.projectFilter ?? '';
+                const isSelected = selectedTags.has(tag);
+                filter.setAttribute('aria-pressed', String(isSelected));
+                filter.classList.toggle('border-transparent', isSelected);
+                filter.classList.toggle('bg-soft-periwinkle-800', isSelected);
+                filter.classList.toggle('text-white', isSelected);
+                filter.classList.toggle('border-soft-periwinkle-800', !isSelected);
+                filter.classList.toggle('bg-transparent', !isSelected);
+                filter.classList.toggle('text-soft-periwinkle-800', !isSelected);
+                filter.querySelector('span')!.classList.toggle('hidden', !isSelected);
+            });
+        };
+
+        const mountGlide = (projectCount: number) => {
+            if (projectCount > 1) {
+                glide = new Glide(glideRoot, {
+                    type: 'carousel',
+                    perView: 1.25,
+                    focusAt: 'center',
+                    gap: 28,
+                    breakpoints: { 640: { perView: 1 } }
+                }).mount();
+            }
+            controls.forEach(control => {
+                control.disabled = projectCount < 2;
+            });
+        };
+
+        const updateProjects = () => {
+            glide?.destroy();
+            glide = undefined;
+
+            const matchingSlides = allSlides.filter(slide => {
+                const projectTags = JSON.parse(slide.dataset.projectTags ?? '[]') as string[];
+                return projectTags.some(tag => selectedTags.has(tag));
+            });
+            slides.replaceChildren(...matchingSlides);
+            count.textContent = `${matchingSlides.length} ${matchingSlides.length === 1 ? 'project' : 'projects'} shown`;
+            emptyState.classList.toggle('hidden', matchingSlides.length !== 0);
+            mountGlide(matchingSlides.length);
+        };
+
+        filters.forEach(filter => {
+            filter.addEventListener('click', () => {
+                const tag = filter.dataset.projectFilter;
+                if (!tag) return;
+                if (selectedTags.has(tag)) selectedTags.delete(tag);
+                else selectedTags.add(tag);
+                updateFilterButtons();
+                updateProjects();
+            });
+        });
+
+        updateProjects();
+        carousel.dataset.projectCarouselMounted = 'true';
+    });
 </script>
-
-<style>
-	.project-carousel :global(.glide__slides) {
-		align-items: stretch;
-	}
-
-	.project-carousel :global(.glide__slide) {
-		height: auto;
-		opacity: 0.45;
-		transform: scale(0.88);
-		transition:
-			transform 280ms ease,
-			opacity 280ms ease;
-	}
-
-	.project-carousel :global(.glide__slide--active) {
-		opacity: 1;
-		transform: scale(1);
-	}
-
-	.project-carousel :global(.glide__slide--active) .project-card {
-		border-color: var(--color-gray-400);
-		box-shadow: 0 32px 90px rgb(75 85 99 / 0.24);
-	}
-
-	.project-logo {
-		width: 10rem;
-		height: 4rem;
-		border-radius: 0.125rem;
-		background-position: center;
-		background-repeat: no-repeat;
-		background-size: contain;
-		filter: grayscale(1);
-	}
-
-	.project-description :global(:where(h1, h2, h3, h4, h5, h6)) {
-		font-family: "Lora", Georgia, "Times New Roman", Times, serif;
-	}
-
-	@media (max-width: 640px) {
-		.project-carousel :global(.glide__slide) {
-			opacity: 1;
-			transform: scale(1);
-		}
-	}
-</style>

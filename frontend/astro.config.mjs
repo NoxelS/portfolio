@@ -18,5 +18,5 @@ export default defineConfig({
 	vite: {
 		plugins: [tailwindcss()],
 	},
-	integrations: [sitemap(), icon({ include: { mdi: ['github', 'linkedin'], iconoir: ['arrow-down'] } })],
+	integrations: [sitemap(), icon({ include: { mdi: ['github', 'linkedin'], iconoir: ['arrow-down', 'arrow-right'] } })],
 });
