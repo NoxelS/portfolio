@@ -1,0 +1,90 @@
+---
+/**
+ * StandoutStory — a visual career narrative connecting Noel's foundations
+ * in physics, software development, and data/AI work to client outcomes.
+ */
+
+const chapters = [
+	{
+		index: '01',
+		title: 'Theoretical physics',
+		label: 'A rigorous foundation',
+		body: 'Working where machine learning meets physics taught me to see the structure inside complex questions.',
+		outcome: 'Analytical thinking',
+		accent: 'border-powder-petal-300 bg-powder-petal-50 text-powder-petal-800',
+		position: 'lg:col-span-5 lg:col-start-1',
+	},
+	{
+		index: '02',
+		title: 'Software development',
+		label: 'Ideas made real',
+		body: 'I began freelancing in high school, building custom content-management systems for schools across Germany.',
+		outcome: 'Requirements into reality',
+		accent: 'border-thistle-300 bg-thistle-50 text-thistle-800',
+		position: 'lg:col-span-5 lg:col-start-8 lg:mt-24',
+	},
+	{
+		index: '03',
+		title: 'Data science & AI',
+		label: 'Evidence into action',
+		body: 'Today, I use data and AI to automate work, accelerate processes, and uncover opportunities for meaningful savings.',
+		outcome: 'Insight-led decisions',
+		accent: 'border-soft-periwinkle-300 bg-soft-periwinkle-50 text-soft-periwinkle-800',
+		position: 'lg:col-span-5 lg:col-start-6 lg:mt-28',
+	},
+];
+---
+
+<div class="grid gap-10 lg:gap-14">
+	<div class="max-w-3xl space-y-5">
+		<p class="text-eyebrow text-accent">Connecting dots across domains</p>
+		<h3 class="lora text-display-sm uppercase text-foreground">From complex questions to useful decisions.</h3>
+		<p class="max-w-2xl text-copy-lg text-muted-strong">
+			I bring scientific rigor, practical software experience, and a data-informed perspective to the questions that matter to your business.
+		</p>
+	</div>
+
+	<div class="relative isolate overflow-hidden border-y border-border py-10 sm:py-14 lg:py-20">
+		<svg class="pointer-events-none absolute inset-0 hidden h-full w-full lg:block" viewBox="0 0 1200 760" preserveAspectRatio="none" aria-hidden="true">
+			<path d="M 120 120 C 310 110, 430 170, 520 312 S 780 432, 970 550" fill="none" stroke="currentColor" stroke-width="2" class="text-powder-petal-200" stroke-dasharray="5 9" />
+			<path d="M 120 120 C 310 110, 430 170, 520 312 S 780 432, 970 550" fill="none" stroke="currentColor" stroke-width="1" class="text-soft-periwinkle-200" opacity="0.65" />
+			<circle cx="120" cy="120" r="11" class="fill-powder-petal-300" />
+			<circle cx="520" cy="312" r="11" class="fill-thistle-300" />
+			<circle cx="970" cy="550" r="11" class="fill-soft-periwinkle-300" />
+			<circle cx="120" cy="120" r="4" class="fill-canvas" />
+			<circle cx="520" cy="312" r="4" class="fill-canvas" />
+			<circle cx="970" cy="550" r="4" class="fill-canvas" />
+		</svg>
+
+		<div class="relative grid gap-8 lg:grid-cols-12 lg:gap-y-0">
+			{chapters.map((chapter) => (
+				<article class:list={['group relative grid gap-5 border-l border-border pl-5 transition duration-300 hover:border-accent sm:pl-7', chapter.position]}>
+					<div class:list={['grid size-12 place-items-center rounded-full border font-mono text-xs tracking-[0.12em] transition duration-300 group-hover:scale-110', chapter.accent]}>
+						{chapter.index}
+					</div>
+					<div class="grid gap-3">
+						<p class="text-eyebrow text-muted">{chapter.label}</p>
+						<h4 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{chapter.title}</h4>
+						<p class="max-w-md text-base leading-relaxed text-muted-strong">{chapter.body}</p>
+						<p class="pt-1 text-sm font-semibold tracking-[0.04em] text-accent">{chapter.outcome}</p>
+					</div>
+				</article>
+			))}
+		</div>
+	</div>
+
+	<div class="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-3">
+		<div class="grid gap-2 bg-canvas p-5 sm:p-6">
+			<p class="text-meta">01 / Perspective</p>
+			<p class="lora text-xl text-foreground">See the structure.</p>
+		</div>
+		<div class="grid gap-2 bg-canvas p-5 sm:p-6">
+			<p class="text-meta">02 / Translation</p>
+			<p class="lora text-xl text-foreground">Understand what matters.</p>
+		</div>
+		<div class="grid gap-2 bg-canvas p-5 sm:p-6">
+			<p class="text-meta">03 / Outcome</p>
+			<p class="lora text-xl text-foreground">Act on evidence.</p>
+		</div>
+	</div>
+</div>

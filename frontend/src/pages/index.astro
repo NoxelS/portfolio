@@ -12,6 +12,7 @@ import LandingPage from '../components/LandingPage.astro';
 import ProjectCarousel from '../components/ProjectCarousel.astro';
 import BannerQuote from '../components/BannerQuote.astro';
 import PortfolioSection from '../components/PortfolioSection.astro';
+import StandoutStory from '../components/StandoutStory.astro';
 
 const projects = [
     {
@@ -78,8 +79,10 @@ Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.`,
             id="my-work"
             eyebrow="How I work"
             title="What makes me stand out"
-            description="A flexible section shell for your positioning, process, or selected differentiators."
-        />
+            description="I connect dots across domains—bringing analytical thinking, business awareness, and data-informed action to every project."
+        >
+            <StandoutStory />
+        </PortfolioSection>
 
         <BannerQuote
             quote="Not only theory, but also proven practice."
