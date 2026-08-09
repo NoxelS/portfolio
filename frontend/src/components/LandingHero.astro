@@ -4,7 +4,7 @@
  *
  * Owns a full-viewport `<div id="mesh-frame">` containing layered radial
  * gradients, dot-noise grain, and a canvas that paints thousands of deformed
- * droplet-shaped halftone points whose motion is driven by layered sine waves
+ * circular halftone points whose motion is driven by layered sine waves
  * and mouse-positioned vortex fields.
  *
  * The WebGL rendering is delegated to a bundled client module
@@ -36,9 +36,6 @@ import MeshRenderer from './MeshRenderer.astro';
             </a>
         </div>
     </div>
-    <div class="mesh-color mesh-color-a"></div>
-    <div class="mesh-color mesh-color-b"></div>
-    <div class="mesh-color mesh-color-c"></div>
     <MeshRenderer canvasId="hero-mesh-canvas" frameId="mesh-frame" interactionId="landing-page" client:load />
     <div class="mesh-shadow mesh-shadow-a"></div>
     <div class="mesh-shadow mesh-shadow-b"></div>
@@ -75,28 +72,10 @@ import MeshRenderer from './MeshRenderer.astro';
 
 
 <style>
-    .mesh-color,
     .mesh-shadow,
     .mesh-grain {
         pointer-events: none;
         position: absolute;
-    }
-
-    .mesh-color {
-        inset: -24%;
-        opacity: 0.7;
-    }
-
-    .mesh-color-a {
-        background: radial-gradient(ellipse at 18% 22%, color-mix(in oklch, var(--color-ghost-white-500) 64%, transparent) 0%, transparent 58%);
-    }
-
-    .mesh-color-b {
-        background: radial-gradient(ellipse at 82% 24%, color-mix(in oklch, var(--color-powder-petal-500) 58%, transparent) 0%, transparent 56%);
-    }
-
-    .mesh-color-c {
-        background: radial-gradient(ellipse at 48% 86%, color-mix(in oklch, var(--color-soft-periwinkle-950) 72%, transparent) 0%, transparent 62%);
     }
 
     .mesh-shadow {

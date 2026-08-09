@@ -18,8 +18,8 @@ import { Renderer, Program, InstancedMesh } from 'ogl';
 
 const LOGICAL_WIDTH = 1600;
 const LOGICAL_HEIGHT = 760;
-const SPACING = 15;
-const VERTS_PER_QUAD = 4;
+const SPACING = 10;
+const VERTS_PER_QUAD = 1;
 
 // ---------------------------------------------------------------------------
 // Animation knobs — adjust these values to tune the mesh's feel.
@@ -155,15 +155,8 @@ const FRAGMENT_SHADER = /* glsl */ `#version 300 es
     in vec2 vLocalPos;
     out vec4 fragColor;
 
-    float sdTeardrop(vec2 p) {
-        float dCircle = length(p) - 1.0;
-        float dTri    = max(length(p - vec2(0.0, 0.15)) - 1.15, -p.y);
-        float k       = clamp(0.5 + 0.5 * (dCircle - dTri) / 0.3, 0.0, 1.0);
-        return mix(dTri, dCircle, k) - 0.3 * k * (1.0 - k);
-    }
-
     void main() {
-        float d  = sdTeardrop(vLocalPos);
+        float d  = length(vLocalPos) - 1.0;
         float alpha = 1.0 - smoothstep(0.0, 0.04, d);
         fragColor = vec4(vColor.rgb, vColor.a * alpha);
     }
@@ -262,10 +255,9 @@ function createPoints(layer: 0 | 1): MeshPoint[] {
 // Canvas 2D fallback (pixel-identical to original)
 // ---------------------------------------------------------------------------
 
-// Pre-built teardrop Path2D — reused for every dot in the Canvas 2D fallback.
-const TEARDROP_PATH = new Path2D(
-    'M 0 -1 C 0.18 -0.74 0.28 -0.46 0.48 -0.48 C 0.7 -0.5 0.9 -0.34 1 0 C 0.9 0.34 0.7 0.5 0.48 0.48 C 0.28 0.46 0.18 0.74 0 1 C -0.18 0.74 -0.28 0.46 -0.48 0.48 C -0.7 0.5 -0.9 0.34 -1 0 C -0.9 -0.34 -0.7 -0.5 -0.48 -0.48 C -0.28 -0.46 -0.18 0.74 0 -1 Z',
-);
+// Pre-built circle Path2D — reused for every dot in the Canvas 2D fallback.
+const CIRCLE_PATH = new Path2D();
+CIRCLE_PATH.arc(0, 0, 1, 0, Math.PI * 2);
 
 function drawFallback(ctx: CanvasRenderingContext2D | null, points: MeshPoint[], mouseX = 0, mouseY = 0) {
     if (!ctx) return;
@@ -301,7 +293,7 @@ function drawFallback(ctx: CanvasRenderingContext2D | null, points: MeshPoint[],
         );
         ctx.fillStyle = pt.color;
         ctx.globalAlpha = pt.alpha;
-        ctx.fill(TEARDROP_PATH);
+        ctx.fill(CIRCLE_PATH);
     }
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
