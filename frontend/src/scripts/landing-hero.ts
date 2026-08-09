@@ -18,8 +18,37 @@ import { Renderer, Program, InstancedMesh } from 'ogl';
 
 const LOGICAL_WIDTH = 1600;
 const LOGICAL_HEIGHT = 760;
-const SPACING = 10;
+const SPACING = 9;
 const VERTS_PER_QUAD = 4;
+
+// ---------------------------------------------------------------------------
+// Animation knobs — adjust these values to tune the mesh's feel.
+// ---------------------------------------------------------------------------
+
+// Idle wobble: strength of the slow ambient movement when the pointer is still.
+const IDLE_WOBBLE_X_PRIMARY = 0.44;
+const IDLE_WOBBLE_X_SECONDARY = 0.45;
+const IDLE_WOBBLE_Y_PRIMARY = 0.41;
+const IDLE_WOBBLE_Y_SECONDARY = 0.44;
+
+// Idle wobble: oscillation speeds in radians-per-second units (lower is slower).
+const IDLE_WOBBLE_X_PRIMARY_SPEED = 0.25;
+const IDLE_WOBBLE_X_SECONDARY_SPEED = 0.21;
+const IDLE_WOBBLE_Y_PRIMARY_SPEED = 0.20;
+const IDLE_WOBBLE_Y_SECONDARY_SPEED = 0.23;
+
+// Pointer response: how strongly pointer movement adds momentum to the mesh.
+const POINTER_IMPULSE = 50;
+const MAX_POINTER_VELOCITY = 0.25;
+
+// Pointer inertia: friction affects only pointer velocity; the spring controls
+// how quickly the pointer-induced offset returns to the idle wobble.
+const POINTER_VELOCITY_DAMPING = 1.35;
+const POINTER_RETURN_SPRING = 0.7;
+
+// Rendering: cap large timing jumps and draw at roughly 30 frames per second.
+const MAX_DELTA_SECONDS = 0.05;
+const DRAW_INTERVAL_MS = 33;
 
 // ---------------------------------------------------------------------------
 // Types
@@ -478,7 +507,7 @@ function initOgl(
 
         // ── Draw (uniforms only; buffer data is static) ─────────────────
         function draw(_points: MeshPoint[], mouseX: number, mouseY: number, time: number) {
-            program.uniforms.uTime.value[0] = time;
+            program.uniforms.uTime.value = time;
             program.uniforms.uMouse.value[0] = mouseX;
             program.uniforms.uMouse.value[1] = mouseY;
             program.uniforms.uProjectionMatrix.value = projectionMatrix;
@@ -538,10 +567,13 @@ export function init(landingEl: HTMLElement, frameEl: HTMLElement, canvasEl: HTM
     }
 
     function meshMotion() {
-        // Two slow waves prevent a recognisable, mechanical loop. The cursor
-        // contribution stays deliberately smaller than the existing warp.
-        const idleX = Math.sin(animTime * 0.23) * 0.036 + Math.cos(animTime * 0.11) * 0.014;
-        const idleY = Math.cos(animTime * 0.19) * 0.029 + Math.sin(animTime * 0.13) * 0.012;
+        // Two slow waves prevent a recognisable, mechanical loop. The idle
+        // movement is just noticeable at rest while the cursor contribution
+        // remains a subtle nudge on top of the existing warp.
+        const idleX = Math.sin(animTime * IDLE_WOBBLE_X_PRIMARY_SPEED) * IDLE_WOBBLE_X_PRIMARY
+            + Math.cos(animTime * IDLE_WOBBLE_X_SECONDARY_SPEED) * IDLE_WOBBLE_X_SECONDARY;
+        const idleY = Math.cos(animTime * IDLE_WOBBLE_Y_PRIMARY_SPEED) * IDLE_WOBBLE_Y_PRIMARY
+            + Math.sin(animTime * IDLE_WOBBLE_Y_SECONDARY_SPEED) * IDLE_WOBBLE_Y_SECONDARY;
         return { x: idleX + driftX, y: idleY + driftY };
     }
 
@@ -626,8 +658,10 @@ export function init(landingEl: HTMLElement, frameEl: HTMLElement, canvasEl: HTM
         // placing it under the cursor. It can therefore coast after the mouse
         // stops, rather than snapping to a target (or back to the origin).
         if (lastPointerX !== null && lastPointerY !== null) {
-            velocityX = Math.max(-0.16, Math.min(0.16, velocityX + (pointerX - lastPointerX) * 10));
-            velocityY = Math.max(-0.16, Math.min(0.16, velocityY + (pointerY - lastPointerY) * 10));
+            velocityX = Math.max(-MAX_POINTER_VELOCITY, Math.min(MAX_POINTER_VELOCITY,
+                velocityX + (pointerX - lastPointerX) * POINTER_IMPULSE));
+            velocityY = Math.max(-MAX_POINTER_VELOCITY, Math.min(MAX_POINTER_VELOCITY,
+                velocityY + (pointerY - lastPointerY) * POINTER_IMPULSE));
         }
         lastPointerX = pointerX;
         lastPointerY = pointerY;
@@ -647,20 +681,22 @@ export function init(landingEl: HTMLElement, frameEl: HTMLElement, canvasEl: HTM
 
         // Time-based integration keeps the effect equally restrained on
         // 60 Hz and high-refresh-rate displays.
-        const deltaSeconds = Math.min(0.05, Math.max(0, (now - (lastFrame || now)) / 1000));
+        const deltaSeconds = Math.min(MAX_DELTA_SECONDS, Math.max(0, (now - (lastFrame || now)) / 1000));
         lastFrame = now;
         animTime += deltaSeconds;
 
-        driftX = Math.max(-0.16, Math.min(0.16, driftX + velocityX * deltaSeconds));
-        driftY = Math.max(-0.16, Math.min(0.16, driftY + velocityY * deltaSeconds));
-        // Both motion and displacement fade gently, so a nudge lingers but
-        // cannot leave the mesh permanently offset after the pointer leaves.
-        velocityX *= Math.exp(-1.35 * deltaSeconds);
-        velocityY *= Math.exp(-1.35 * deltaSeconds);
-        driftX *= Math.exp(-0.28 * deltaSeconds);
-        driftY *= Math.exp(-0.28 * deltaSeconds);
+        driftX = Math.max(-MAX_POINTER_VELOCITY, Math.min(MAX_POINTER_VELOCITY,
+            driftX + velocityX * deltaSeconds));
+        driftY = Math.max(-MAX_POINTER_VELOCITY, Math.min(MAX_POINTER_VELOCITY,
+            driftY + velocityY * deltaSeconds));
+        // The spring returns only the pointer-induced offset to zero; idle
+        // wobble is calculated separately and is never damped by this motion.
+        velocityX -= driftX * POINTER_RETURN_SPRING * deltaSeconds;
+        velocityY -= driftY * POINTER_RETURN_SPRING * deltaSeconds;
+        velocityX *= Math.exp(-POINTER_VELOCITY_DAMPING * deltaSeconds);
+        velocityY *= Math.exp(-POINTER_VELOCITY_DAMPING * deltaSeconds);
 
-        if (now - lastDraw >= 33) {
+        if (now - lastDraw >= DRAW_INTERVAL_MS) {
             const motion = meshMotion();
 
             if (ogl) {
