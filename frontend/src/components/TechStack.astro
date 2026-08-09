@@ -1,0 +1,214 @@
+---
+/**
+ * A searchable, logo-led overview of the tools used across the portfolio.
+ * Technology names remain in the document for accessible search and labels,
+ * while the visible UI stays intentionally logo-only.
+ */
+import { Icon } from 'astro-icon/components';
+
+type Technology = {
+	name: string;
+	href: string;
+	productionUse: boolean;
+	icon?: string;
+	logoUrl?: string;
+};
+
+type StackGroup = {
+	name: string;
+	accent: string;
+	technologies: Technology[];
+};
+
+const productionUseClass = 'border-foreground bg-canvas text-foreground';
+const exploratoryUseClass = 'border-foreground bg-[repeating-linear-gradient(135deg,transparent_0,transparent_5px,rgba(0,0,0,0.14)_5px,rgba(0,0,0,0.14)_6px)] text-foreground';
+
+const stackGroups: StackGroup[] = [
+	{
+		name: 'Frontend',
+		accent: 'bg-soft-periwinkle-500',
+		technologies: [
+			{ name: 'Angular', icon: 'mdi:angular', href: 'https://angular.dev/', productionUse: true },
+			{ name: 'Vue.js', icon: 'mdi:vuejs', href: 'https://vuejs.org/', productionUse: true },
+			{ name: 'HTML', icon: 'mdi:language-html5', href: 'https://developer.mozilla.org/docs/Web/HTML', productionUse: true },
+			{ name: 'CSS', icon: 'mdi:language-css3', href: 'https://developer.mozilla.org/docs/Web/CSS', productionUse: true },
+			{ name: 'SCSS', icon: 'mdi:sass', href: 'https://sass-lang.com/', productionUse: true },
+			{ name: 'JavaScript', icon: 'mdi:language-javascript', href: 'https://developer.mozilla.org/docs/Web/JavaScript', productionUse: true },
+			{ name: 'TypeScript', icon: 'mdi:language-typescript', href: 'https://www.typescriptlang.org/', productionUse: true },
+			{ name: 'Tailwind CSS', icon: 'mdi:tailwind', href: 'https://tailwindcss.com/', productionUse: true },
+			{ name: 'React', icon: 'mdi:react', href: 'https://react.dev/', productionUse: true },
+			{ name: 'Astro', icon: 'mdi:rocket-launch-outline', href: 'https://astro.build/', productionUse: true },
+			{ name: 'Next.js', icon: 'mdi:layers-triple', href: 'https://nextjs.org/', productionUse: false },
+			{ name: 'Svelte', icon: 'mdi:fire', href: 'https://svelte.dev/', productionUse: false },
+			{ name: 'Nuxt', icon: 'mdi:nuxt', href: 'https://nuxt.com/', productionUse: false },
+		],
+	},
+	{
+		name: 'Backend',
+		accent: 'bg-thistle-500',
+		technologies: [
+			{ name: 'Python', icon: 'mdi:language-python', href: 'https://www.python.org/', productionUse: true },
+			{ name: 'FastAPI', icon: 'mdi:lightning-bolt-outline', href: 'https://fastapi.tiangolo.com/', productionUse: true },
+			{ name: 'C++', icon: 'mdi:language-cpp', href: 'https://isocpp.org/', productionUse: false },
+			{ name: 'Java', icon: 'mdi:language-java', href: 'https://dev.java/', productionUse: false },
+			{ name: 'Node.js', icon: 'mdi:nodejs', href: 'https://nodejs.org/', productionUse: true },
+			{ name: 'Deno', icon: 'mdi:language-typescript', href: 'https://deno.com/', productionUse: true },
+			{ name: 'Next.js', icon: 'mdi:layers-triple', href: 'https://nextjs.org/', productionUse: false },
+			{ name: 'GraphQL', icon: 'mdi:graphql', href: 'https://graphql.org/', productionUse: false },
+		],
+	},
+	{
+		name: 'Storage',
+		accent: 'bg-powder-petal-500',
+		technologies: [
+			{ name: 'PostgreSQL', icon: 'mdi:database', href: 'https://www.postgresql.org/', productionUse: true },
+			{ name: 'MySQL', icon: 'mdi:database-outline', href: 'https://www.mysql.com/', productionUse: true },
+			{ name: 'MongoDB', icon: 'mdi:database-search', href: 'https://www.mongodb.com/', productionUse: true },
+			{ name: 'Firebase', icon: 'mdi:firebase', href: 'https://firebase.google.com/', productionUse: false },
+			{ name: 'Redis', icon: 'mdi:database', href: 'https://redis.io/', productionUse: true },
+			{ name: 'Valkey', icon: 'mdi:database-outline', href: 'https://valkey.io/', productionUse: true },
+			{ name: 'DuckDB', icon: 'mdi:database-search', href: 'https://duckdb.org/', productionUse: true },
+			{ name: 'Qdrant', icon: 'mdi:vector-polyline', href: 'https://qdrant.tech/', productionUse: true },
+			{ name: 'pgvector', icon: 'mdi:vector-polyline', href: 'https://github.com/pgvector/pgvector', productionUse: true },
+			{ name: 'Chroma', icon: 'mdi:database-search', href: 'https://www.trychroma.com/', productionUse: false },
+			{ name: 'Snowflake', logoUrl: 'https://cdn.simpleicons.org/snowflake/000000', href: 'https://www.snowflake.com/', productionUse: false },
+		],
+	},
+	{
+		name: 'Cloud & Infra',
+		accent: 'bg-medium-slate-blue-500',
+		technologies: [
+			{ name: 'Azure', icon: 'mdi:microsoft-azure', href: 'https://azure.microsoft.com/', productionUse: true },
+			{ name: 'Kubernetes', icon: 'mdi:kubernetes', href: 'https://kubernetes.io/', productionUse: true },
+			{ name: 'K3s', icon: 'mdi:kubernetes', href: 'https://k3s.io/', productionUse: true },
+			{ name: 'Docker', icon: 'mdi:docker', href: 'https://www.docker.com/', productionUse: true },
+			{ name: 'Docker Swarm', icon: 'mdi:server-network', href: 'https://docs.docker.com/engine/swarm/', productionUse: false },
+			{ name: 'Podman', icon: 'mdi:server-network', href: 'https://podman.io/', productionUse: true },
+		],
+	},
+	{
+		name: 'CI & CD',
+		accent: 'bg-foreground',
+		technologies: [
+			{ name: 'GitHub', icon: 'mdi:github', href: 'https://github.com/', productionUse: true },
+			{ name: 'GitLab', icon: 'mdi:gitlab', href: 'https://about.gitlab.com/', productionUse: true },
+			{ name: 'Argo CD', icon: 'mdi:source-branch', href: 'https://argo-cd.readthedocs.io/', productionUse: true },
+			{ name: 'Jenkins', icon: 'mdi:cog-outline', href: 'https://www.jenkins.io/', productionUse: true },
+		],
+	},
+	{
+		name: 'MLOps',
+		accent: 'bg-soft-periwinkle-500',
+		technologies: [
+			{ name: 'vLLM', icon: 'mdi:chip', href: 'https://docs.vllm.ai/', productionUse: true },
+			{ name: 'llama.cpp', icon: 'mdi:memory', href: 'https://github.com/ggml-org/llama.cpp', productionUse: true },
+			{ name: 'LiteLLM', icon: 'mdi:router-network', href: 'https://www.litellm.ai/', productionUse: true },
+			{ name: 'Langfuse', logoUrl: 'https://cdn.simpleicons.org/langfuse/000000', href: 'https://langfuse.com/', productionUse: true },
+			{ name: 'MLflow', logoUrl: 'https://cdn.simpleicons.org/mlflow/000000', href: 'https://mlflow.org/', productionUse: true },
+			{ name: 'Feast', logoUrl: 'https://cdn.simpleicons.org/feast/000000', href: 'https://feast.dev/', productionUse: false },
+		],
+	},
+	{
+		name: 'Agents',
+		accent: 'bg-thistle-500',
+		technologies: [
+			{ name: 'LangGraph', icon: 'mdi:graph-outline', href: 'https://langchain-ai.github.io/langgraph/', productionUse: true },
+			{ name: 'LangChain', icon: 'mdi:link', href: 'https://www.langchain.com/', productionUse: true },
+			{ name: 'NOOA', icon: 'mdi:robot-outline', href: 'https://github.com/NVIDIA-NeMo/labs-OO-Agents', productionUse: false },
+			{ name: 'AgentOS', icon: 'mdi:robot-industrial-outline', href: 'https://agentos.sh/', productionUse: false },
+			{ name: 'n8n', icon: 'mdi:robot-industrial-outline', href: 'https://n8n.io/', productionUse: false },
+
+		],
+	},
+	{
+		name: 'Libraries',
+		accent: 'bg-powder-petal-500',
+		technologies: [
+			{ name: 'TensorFlow', icon: 'mdi:brain', href: 'https://www.tensorflow.org/', productionUse: true },
+			{ name: 'PyTorch', icon: 'mdi:fire', href: 'https://pytorch.org/', productionUse: false },
+			{ name: 'SciPy', icon: 'mdi:chart-bell-curve-cumulative', href: 'https://scipy.org/', productionUse: true },
+			{ name: 'NumPy', icon: 'mdi:matrix', href: 'https://numpy.org/', productionUse: true },
+			{ name: 'Pandas', icon: 'mdi:table-large', href: 'https://pandas.pydata.org/', productionUse: true },
+			{ name: 'Polars', icon: 'mdi:table-large', href: 'https://pola.rs/', productionUse: true },
+			{ name: 'Transformers', icon: 'mdi:brain', href: 'https://huggingface.co/docs/transformers/index', productionUse: true },
+		],
+	},
+];
+---
+
+<div class="grid gap-8 mt-8" data-tech-stack>
+	<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between self-end">
+		<div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-base  leading-tight text-muted-strong self-end" aria-label="Technology experience legend">
+			<span class="flex items-center gap-3"><span class="h-5 w-5 shrink-0 border border-foreground bg-canvas"></span>Used in real production environments</span>
+			<span class="flex items-center gap-3"><span class="h-5 w-5 shrink-0 border border-foreground bg-[repeating-linear-gradient(135deg,transparent_0,transparent_3px,rgba(0,0,0,0.25)_3px,rgba(0,0,0,0.25)_4px)]"></span>Used in research and personal projects</span>
+		</div>
+		<label class="group flex min-w-0 items-center gap-3 border border-foreground bg-canvas px-4 py-3 text-foreground transition-colors focus-within:bg-foreground focus-within:text-canvas sm:w-72" for="tech-stack-search">
+			<Icon name="iconoir:search" class="h-5 w-5 shrink-0" aria-hidden="true" />
+			<span class="sr-only">Search technologies</span>
+			<input id="tech-stack-search" data-tech-stack-search type="search" placeholder="Search the stack" autocomplete="off" class="min-w-0 flex-1 bg-transparent text-base text-inherit outline-none placeholder:text-muted-strong group-focus-within:placeholder:text-canvas/65" />
+		</label>
+	</div>
+
+	<div class="grid gap-2 sm:gap-3" data-tech-stack-groups>
+		{stackGroups.map((group) => (
+			<section data-tech-stack-group data-group-name={group.name.toLowerCase()} class="grid min-w-0 grid-cols-1 border border-foreground bg-canvas transition-opacity duration-200 md:grid-cols-[17rem_minmax(0,1fr)]">
+				<div class="relative flex min-h-20 items-center bg-foreground p-5 text-canvas sm:min-h-24 md:min-h-full">
+					<span class:list={['absolute left-0 top-0 h-1.5 w-14', group.accent]}></span>
+					<h3 class="lora text-2xl leading-none uppercase sm:text-3xl">{group.name}</h3>
+				</div>
+				<div class="grid min-w-0 grid-cols-[repeat(auto-fit,minmax(3.5rem,1fr))] gap-2 bg-surface p-2 sm:gap-3 sm:p-3">
+					{group.technologies.map((technology) => (
+						<a data-tech-stack-item data-technology-name={technology.name.toLowerCase()} data-production-use={technology.productionUse} href={technology.href} target="_blank" rel="noreferrer" class:list={['group/logo relative flex h-12 min-w-0 items-center justify-center border p-2 transition-colors duration-200 hover:bg-none hover:bg-foreground hover:text-canvas focus-visible:bg-none focus-visible:bg-foreground focus-visible:text-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent', technology.productionUse ? productionUseClass : exploratoryUseClass]} aria-label={`Open ${technology.name} website in a new tab`} title={`${technology.name} — ${technology.productionUse ? 'production use' : 'research and side projects'}`}>
+							{technology.icon ? (
+								<Icon name={technology.icon} class="h-6 w-6 max-w-full transition-all duration-200 group-hover/logo:scale-75 group-hover/logo:opacity-0 group-focus-visible/logo:scale-75 group-focus-visible/logo:opacity-0" aria-hidden="true" />
+							) : technology.logoUrl ? (
+								<img src={technology.logoUrl} alt={`${technology.name} logo`} class="h-6 w-6 max-w-full object-contain grayscale transition-all duration-200 group-hover/logo:scale-75 group-hover/logo:opacity-0 group-focus-visible/logo:scale-75 group-focus-visible/logo:opacity-0" />
+							) : (
+								<span class="max-w-full truncate text-center text-xs font-semibold" aria-hidden="true">{technology.name}</span>
+							)}
+							<span class="absolute inset-1 flex items-center justify-center gap-1 text-center text-[0.625rem] font-semibold leading-tight opacity-0 transition-opacity duration-200 group-hover/logo:opacity-100 group-focus-visible/logo:opacity-100">
+								<span>{technology.name}</span>
+								<Icon name="iconoir:open-new-window" class="h-3 w-3 shrink-0" aria-hidden="true" />
+							</span>
+						</a>
+					))}
+				</div>
+			</section>
+		))}
+	</div>
+
+	<p data-tech-stack-empty class="hidden border border-dashed border-foreground px-5 py-10 text-center text-muted-strong" aria-live="polite">No technologies match that search.</p>
+</div>
+
+<script>
+	const techStack = document.querySelector<HTMLElement>('[data-tech-stack]');
+
+	if (techStack) {
+		const search = techStack.querySelector<HTMLInputElement>('[data-tech-stack-search]');
+		const groups = [...techStack.querySelectorAll<HTMLElement>('[data-tech-stack-group]')];
+		const emptyState = techStack.querySelector<HTMLElement>('[data-tech-stack-empty]');
+
+		search?.addEventListener('input', () => {
+			const query = search.value.trim().toLowerCase();
+			let visibleGroups = 0;
+
+			groups.forEach((group) => {
+				const groupMatch = group.dataset.groupName?.includes(query) ?? false;
+				let visibleItems = 0;
+
+				group.querySelectorAll<HTMLElement>('[data-tech-stack-item]').forEach((item) => {
+					const itemMatch = item.dataset.technologyName?.includes(query) ?? false;
+					const visible = !query || groupMatch || itemMatch;
+					item.classList.toggle('hidden', !visible);
+					if (visible) visibleItems += 1;
+				});
+
+				const visible = visibleItems > 0;
+				group.classList.toggle('hidden', !visible);
+				if (visible) visibleGroups += 1;
+			});
+
+			emptyState?.classList.toggle('hidden', visibleGroups > 0);
+		});
+	}
+</script>

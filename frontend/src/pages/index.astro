@@ -12,6 +12,7 @@ import BannerQuote from '../components/BannerQuote.astro';
 import PortfolioSection from '../components/PortfolioSection.astro';
 import StandoutStory from '../components/StandoutStory.astro';
 import PartnerLogoCarousel from '../components/PartnerLogoCarousel.astro';
+import TechStack from '../components/TechStack.astro';
 import { getAllTags, getSortedProjects } from '../data/projects';
 
 const projects = getSortedProjects();
@@ -70,11 +71,14 @@ const projectTags = getAllTags();
 
         <!-- My Tech Stack -->
         <PortfolioSection
-            id="my-tech-stack"
+            id="tech-stack"
             eyebrow="Capabilities"
             title="My Tech Stack"
-            description="Use this area for the tools, systems, and working principles you want to foreground."
-        />
+            description="Quickly check whether our tech stacks already align. If a technology is missing, that’s no issue—I’m always ready to learn and can quickly find my way around a new stack."
+            noPadding
+        >
+            <TechStack />
+        </PortfolioSection>
 
         <BannerQuote
             quote="I prefer human interaction."

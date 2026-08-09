@@ -10,6 +10,10 @@ export const GET: APIRoute = () => {
 
 Portfolio homepage content has not been added yet.
 
+## Tech Stack
+
+Quickly check whether our tech stacks already align. If a technology is missing, that’s no issue—I’m always ready to learn and can quickly find my way around a new stack.
+
 Canonical URL: ${defaultSeo.site}/
 `;
 
