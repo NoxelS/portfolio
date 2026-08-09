@@ -2,20 +2,56 @@
 /**
  * MeshRenderer — client-side OGL WebGL halftone mesh with Canvas 2D fallback.
  *
- * Initialises the animation on the canvas. Uses a plain `<script>` tag so
- * Astro/Vite bundles it as a client module (identical pattern to
- * `ProjectCarousel.astro`).
+ * Initialises the animation on the canvas once its frame becomes visible.
+ * Uses a plain `<script>` tag so Astro/Vite bundles it as a client module.
  *
  * @component
  */
+
+const { canvasId, frameId, interactionId = frameId } = Astro.props as {
+  canvasId: string;
+  frameId: string;
+  interactionId?: string;
+};
+
 ---
 
-<canvas id="mesh-canvas" class="absolute inset-0 h-full w-full" />
+<div
+  data-mesh-instance
+  data-frame-id={frameId}
+  data-interaction-id={interactionId}
+  class="absolute inset-0"
+>
+  <canvas id={canvasId} class="absolute inset-0 h-full w-full" aria-hidden="true" />
+</div>
 
 <script>
-  import { init } from '../scripts/landing-hero';
-  const landing = document.getElementById('landing-page');
-  const frame = document.getElementById('mesh-frame');
-  const cvs = document.getElementById('mesh-canvas') as HTMLCanvasElement;
-  if (landing && frame && cvs) init(landing, frame, cvs);
+  document.querySelectorAll<HTMLElement>('[data-mesh-instance]:not([data-mesh-bound])').forEach((instance) => {
+    const canvas = instance.querySelector('canvas') as HTMLCanvasElement | null;
+    const frame = instance.dataset.frameId
+      ? document.getElementById(instance.dataset.frameId)
+      : null;
+    const interaction = instance.dataset.interactionId
+      ? document.getElementById(instance.dataset.interactionId)
+      : null;
+
+    if (!frame || !interaction || !canvas) return;
+
+    instance.dataset.meshBound = 'true';
+    let initialised = false;
+    const start = async () => {
+      if (initialised) return;
+      initialised = true;
+      const { init } = await import('../scripts/landing-hero');
+      init(interaction, frame, canvas);
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        observer.disconnect();
+        void start();
+      }
+    }, { threshold: 0 });
+    observer.observe(frame);
+  });
 </script>

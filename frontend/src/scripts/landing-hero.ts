@@ -18,7 +18,7 @@ import { Renderer, Program, InstancedMesh } from 'ogl';
 
 const LOGICAL_WIDTH = 1600;
 const LOGICAL_HEIGHT = 760;
-const SPACING = 9;
+const SPACING = 15;
 const VERTS_PER_QUAD = 4;
 
 // ---------------------------------------------------------------------------

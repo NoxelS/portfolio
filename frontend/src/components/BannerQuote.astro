@@ -9,17 +9,25 @@
  * @prop {string} quote - The guiding principle.
  * @prop {string} subquote - Supporting perspective.
  */
+import MeshRenderer from './MeshRenderer.astro';
 
 const { quote, subquote } = Astro.props as {
     quote: string;
     subquote: string;
 };
 
+const meshKey = quote.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+const meshFrameId = `banner-mesh-frame-${meshKey}`;
+const meshCanvasId = `banner-mesh-canvas-${meshKey}`;
+
 ---
 
 <!-- Personal principle between page sections -->
-<aside class="-mx-4 w-[calc(100%+2rem)] min-w-0 bg-gray-950 px-4 py-10 md:-mx-8 md:w-[calc(100%+4rem)] md:px-8 md:py-14" aria-label="Portfolio principle">
-	<div class="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(14rem,1fr)] lg:gap-12">
+<aside class="relative -mx-4 w-[calc(100%+2rem)] min-w-0 overflow-hidden bg-gray-950 px-4 py-10 md:-mx-8 md:w-[calc(100%+4rem)] md:px-8 md:py-14" aria-label="Portfolio principle">
+    <div id={meshFrameId} class="absolute inset-0 overflow-hidden opacity-75" aria-hidden="true">
+        <MeshRenderer canvasId={meshCanvasId} frameId={meshFrameId} client:load />
+    </div>
+	<div class="relative z-10 grid min-w-0 gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(14rem,1fr)] lg:gap-12">
         <blockquote>
             <p class="lora max-w-4xl text-3xl leading-[1.08] text-white sm:text-4xl lg:text-5xl">{quote}</p>
         </blockquote>
@@ -27,5 +35,7 @@ const { quote, subquote } = Astro.props as {
             <p class="text-base leading-relaxed text-white">{subquote}</p>
         </div>
     </div>
-    <slot />
+	<div class="relative z-10">
+	    <slot />
+	</div>
 </aside>

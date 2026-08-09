@@ -19,8 +19,7 @@ import MeshRenderer from './MeshRenderer.astro';
 
 <div
     id="mesh-frame"
-    class="absolute top-0 left-0 h-[50svh] w-full overflow-hidden bg-black md:h-1/2"
-    style="--mesh-background: color-mix(in oklch, var(--color-accent) 55%, black); background: var(--mesh-background);"
+    class="absolute top-0 left-0 h-[50svh] w-full overflow-hidden bg-gray-950 md:h-1/2"
     aria-label="Abstract liquid halftone mesh"
     role="img"
 >
@@ -40,7 +39,7 @@ import MeshRenderer from './MeshRenderer.astro';
     <div class="mesh-color mesh-color-a"></div>
     <div class="mesh-color mesh-color-b"></div>
     <div class="mesh-color mesh-color-c"></div>
-    <MeshRenderer client:load />
+    <MeshRenderer canvasId="hero-mesh-canvas" frameId="mesh-frame" interactionId="landing-page" client:load />
     <div class="mesh-shadow mesh-shadow-a"></div>
     <div class="mesh-shadow mesh-shadow-b"></div>
     <div class="mesh-grain"></div>
