@@ -73,6 +73,8 @@ const jsonLd = {
 {description && <meta name="description" content={description} />}
 {(noindex || isStaging) && <meta name="robots" content="noindex,nofollow" />}
 <link rel="canonical" href={canonicalUrl} />
+<link rel="describedby" href="/llms.txt" />
+<link rel="alternate" href="/index.md" type="text/markdown" />
 
 <meta property="og:site_name" content={defaultSeo.siteName} />
 <meta property="og:type" content={type} />
