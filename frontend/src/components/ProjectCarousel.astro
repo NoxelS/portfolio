@@ -37,33 +37,46 @@ const { projects, tags } = Astro.props;
     </div>
 
     <div class="project-carousel glide min-w-0" aria-label="Projects carousel" data-project-glide>
-        <div class="glide__track overflow-visible" data-glide-el="track">
-            <ul class="glide__slides items-stretch py-4" data-project-slides>
+        <div class="relative">
+            <div class="glide__track overflow-visible" data-glide-el="track">
+                <ul class="glide__slides items-stretch py-4" data-project-slides>
                 {
                     projects.map(project => (
                         <li
                             class="glide__slide flex h-auto"
-                            data-project-tags={JSON.stringify(project.tags)}
+                            data-project-filters={JSON.stringify(project.filters)}
                         >
-                            <article class="relative flex h-full w-full flex-col gap-4 border border-gray-300 bg-white p-6 sm:p-8">
+                            <article class="relative flex h-full w-full max-h-[56rem] flex-col gap-4 overflow-y-auto border border-gray-300 bg-white p-6 sm:p-8" data-project-card>
                                 <header class="grid grid-cols-[minmax(0,1fr)_7rem] items-start gap-5">
                                     <div class="flex flex-row gap-3 relative w-max items-center">
                                         <h3 class="lora text-2xl leading-tight text-gray-950 sm:text-3xl">{project.title}</h3>
                                     </div>
                                     <div class="grid justify-items-end gap-3 absolute right-0 top-0 p-6 sm:p-8">
                                         {project.logoSrc && (
-                                            <div
-                                                class="flex h-14 w-28 items-center justify-end"
-                                                role="img"
-                                                aria-label={project.logoAlt ?? `${project.title} logo`}
-                                            >
-                                                <img class="max-h-full max-w-full object-contain grayscale" src={project.logoSrc} alt="" />
-                                            </div>
+                                            project.companyUrl ? (
+                                                <a
+                                                    class="focus-ring flex h-14 w-28 items-center justify-end"
+                                                    href={project.companyUrl}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    aria-label={`Open ${project.logoAlt ?? project.title} website in a new tab`}
+                                                >
+                                                    <img class="max-h-full max-w-full object-contain grayscale" src={project.logoSrc} alt="" />
+                                                </a>
+                                            ) : (
+                                                <div
+                                                    class="flex h-14 w-28 items-center justify-end"
+                                                    role="img"
+                                                    aria-label={project.logoAlt ?? `${project.title} logo`}
+                                                >
+                                                    <img class="max-h-full max-w-full object-contain grayscale" src={project.logoSrc} alt="" />
+                                                </div>
+                                            )
                                         )}
                                     </div>
                                 </header>
 
-                                <p class="text-copy-md p-0 m-0 leading-relaxed text-gray-700">{project.summary}</p>
+                                <p class="m-0 p-0 text-lg leading-relaxed text-gray-700">{project.summary}</p>
 
                                 <ol class="grid gap-6 md:grid-cols-3 md:gap-0" aria-label={`${project.title} case-study steps`}>
                                     {project.steps.map((step, index) => (
@@ -85,7 +98,7 @@ const { projects, tags } = Astro.props;
                                             </span>
                                             <div class="grid gap-2">
                                                 <h4 class="lora text-lg leading-tight text-gray-950">{step.label}</h4>
-                                                <p class="text-copy-sm leading-relaxed text-gray-700">{step.content}</p>
+                                                <p class="text-[0.9375rem] leading-relaxed text-gray-700 sm:text-base">{step.content}</p>
                                             </div>
                                         </li>
                                     ))}
@@ -100,7 +113,10 @@ const { projects, tags } = Astro.props;
                         </li>
                     ))
                 }
-            </ul>
+                </ul>
+            </div>
+            <div class="pointer-events-none absolute inset-y-0 left-0 z-20 w-8 bg-gradient-to-r from-white via-white/90 to-transparent sm:w-16" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute inset-y-0 right-0 z-20 w-8 bg-gradient-to-l from-white via-white/90 to-transparent sm:w-16" aria-hidden="true"></div>
         </div>
         <p class="hidden py-3 pl-4 text-copy-md text-gray-700" data-project-empty role="status">
             No projects match the selected tags. Select one or more tags to see projects.
@@ -129,10 +145,10 @@ const { projects, tags } = Astro.props;
         </div>
     </div>
 
-    <div class="flex flex-row gap-4">
+    <!-- <div class="flex flex-row gap-4">
         <ActionLink href="#tech-stack" variant="primary" icon="iconoir:arrow-down" class="w-fit"> See my tech stack </ActionLink>
         <ActionLink href="#contact" variant="secondary" icon="iconoir:arrow-down" class="w-fit"> Contact me about a project </ActionLink>
-    </div>
+    </div> -->
 </div>
 
 <script>
@@ -152,6 +168,17 @@ const { projects, tags } = Astro.props;
         const allSlides = Array.from(slides.children) as HTMLLIElement[];
         const selectedTags = new Set(['Highlighted']);
         let glide: Glide | undefined;
+
+        const syncCardHeights = () => {
+            const cards = Array.from(slides.querySelectorAll<HTMLElement>('[data-project-card]'));
+            if (cards.length === 0) return;
+
+            cards.forEach(card => card.style.removeProperty('height'));
+            const maximumContentHeight = Math.max(...cards.map(card => card.scrollHeight));
+            const maximumCardHeight = window.innerWidth >= 640 ? 896 : 768;
+            const sharedHeight = Math.min(maximumContentHeight, maximumCardHeight);
+            cards.forEach(card => card.style.setProperty('height', `${sharedHeight}px`));
+        };
 
         const updateFilterButtons = () => {
             filters.forEach(filter => {
@@ -188,13 +215,14 @@ const { projects, tags } = Astro.props;
             glide = undefined;
 
             const matchingSlides = allSlides.filter(slide => {
-                const projectTags = JSON.parse(slide.dataset.projectTags ?? '[]') as string[];
-                return projectTags.some(tag => selectedTags.has(tag));
+                const projectFilters = JSON.parse(slide.dataset.projectFilters ?? '[]') as string[];
+                return projectFilters.some(filter => selectedTags.has(filter));
             });
             slides.replaceChildren(...matchingSlides);
             count.textContent = `${matchingSlides.length} ${matchingSlides.length === 1 ? 'project' : 'projects'} shown`;
             emptyState.classList.toggle('hidden', matchingSlides.length !== 0);
             mountGlide(matchingSlides.length);
+            requestAnimationFrame(syncCardHeights);
         };
 
         filters.forEach(filter => {
@@ -209,6 +237,7 @@ const { projects, tags } = Astro.props;
         });
 
         updateProjects();
+        window.addEventListener('resize', syncCardHeights);
         carousel.dataset.projectCarouselMounted = 'true';
     });
 </script>

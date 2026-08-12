@@ -2,7 +2,7 @@
  *
  * Each record defines a single case study: a short summary,
  * three narrative steps (Problem / How I solved it / Impact),
- * and metadata for filtering and display.
+ * separate metadata for filtering and display.
  */
 
 export type ProjectStep = {
@@ -15,124 +15,192 @@ export type Project = {
     summary: string;
     steps: ProjectStep[];
     tags: string[];
+    filters: string[];
     logoSrc?: string;
     logoAlt?: string;
+    companyUrl?: string;
 };
 
 export const projects: Project[] = [
     {
-        title: 'AI Transformation @ NetCom',
+        title: 'On-Premise AI Inference Platform @ NetCom',
         summary:
-            'Led AI-driven process automation across NetCom operations, reducing manual workload by ~30 % and shortening processing time from hours to minutes.',
+            'Built the governed AI platform that lets NetCom deploy language and agent systems on sensitive data without relying on external model providers.',
         steps: [
             {
                 label: 'Problem',
                 content:
-                    'NetCom\'s operations relied on repetitive, error-prone manual tasks that consumed hours of engineer time each week. Scaling was blocked by bottleneck workflows and inconsistent data entry.',
+                    'European data-protection and client requirements made external AI providers unsuitable for sensitive workloads, leaving teams without a secure, scalable way to bring language AI into daily operations.',
             },
             {
                 label: 'How I solved it',
                 content:
-                    'I designed and integrated an AI-based automation pipeline: audit the workflow, identify automation candidates, and deploy lightweight models with human-in-the-loop guardrails.',
+                    'I planned and implemented the on-premise inference stack, including model routing, load balancing, and operational foundations for reliable internal LLM and agent use.',
             },
             {
                 label: 'Impact',
                 content:
-                    'Process turnaround dropped from hours to minutes. Manual effort fell by roughly 30 %, freeing teams to focus on higher-value work. Errors and rework decreased measurably.',
+                    'NetCom gained private, enterprise-ready AI capacity that keeps sensitive workloads under its control, supports regulated use cases, and reduces token costs by 20–30 % compared with hosted models.',
             },
         ],
-        tags: ['Highlighted', 'AI', 'Automation'],
+        tags: ['Private AI', 'LLM Platform'],
+        filters: ['Highlighted', 'LLM Systems'],
         logoSrc: '/assets/companies/netcom.svg',
         logoAlt: 'NetCom logo',
+        companyUrl: 'https://www.netcom.eu/',
     },
     {
-        title: 'Data & AI Consulting @ KPMG',
+        title: 'Elevator Emergency Dispatch Agent @ NetCom',
         summary:
-            'Delivered data-driven advisory engagements that enabled clients to unlock actionable insights from complex datasets and make faster decisions.',
+            'Built an on-premise voice agent that gathers critical incident details outside business hours, giving emergency dispatchers the context they need to respond appropriately.',
         steps: [
             {
                 label: 'Problem',
                 content:
-                    'KPMG clients struggled with siloed data, inconsistent quality, and low analytics adoption across business units — making reliable insights hard to obtain.',
+                    'After hours, elevator emergency calls were either handled by staff or forwarded to authorities with too little incident context to assess whether medical or fire services were needed.',
             },
             {
                 label: 'How I solved it',
                 content:
-                    'I guided analytics delivery end-to-end: data discovery, prototyping analytical models, and building reusable pipelines that translated raw data into strategic recommendations.',
+                    'I built an on-premise speech-recognition, agent-orchestration, and speech-synthesis pipeline connected to the dispatch control centre, guiding callers through the information responders need.',
             },
             {
                 label: 'Impact',
                 content:
-                    'Clients gained faster access to reliable insights. Analytics adoption grew within business units, and the delivered frameworks became reusable templates for future engagements.',
+                    'Dispatchers receive structured, actionable incident metadata before intervention. The system extends emergency coverage beyond working hours while preserving escalation to medical or fire services when required.',
             },
         ],
-        tags: ['Highlighted', 'Data & Analytics'],
-        logoSrc: '/assets/companies/kpmg.svg',
-        logoAlt: 'KPMG logo',
+        tags: ['Voice Agent', 'Critical Operations'],
+        filters: ['Highlighted', 'Agent Systems', 'Speech & Voice'],
+        logoSrc: '/assets/companies/netcom.svg',
+        logoAlt: 'NetCom logo',
+        companyUrl: 'https://www.netcom.eu/',
     },
     {
-        title: 'CNN Model Development for Drug Discovery @ UDS',
+        title: 'HPC Molecular Embedding Pipeline @ Saarland University',
         summary:
-            'Built and validated a CNN research prototype to support drug discovery pipelines at Saarland University, bridging deep learning and bioinformatics.',
+            'Built a modular HPC pipeline that turns virtually generated molecules into centrally available chemical-space embeddings for high-throughput drug screening.',
         steps: [
             {
                 label: 'Problem',
                 content:
-                    'Drug discovery research at UDS required rapid screening of chemical structures — a task too slow for traditional manual analysis and too novel for off-the-shelf tools.',
+                    'Drug-screening simulations generated large numbers of candidate molecules, but embedding them with TopoFormer across several systems created fragmented data ownership and a bottleneck before binding-energy filtering.',
             },
             {
                 label: 'How I solved it',
                 content:
-                    'I developed a CNN-based research prototype trained on domain-specific data, iterated on validation metrics, and packaged the model for reproducibility and further experimentation.',
+                    'I built a modular HPC pipeline that distributed TopoFormer embedding jobs, collected the resulting molecular representations centrally, and handed them off consistently to the next screening stage.',
             },
             {
                 label: 'Impact',
                 content:
-                    'The prototype provided a viable screening pathway for the research team, accelerating candidate identification and establishing a foundation for subsequent computational chemistry work.',
+                    'Researchers gained a dependable, scalable path from molecule generation to chemical-space analysis, with centrally managed embeddings ready for downstream filtering and decision-making.',
             },
         ],
-        tags: ['AI', 'Research'],
+        tags: ['HPC', 'Drug Discovery'],
+        filters: ['Highlighted', 'Research'],
         logoSrc: '/assets/companies/uds.png',
         logoAlt: 'Saarland University logo',
+        companyUrl: 'https://www.uni-saarland.de/en/home/',
     },
     {
-        title: 'CMS Product Ownership',
+        title: 'Voting Theory Research Platform @ KPMG',
         summary:
-            'Owned the product lifecycle of a content management system at GIP Exyr, aligning technical delivery with business requirements and user needs.',
+            'Owned the software layer that made high-performance voting-theory simulations easier for a multidisciplinary research team to explore, interpret, and share.',
         steps: [
             {
                 label: 'Problem',
                 content:
-                    'The CMS lacked a clear product roadmap and reliable feature delivery cadence. Stakeholder requests competed without prioritisation, leading to scope creep.',
+                    'The research team produced large volumes of synthetic simulation data, but lacked a cohesive way to analyse results, exchange findings, and make their implications interpretable across disciplines.',
             },
             {
                 label: 'How I solved it',
                 content:
-                    'I structured the product backlog, defined clear acceptance criteria, and established sprint-based delivery cycles with regular stakeholder syncs to keep scope aligned.',
+                    'I independently designed and built a modular analysis stack around the simulation workflow, giving the team flexible tools to explore outputs and share comparable results.',
             },
             {
                 label: 'Impact',
                 content:
-                    'Feature delivery became predictable and stakeholder satisfaction improved. The team shipped releases on time and the CMS adoption grew across end users.',
+                    'The team could inspect and communicate simulation outcomes more effectively, improving the interpretability and collaborative value of its social-choice research.',
             },
         ],
-        tags: ['Product'],
-        logoSrc: '/assets/companies/gip_logo_neg.png',
-        logoAlt: 'GIP Exyr logo',
+        tags: ['Simulation', 'Data Analysis'],
+        filters: ['Research', 'Process Automation'],
+        logoSrc: '/assets/companies/kpmg.svg',
+        logoAlt: 'KPMG logo',
+        companyUrl: 'https://kpmg.com/de/de.html',
+    },
+    {
+        title: 'School Grading CMS @ IGS Nieder-Olm',
+        summary:
+            'Delivered and maintained an on-premise grading CMS that replaced paper-based grade collection with secure, automatic per-student summaries.',
+        steps: [
+            {
+                label: 'Problem',
+                content:
+                    'Teachers recorded assessments on paper and had to manually collect grades from every subject to determine a student’s term grade—a slow process with sensitive data-governance requirements.',
+            },
+            {
+                label: 'How I solved it',
+                content:
+                    'For my first freelance engagement, I built and maintained a complete on-premise CMS where teachers record individual assessments and the system generates each student’s consolidated grading overview.',
+            },
+            {
+                label: 'Impact',
+                content:
+                    'Grade aggregation became structured and automatic, reducing administrative work for teachers while keeping student data within a solution designed for the school’s privacy requirements.',
+            },
+        ],
+        tags: ['Privacy-first', 'Full-stack'],
+        filters: ['Process Automation'],
+        logoSrc: '/assets/companies/IGS_NiederOlm_farbig.jpg',
+        logoAlt: 'IGS Nieder-Olm logo',
+        companyUrl: 'https://igsno.de/',
+    },
+    {
+        title: 'CNN-Based Molecular Backmapping @ Saarland University',
+        summary:
+            'Developed a CNN-based approach for reconstructing atomistic DOPC lipid structures from coarse-grained simulations, reaching a backmapping rate of about 23 molecules per second.',
+        steps: [
+            {
+                label: 'Problem',
+                content:
+                    'Coarse-grained molecular simulations make larger and longer experiments practical, but translating them back into atom-level detail traditionally requires significant manual oversight and computational effort.',
+            },
+            {
+                label: 'How I solved it',
+                content:
+                    'For my bachelor’s thesis, I developed and evaluated CNNs that predict molecular internal coordinates from coarse-grained DOPC representations, using a dataset of roughly 160,000 paired structures.',
+            },
+            {
+                label: 'Impact',
+                content:
+                    'The research demonstrated a viable, efficient backmapping approach that preserves structural detail while reducing manual intervention, creating a foundation for broader molecular-dynamics and drug-discovery research.',
+            },
+        ],
+        tags: ['Deep Learning', 'Biophysics'],
+        filters: ['Research'],
+        logoSrc: '/assets/companies/uds.png',
+        logoAlt: 'Saarland University logo',
+        companyUrl: 'https://www.uni-saarland.de/en/home/',
     },
 ];
 
-/** Returns projects sorted with Highlighted-tagged projects first, preserving relative order. */
+/** Returns projects sorted with Highlighted-filtered projects first, preserving relative order. */
 export function getSortedProjects(): Project[] {
     return [...projects].sort((a, b) => {
-        const aHighlighted = a.tags.includes('Highlighted');
-        const bHighlighted = b.tags.includes('Highlighted');
+        const aHighlighted = a.filters.includes('Highlighted');
+        const bHighlighted = b.filters.includes('Highlighted');
         if (aHighlighted === bHighlighted) return 0;
         return aHighlighted ? -1 : 1;
     });
 }
 
-/** Returns a deduplicated, sorted list of all unique tags across projects. */
+/** Returns a deduplicated, sorted list of all project filters. */
 export function getAllTags(): string[] {
-    return Array.from(new Set(projects.flatMap((project) => project.tags))).sort();
+    return Array.from(new Set(projects.flatMap((project) => project.filters))).sort((a, b) => {
+        if (a === 'Highlighted') return -1;
+        if (b === 'Highlighted') return 1;
+        return a.localeCompare(b);
+    });
 }

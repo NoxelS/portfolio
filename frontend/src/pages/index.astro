@@ -14,6 +14,8 @@ import StandoutStory from '../components/StandoutStory.astro';
 import PartnerLogoCarousel from '../components/PartnerLogoCarousel.astro';
 import TechStack from '../components/TechStack.astro';
 import ContactOptions from '../components/ContactOptions.astro';
+import Footer from '../components/Footer.astro';
+import ActionLink from '../components/ActionLink.astro';
 import { getAllTags, getSortedProjects } from '../data/projects';
 
 const projects = getSortedProjects();
@@ -25,6 +27,7 @@ const projectTags = getAllTags();
 
     <div class="grid w-full min-w-0 grid-cols-1 gap-8 px-4 md:px-8">
         <BannerQuote
+            id="work-banner"
             quote="Complex problems don't always require complex solutions"
             subquote="Sometimes the simplest approach is the best. My background in both technical and business domains allows me to bridge the gap between these worlds."
         />
@@ -34,12 +37,12 @@ const projectTags = getAllTags();
             id="my-work"
             eyebrow="How I work"
             title="From complex questions to useful decisions"
-            description="I combine scientific rigor with practical software engineering to build AI systems that hold up in real operations."
+            description="I combine scientific curiosity with practical software engineering to build AI systems that hold up in real operations."
         >
             <StandoutStory />
         </PortfolioSection>
 
-        <BannerQuote quote="Not only theory, but proven practice" subquote="">
+        <BannerQuote id="projects-banner" quote="Not only theory, but proven practice" subquote="">
             <div class="flex flex-col gap-4 pt-4">
                 <div class="flex text-white text-lg">I already got the chance to have contributed alongside some awesome organisations:</div>
                 <PartnerLogoCarousel
@@ -62,13 +65,28 @@ const projectTags = getAllTags();
             id="my-projects"
             eyebrow="Selected work"
             title="My Projects"
-            description="A selection of practical AI, data, research, and product work."
+            description="From private AI platforms and voice agents to high-performance research pipelines, these projects solve real operational constraints with systems teams can use, govern, and scale."
             noPadding
         >
-            <ProjectCarousel projects={projects} tags={projectTags} />
+            <div class="grid gap-8">
+                <ProjectCarousel projects={projects} tags={projectTags} />
+                <div class="grid gap-5 flex flex-col">
+                    <p class="text-lg leading-relaxed text-muted-strong lg:max-w-2/3">
+                        These are selected projects only. If you are looking for experience in a specific area, feel free to get in touch with me.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <ActionLink href="#tech-stack-banner" icon="iconoir:arrow-down">Explore my tech stack</ActionLink>
+                        <ActionLink href="#contact-banner" variant="secondary" icon="iconoir:arrow-down">Get in touch</ActionLink>
+                    </div>
+                </div>
+            </div>
         </PortfolioSection>
 
-        <BannerQuote quote="From ideas and requirements to reality" subquote="With a broad skill set and a passion for learning, I help bring ideas to life." />
+        <BannerQuote
+            id="tech-stack-banner"
+            quote="From ideas and requirements to reality"
+            subquote="With a broad skill set and a passion for learning, I help bring ideas to life."
+        />
 
         <!-- My Tech Stack -->
         <PortfolioSection
@@ -78,10 +96,17 @@ const projectTags = getAllTags();
             description="Quickly check whether our tech stacks already align. If a technology is missing, that's no issue. I only list technologies I'm comfortable with. I'm always ready to learn and can quickly find my way around a new stack."
             noPadding
         >
-            <TechStack />
+            <div class="grid gap-8">
+                <TechStack />
+                <div class="flex flex-col items-start gap-4 pt-4">
+                    <p class="text-lg leading-relaxed text-muted-strong">Any more questions?</p>
+                    <ActionLink href="#contact-banner" icon="iconoir:arrow-down">Get in touch</ActionLink>
+                </div>
+            </div>
         </PortfolioSection>
 
         <BannerQuote
+            id="contact-banner"
             quote="Nothing beats a real conversation"
             subquote="Even though I work with AI agents, I believe that personal connections are irreplaceable. So I always make time for face-to-face meetings and conversations."
         />
@@ -96,6 +121,6 @@ const projectTags = getAllTags();
             <ContactOptions />
         </PortfolioSection>
 
-        <!-- Footer -->
+        <Footer />
     </div>
 </BaseLayout>
