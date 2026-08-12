@@ -16,6 +16,7 @@ import TechStack from '../components/TechStack.astro';
 import ContactOptions from '../components/ContactOptions.astro';
 import Footer from '../components/Footer.astro';
 import ActionLink from '../components/ActionLink.astro';
+import { Icon } from 'astro-icon/components';
 import { getAllTags, getSortedProjects } from '../data/projects';
 
 const projects = getSortedProjects();
@@ -96,8 +97,9 @@ const projectTags = getAllTags();
             description="Quickly check whether our tech stacks already align. If a technology is missing, that's no issue. I only list technologies I'm comfortable with. I'm always ready to learn and can quickly find my way around a new stack."
             noPadding
         >
-            <div class="grid gap-8">
+            <div class="grid gap-4">
                 <TechStack />
+                <p class="text-lg leading-relaxed text-muted-strong opacity-50"><Icon name="iconoir:asterisk" class="mr-1 inline-block h-4 w-4 align-[-0.15em]" aria-hidden="true" />Only a selection of the libraries and tools I use regularly is listed here.</p>
                 <div class="flex flex-col items-start gap-4 pt-4">
                     <p class="text-lg leading-relaxed text-muted-strong">Any more questions?</p>
                     <ActionLink href="#contact-banner" icon="iconoir:arrow-down">Get in touch</ActionLink>

@@ -74,7 +74,7 @@ export default defineConfig({
 					'vuejs',
 					'mail',
 				],
-				iconoir: ['arrow-down', 'arrow-right', 'open-new-window', 'search', "mail", "phone", "calendar"],
+				iconoir: ['arrow-down', 'arrow-right', 'open-new-window', 'search', 'asterisk', "mail", "phone", "calendar"],
 			},
 		}),
 	],
