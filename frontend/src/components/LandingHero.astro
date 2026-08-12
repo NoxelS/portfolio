@@ -59,8 +59,8 @@ import MeshRenderer from './MeshRenderer.astro';
                         role="tooltip"
                         class="pointer-events-none invisible absolute right-0 bottom-full z-20 mb-3 w-72 rounded-sm bg-gray-950/95 p-4 font-sans text-sm leading-relaxed text-white opacity-0 shadow-xl ring-1 ring-white/15 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 data-[open=true]:visible data-[open=true]:opacity-100"
                     >
-                        Server delivery: <span class="font-semibold" data-site-load-time>…</span> ms. LCP:
-                        <span class="font-semibold" data-site-lcp>…</span> ms. Yes, I even over-optimized my
+                        Server delivery: <span class="font-semibold" data-site-load-time>…</span> ms. FCP:
+                        <span class="font-semibold" data-site-fcp>…</span> ms. Yes, I even over-optimized my
                         portfolio website.
                     </span>
                 </span>
@@ -113,8 +113,8 @@ import MeshRenderer from './MeshRenderer.astro';
         }
     };
 
-    const updateLargestContentfulPaint = (value: number) => {
-        const output = document.querySelector<HTMLElement>('[data-site-lcp]');
+    const updateFirstContentfulPaint = (value: number) => {
+        const output = document.querySelector<HTMLElement>('[data-site-fcp]');
 
         if (!output || value <= 0) {
             return;
@@ -123,17 +123,16 @@ import MeshRenderer from './MeshRenderer.astro';
         output.textContent = String(Math.round(value));
     };
 
-    if (PerformanceObserver.supportedEntryTypes?.includes('largest-contentful-paint')) {
+    if (PerformanceObserver.supportedEntryTypes?.includes('paint')) {
         const observer = new PerformanceObserver((list) => {
-            const entries = list.getEntries();
-            const latest = entries[entries.length - 1];
+            const firstContentfulPaint = list.getEntriesByName('first-contentful-paint')[0];
 
-            if (latest) {
-                updateLargestContentfulPaint(latest.startTime);
+            if (firstContentfulPaint) {
+                updateFirstContentfulPaint(firstContentfulPaint.startTime);
             }
         });
 
-        observer.observe({ type: 'largest-contentful-paint', buffered: true });
+        observer.observe({ type: 'paint', buffered: true });
     }
 
     const performanceToggle = document.querySelector<HTMLElement>('[data-performance-toggle]');
