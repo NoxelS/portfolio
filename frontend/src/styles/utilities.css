@@ -124,6 +124,18 @@
 	}
 }
 
+@utility motion-reveal {
+	transition-property: opacity, transform;
+	transition-duration: 1000ms;
+	transition-timing-function: var(--ease-standard);
+
+	@media (prefers-reduced-motion: reduce) {
+		opacity: 1;
+		transform: none;
+		transition: none;
+	}
+}
+
 @utility hard-press {
 	transition-property: transform;
 	transition-duration: 120ms;

@@ -132,7 +132,7 @@ const stackGroups: StackGroup[] = [
 ---
 
 <div class="grid gap-4 mt-8 md:gap-8" data-tech-stack>
-	<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between self-end">
+	<div class="motion-reveal flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between self-end" data-motion-reveal>
 		<div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-base leading-tight text-muted-strong self-end" aria-label="Technology experience legend">
 			<span class="flex items-center gap-3"><span class="h-5 w-5 shrink-0 border border-foreground bg-canvas"></span>Used in real production environments</span>
 			<span class="flex items-center gap-3"><span class="h-5 w-5 shrink-0 border border-foreground bg-[repeating-linear-gradient(135deg,transparent_0,transparent_3px,rgba(0,0,0,0.25)_3px,rgba(0,0,0,0.25)_4px)]"></span>Used in research and personal projects</span>
@@ -145,8 +145,21 @@ const stackGroups: StackGroup[] = [
 	</div>
 
 	<div class="grid gap-2 sm:gap-3" data-tech-stack-groups>
-		{stackGroups.map((group) => (
-			<section data-tech-stack-group data-group-name={group.name.toLowerCase()} class="grid min-w-0 grid-cols-1 border border-foreground bg-canvas transition-opacity duration-200 md:grid-cols-[17rem_minmax(0,1fr)]">
+		{stackGroups.map((group, index) => (
+			<section
+				data-tech-stack-group
+				data-group-name={group.name.toLowerCase()}
+				class:list={[
+					'motion-reveal grid min-w-0 grid-cols-1 border border-foreground bg-canvas md:grid-cols-[17rem_minmax(0,1fr)]',
+					index === 0 && 'lg:delay-0',
+					index === 1 && 'lg:delay-50',
+					index === 2 && 'lg:delay-100',
+					index === 3 && 'lg:delay-150',
+					index === 4 && 'lg:delay-200',
+					index >= 5 && 'lg:delay-250',
+				]}
+				data-motion-reveal
+			>
 				<div class="relative flex min-h-14 items-center bg-foreground p-3 text-canvas sm:min-h-24 sm:p-5 md:min-h-full">
 					<span class:list={['absolute left-0 top-0 h-1.5 w-20', group.accent]}></span>
 					<h3 class="lora text-xl leading-none uppercase sm:text-3xl">{group.name}</h3>

@@ -42,6 +42,7 @@ const runtimeConfig = {
 		<link rel="manifest" href="/favicon_io/site.webmanifest">
 	</head>
 	<body>
+		<div class="pointer-events-none fixed inset-x-0 top-0 z-50 h-1 origin-left scale-x-0 bg-accent" data-scroll-progress aria-hidden="true"></div>
 		<NavBar />
 		<main class="min-h-screen w-screen max-w-[100vw]">
 			<slot />
@@ -64,5 +65,8 @@ const runtimeConfig = {
 				</script>
 			)
 		}
-	</body>
+		</body>
+		<script>
+			import '../scripts/motion';
+		</script>
 </html>

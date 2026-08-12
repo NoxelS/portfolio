@@ -17,16 +17,23 @@ const { projects, tags } = Astro.props;
         <span class="order-last ml-auto text-sm text-gray-600 uppercase">Filter by</span>
         <div class="flex flex-wrap justify-end gap-2" aria-label="Filter projects by tag" data-project-filters>
             {
-                tags.map(tag => (
+                tags.map((tag, index) => (
                     <button
                         class:list={[
-                            'focus-ring inline-flex cursor-pointer items-center gap-1.5 border px-3 py-2 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] transition-[background-color,color,border-color] duration-150 ease-[var(--ease-standard)]',
+                            'motion-reveal focus-ring inline-flex cursor-pointer items-center gap-1.5 border px-3 py-2 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1]',
+                            index === 0 && 'lg:delay-0',
+                            index === 1 && 'lg:delay-50',
+                            index === 2 && 'lg:delay-100',
+                            index === 3 && 'lg:delay-150',
+                            index === 4 && 'lg:delay-200',
+                            index >= 5 && 'lg:delay-250',
                             tag === 'Highlighted'
                                 ? 'project-filter-active hover:bg-primary/90 hover:text-white'
                                 : 'border-primary bg-transparent text-primary hover:bg-surface hover:text-primary',
                         ]}
                         type="button"
                         data-project-filter={tag}
+                        data-motion-reveal
                         aria-pressed={tag === 'Highlighted' ? 'true' : 'false'}
                     >
                         <span class:list={{ hidden: tag !== 'Highlighted' }} aria-hidden="true">✓</span>
@@ -47,7 +54,7 @@ const { projects, tags } = Astro.props;
                             class="glide__slide flex h-auto"
                             data-project-filters={JSON.stringify(project.filters)}
                         >
-                            <article class="relative flex h-auto min-w-0 w-full max-w-full max-h-none flex-col gap-4 overflow-y-visible border-0 bg-white p-0 sm:max-h-[56rem] sm:overflow-y-auto sm:border sm:border-gray-300 sm:p-8" data-project-card>
+							<article class="relative flex h-auto min-w-0 w-full max-w-full max-h-none flex-col gap-4 overflow-y-visible border-0 bg-white p-0 sm:max-h-[56rem] sm:overflow-y-auto sm:border sm:border-gray-300 sm:p-8" data-project-card>
                                 <header class="flex min-w-0 flex-col items-start gap-3">
                                     <div class="relative flex h-14 w-28 shrink-0 items-center justify-start overflow-hidden">
                                         {project.logoSrc && (
@@ -73,7 +80,7 @@ const { projects, tags } = Astro.props;
                                         )}
                                     </div>
                                     <div class="flex min-w-0 flex-row items-center gap-3">
-                                        <h3 class="lora min-w-0 max-w-full break-words text-2xl leading-tight text-gray-950 sm:text-3xl">{project.title}</h3>
+										<h3 class="lora min-w-0 max-w-full break-words text-2xl leading-tight text-gray-950 sm:text-3xl">{project.title}</h3>
                                     </div>
                                 </header>
 
