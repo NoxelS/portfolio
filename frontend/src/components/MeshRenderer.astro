@@ -33,19 +33,86 @@ const {
 
         instance.dataset.meshBound = 'true';
         let initialised = false;
+        let startScheduled = false;
+        let startupTimer: number | null = null;
+        let idleCallbackId: number | null = null;
+        let frameVisible = false;
+        let lcpReady = false;
+
+        const clearStartupScheduling = () => {
+            if (startupTimer !== null) {
+                window.clearTimeout(startupTimer);
+                startupTimer = null;
+            }
+
+            if (idleCallbackId !== null && 'cancelIdleCallback' in window) {
+                window.cancelIdleCallback(idleCallbackId);
+                idleCallbackId = null;
+            }
+        };
+
         const start = async () => {
-            if (initialised) return;
+            if (initialised || startScheduled) return;
+            startScheduled = true;
+            clearStartupScheduling();
             initialised = true;
             const { init } = await import('../scripts/landing-hero');
             init(interaction, frame, canvas);
         };
 
+        const scheduleDuringIdle = () => {
+            if (!frameVisible || !lcpReady || initialised || idleCallbackId !== null) return;
+
+            if ('requestIdleCallback' in window) {
+                idleCallbackId = window.requestIdleCallback(() => {
+                    idleCallbackId = null;
+                    void start();
+                }, { timeout: 800 });
+            } else {
+                startupTimer = window.setTimeout(() => {
+                    startupTimer = null;
+                    void start();
+                }, 0);
+            }
+        };
+
+        // Give the initial LCP candidate and its paint a chance to complete
+        // before loading OGL, building the point grid, and starting the RAF.
+        if (PerformanceObserver.supportedEntryTypes?.includes('largest-contentful-paint')) {
+            const lcpObserver = new PerformanceObserver(() => {
+                lcpObserver.disconnect();
+                lcpReady = true;
+                scheduleDuringIdle();
+            });
+            lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+        } else {
+            window.requestAnimationFrame(() => {
+                lcpReady = true;
+                scheduleDuringIdle();
+            });
+        }
+
+        // Never leave the decorative animation waiting indefinitely if an LCP
+        // entry is unavailable or the browser remains continuously busy.
+        startupTimer = window.setTimeout(() => {
+            startupTimer = null;
+            if (frameVisible) {
+                void start();
+            }
+        }, 800);
+
+        // User intent is a stronger signal than idle scheduling. The listener
+        // is one-shot and only schedules the existing asynchronous startup.
+        const startOnIntent = () => {
+            void start();
+        };
+        frame.addEventListener('pointerenter', startOnIntent, { once: true, passive: true });
+        frame.addEventListener('pointerdown', startOnIntent, { once: true, passive: true });
+
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if (entry.isIntersecting) {
-                    observer.disconnect();
-                    void start();
-                }
+                frameVisible = entry.isIntersecting;
+                if (frameVisible) scheduleDuringIdle();
             },
             { threshold: 0 }
         );
