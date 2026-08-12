@@ -2,6 +2,7 @@
 import '@glidejs/glide/dist/css/glide.core.min.css';
 import type { Project } from '../data/projects';
 import ActionLink from './ActionLink.astro';
+import { cloudflareImageUrl } from '../utils/cloudflare-image';
 
 type Props = {
     projects: Project[];
@@ -58,7 +59,7 @@ const { projects, tags } = Astro.props;
                                                     rel="noreferrer"
                                                     aria-label={`Open ${project.logoAlt ?? project.title} website in a new tab`}
                                                 >
-                                                    <img class="max-h-full max-w-full object-contain grayscale" src={project.logoSrc} alt="" />
+                                                    <img class="max-h-full max-w-full object-contain grayscale" src={cloudflareImageUrl(project.logoSrc, { width: 256 })} alt="" loading="lazy" decoding="async" />
                                                 </a>
                                             ) : (
                                                 <div
@@ -66,7 +67,7 @@ const { projects, tags } = Astro.props;
                                                     role="img"
                                                     aria-label={project.logoAlt ?? `${project.title} logo`}
                                                 >
-                                                    <img class="max-h-full max-w-full object-contain grayscale" src={project.logoSrc} alt="" />
+                                                    <img class="max-h-full max-w-full object-contain grayscale" src={cloudflareImageUrl(project.logoSrc, { width: 256 })} alt="" loading="lazy" decoding="async" />
                                                 </div>
                                             )
                                         )}

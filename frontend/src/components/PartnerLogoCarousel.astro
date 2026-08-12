@@ -8,6 +8,8 @@ type Partner = {
     className?: string;
 };
 
+import { cloudflareImageUrl } from '../utils/cloudflare-image';
+
 const { partners } = Astro.props as { partners: Partner[] };
 const carouselPartners = [...partners, ...partners, ...partners];
 ---
@@ -17,13 +19,14 @@ const carouselPartners = [...partners, ...partners, ...partners];
         {carouselPartners.map((partner, index) => (
             <div class="group flex h-12 w-36 shrink-0 items-center justify-center" data-partner-logo-item aria-hidden={index >= partners.length ? 'true' : undefined}>
                 <img
-                    src={partner.src}
+                    src={cloudflareImageUrl(partner.src, { width: 320 })}
                     alt={index < partners.length ? partner.alt : ''}
                     class:list={[
                         'max-h-10 max-w-full opacity-80 transition-opacity duration-300 group-hover:opacity-100',
                         partner.className ?? 'grayscale invert mix-blend-screen',
                     ]}
                     loading="lazy"
+                    decoding="async"
                 />
             </div>
         ))}

@@ -5,6 +5,7 @@
  * while the visible UI stays intentionally logo-only.
  */
 import { Icon } from 'astro-icon/components';
+import { cloudflareImageUrl } from '../utils/cloudflare-image';
 
 type Technology = {
 	name: string;
@@ -156,7 +157,7 @@ const stackGroups: StackGroup[] = [
 							{technology.icon ? (
 								<Icon name={technology.icon} class="h-6 w-6 max-w-full transition-all duration-200 group-hover/logo:scale-75 group-hover/logo:opacity-0 group-focus-visible/logo:scale-75 group-focus-visible/logo:opacity-0" aria-hidden="true" />
 							) : technology.logoUrl ? (
-								<img src={technology.logoUrl} alt={`${technology.name} logo`} class="h-6 w-6 max-w-full object-contain transition-all duration-200 group-hover/logo:scale-75 group-hover/logo:opacity-0 group-focus-visible/logo:scale-75 group-focus-visible/logo:opacity-0" />
+								<img src={cloudflareImageUrl(technology.logoUrl)} alt={`${technology.name} logo`} class="h-6 w-6 max-w-full object-contain transition-all duration-200 group-hover/logo:scale-75 group-hover/logo:opacity-0 group-focus-visible/logo:scale-75 group-focus-visible/logo:opacity-0" loading="lazy" decoding="async" />
 							) : technology.emoji ? (
 								<span class="h-6 w-6 text-center text-lg leading-none transition-all duration-200 group-hover/logo:scale-75 group-hover/logo:opacity-0 group-focus-visible/logo:scale-75 group-focus-visible/logo:opacity-0" aria-hidden="true">{technology.emoji}</span>
 							) : (

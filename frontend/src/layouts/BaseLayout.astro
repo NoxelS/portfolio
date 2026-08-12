@@ -13,6 +13,8 @@ interface Props {
 }
 
 const { title, description, canonicalPath, noindex } = Astro.props;
+const cloudflareImageResizingEnabled = import.meta.env.PUBLIC_CLOUDFLARE_IMAGE_RESIZING === 'true';
+const imageClientHintOrigin = Astro.site?.host ?? Astro.url.host;
 const openPanelConfig = getOpenPanelConfig();
 const runtimeConfig = {
 	PUBLIC_BUILD_VERSION: process.env.PUBLIC_BUILD_VERSION ?? '',
@@ -24,6 +26,9 @@ const runtimeConfig = {
 <!doctype html>
 <html lang="en" style="scroll-behavior: smooth">
 	<head>
+		{cloudflareImageResizingEnabled && imageClientHintOrigin && (
+			<meta http-equiv="Delegate-CH" content={`sec-ch-dpr ${imageClientHintOrigin}; sec-ch-viewport-width ${imageClientHintOrigin}`} />
+		)}
 		<SEO title={title} description={description} canonicalPath={canonicalPath} noindex={noindex} />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
