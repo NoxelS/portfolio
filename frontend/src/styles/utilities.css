@@ -55,6 +55,10 @@
 	@apply text-secondary text-sm font-semibold leading-tight tracking-[0.08em] uppercase;
 }
 
+@utility project-filter-active {
+	@apply border-transparent bg-primary text-white;
+}
+
 @utility text-lead {
 	@apply text-copy-md text-muted-strong;
 }

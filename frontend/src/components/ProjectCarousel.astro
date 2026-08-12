@@ -21,7 +21,7 @@ const { projects, tags } = Astro.props;
                         class:list={[
                             'focus-ring inline-flex cursor-pointer items-center gap-1.5 border px-3 py-2 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] transition-[background-color,color,border-color] duration-150 ease-[var(--ease-standard)]',
                             tag === 'Highlighted'
-                                ? 'border-transparent bg-primary text-white hover:bg-primary/90 hover:text-white'
+                                ? 'project-filter-active hover:bg-primary/90 hover:text-white'
                                 : 'border-primary bg-transparent text-primary hover:bg-surface hover:text-primary',
                         ]}
                         type="button"
@@ -185,12 +185,17 @@ const { projects, tags } = Astro.props;
                 const tag = filter.dataset.projectFilter ?? '';
                 const isSelected = selectedTags.has(tag);
                 filter.setAttribute('aria-pressed', String(isSelected));
+                filter.classList.toggle('project-filter-active', isSelected);
                 filter.classList.toggle('border-transparent', isSelected);
                 filter.classList.toggle('bg-primary', isSelected);
                 filter.classList.toggle('text-white', isSelected);
                 filter.classList.toggle('border-primary', !isSelected);
                 filter.classList.toggle('bg-transparent', !isSelected);
                 filter.classList.toggle('text-primary', !isSelected);
+                filter.classList.toggle('hover:bg-primary/90', isSelected);
+                filter.classList.toggle('hover:text-white', isSelected);
+                filter.classList.toggle('hover:bg-surface', !isSelected);
+                filter.classList.toggle('hover:text-primary', !isSelected);
                 filter.querySelector('span')!.classList.toggle('hidden', !isSelected);
             });
         };
