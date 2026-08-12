@@ -6,11 +6,12 @@ import { setPublicDocumentCache } from '../lib/cache';
 export const prerender = true;
 
 export const GET: APIRoute = () => {
+	const isStaging = import.meta.env.PUBLIC_DEPLOYMENT_ENV === 'staging';
 	const body = [
 		'User-agent: *',
-		'Allow: /',
+		isStaging ? 'Disallow: /' : 'Allow: /',
 		'',
-		`Sitemap: ${defaultSeo.site}/sitemap-index.xml`,
+		...(isStaging ? [] : [`Sitemap: ${defaultSeo.site}/sitemap-index.xml`]),
 		'',
 	].join('\n');
 
