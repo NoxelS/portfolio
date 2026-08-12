@@ -48,6 +48,7 @@ export default defineConfig({
 					'language-javascript',
 					'language-python',
 					'language-typescript',
+					'information-outline',
 					'layers-triple',
 					'lightning-bolt-outline',
 					'link',

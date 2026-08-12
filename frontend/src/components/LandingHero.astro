@@ -41,8 +41,29 @@ import MeshRenderer from './MeshRenderer.astro';
     <div class="mesh-shadow mesh-shadow-b"></div>
     <div class="mesh-grain"></div>
     <div class="absolute bottom-0 left-0 z-10 flex w-full items-end justify-between px-6 py-8 sm:p-8">
-        <div class="lora text-display-sm text-white opacity-85 md:leading-none">
-            I build with scalability, <br> maintainability and performance in mind.
+        <div class="flex flex-col items-start gap-4">
+            <div class="lora text-display-sm text-white opacity-85 md:leading-none">
+                I build with scalability, <br> maintainability and performance in mind.
+                <span class="group relative ml-1 inline-flex align-middle">
+                    <button
+                        type="button"
+                        class="inline-flex h-5 w-5 items-center justify-center rounded-full text-white/70 transition hover:bg-white/15 hover:text-white focus-visible:bg-white/15 focus-visible:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                        aria-label="View site performance details"
+                        aria-describedby="site-performance-tooltip"
+                    >
+                        <Icon name="mdi:information-outline" class="h-4 w-4 text-white" aria-hidden="true" />
+                    </button>
+                    <span
+                        id="site-performance-tooltip"
+                        role="tooltip"
+                        class="pointer-events-none invisible absolute right-0 bottom-full z-20 mb-3 w-72 rounded-sm bg-gray-950/95 p-4 font-sans text-sm leading-relaxed text-white opacity-0 shadow-xl ring-1 ring-white/15 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+                    >
+                        Server delivery: <span class="font-semibold" data-site-load-time>…</span> ms. LCP:
+                        <span class="font-semibold" data-site-lcp>…</span> ms. Yes, I even over-optimized my
+                        portfolio website.
+                    </span>
+                </span>
+            </div>
         </div>
         <div class="hidden flex-col gap-2 sm:flex">
             <div class="text-white uppercase text-sm">My socials</div>
@@ -69,6 +90,57 @@ import MeshRenderer from './MeshRenderer.astro';
         </div>
     </div>
 </div>
+
+<script>
+    const updateSiteLoadTime = () => {
+        const output = document.querySelector<HTMLElement>('[data-site-load-time]');
+        const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+
+        if (!output || !navigation) {
+            return;
+        }
+
+        const cloudflareTimings = new Map(navigation.serverTiming.map((timing) => [timing.name, timing]));
+        const edgeDuration = cloudflareTimings.get('cfEdge')?.duration ?? 0;
+        const originDuration = cloudflareTimings.get('cfOrigin')?.duration ?? 0;
+        const serverDuration = edgeDuration + originDuration;
+        const browserDuration = navigation.loadEventEnd;
+        const duration = serverDuration > 0 ? serverDuration : browserDuration;
+
+        if (duration > 0) {
+            output.textContent = String(Math.round(duration));
+        }
+    };
+
+    const updateLargestContentfulPaint = (value: number) => {
+        const output = document.querySelector<HTMLElement>('[data-site-lcp]');
+
+        if (!output || value <= 0) {
+            return;
+        }
+
+        output.textContent = String(Math.round(value));
+    };
+
+    if (PerformanceObserver.supportedEntryTypes?.includes('largest-contentful-paint')) {
+        const observer = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            const latest = entries[entries.length - 1];
+
+            if (latest) {
+                updateLargestContentfulPaint(latest.startTime);
+            }
+        });
+
+        observer.observe({ type: 'largest-contentful-paint', buffered: true });
+    }
+
+    if (document.readyState === 'complete') {
+        updateSiteLoadTime();
+    } else {
+        window.addEventListener('load', updateSiteLoadTime, { once: true });
+    }
+</script>
 
 
 <style>
