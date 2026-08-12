@@ -21,8 +21,8 @@ const { projects, tags } = Astro.props;
                         class:list={[
                             'focus-ring inline-flex cursor-pointer items-center gap-1.5 border px-3 py-2 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] transition-[background-color,color,border-color] duration-150 ease-[var(--ease-standard)]',
                             tag === 'Highlighted'
-                                ? 'border-transparent bg-soft-periwinkle-800 text-white hover:bg-soft-periwinkle-900 hover:text-white'
-                                : 'border-soft-periwinkle-800 bg-transparent text-soft-periwinkle-800 hover:bg-surface hover:text-soft-periwinkle-900',
+                                ? 'border-transparent bg-primary text-white hover:bg-primary/90 hover:text-white'
+                                : 'border-primary bg-transparent text-primary hover:bg-surface hover:text-primary',
                         ]}
                         type="button"
                         data-project-filter={tag}
@@ -124,7 +124,7 @@ const { projects, tags } = Astro.props;
 
         <div class="mt-4 flex items-center justify-between gap-4 pt-5" data-glide-el="controls">
             <button
-                class="focus-ring cursor-pointer border border-soft-periwinkle-800 px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-soft-periwinkle-800 transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-surface hover:text-soft-periwinkle-900 disabled:cursor-not-allowed disabled:opacity-40"
+                class="focus-ring cursor-pointer border border-primary px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-primary transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-surface hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
                 type="button"
                 data-glide-dir="<"
                 data-project-control
@@ -134,7 +134,7 @@ const { projects, tags } = Astro.props;
             </button>
             <p class="text-copy-sm text-center text-gray-700 uppercase" aria-live="polite" data-project-count>{projects.length} projects shown</p>
             <button
-                class="focus-ring cursor-pointer border border-soft-periwinkle-800 px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-soft-periwinkle-800 transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-surface hover:text-soft-periwinkle-900 disabled:cursor-not-allowed disabled:opacity-40"
+                class="focus-ring cursor-pointer border border-primary px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-primary transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-surface hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
                 type="button"
                 data-glide-dir=">"
                 data-project-control
@@ -186,11 +186,11 @@ const { projects, tags } = Astro.props;
                 const isSelected = selectedTags.has(tag);
                 filter.setAttribute('aria-pressed', String(isSelected));
                 filter.classList.toggle('border-transparent', isSelected);
-                filter.classList.toggle('bg-soft-periwinkle-800', isSelected);
+                filter.classList.toggle('bg-primary', isSelected);
                 filter.classList.toggle('text-white', isSelected);
-                filter.classList.toggle('border-soft-periwinkle-800', !isSelected);
+                filter.classList.toggle('border-primary', !isSelected);
                 filter.classList.toggle('bg-transparent', !isSelected);
-                filter.classList.toggle('text-soft-periwinkle-800', !isSelected);
+                filter.classList.toggle('text-primary', !isSelected);
                 filter.querySelector('span')!.classList.toggle('hidden', !isSelected);
             });
         };

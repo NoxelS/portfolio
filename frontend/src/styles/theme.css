@@ -78,6 +78,9 @@
 	--color-medium-slate-blue-900: oklch(16.21% 0.076 276.57);
 	--color-medium-slate-blue-950: oklch(13.62% 0.060 277.26);
 
+	--color-primary: #050422;
+	--color-secondary: #050422;
+
 	--color-canvas: oklch(100% 0 0);
 	--color-foreground: var(--color-medium-slate-blue-950);
 	--color-muted: var(--color-soft-periwinkle-700);
@@ -86,8 +89,8 @@
 	--color-surface-raised: oklch(98.7% 0.010 82);
 	--color-border: var(--color-medium-slate-blue-100);
 	--color-border-strong: var(--color-medium-slate-blue-300);
-	--color-accent: var(--color-medium-slate-blue-500);
-	--color-accent-strong: var(--color-medium-slate-blue-600);
+	--color-accent: var(--color-primary);
+	--color-accent-strong: var(--color-primary);
 	--color-accent-contrast: var(--color-ghost-white-50);
 	--color-danger: var(--color-powder-petal-700);
 	--color-warning: var(--color-powder-petal-500);

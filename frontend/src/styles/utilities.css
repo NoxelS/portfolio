@@ -52,7 +52,7 @@
 }
 
 @utility text-eyebrow {
-	@apply text-sm font-semibold leading-tight tracking-[0.08em] uppercase;
+	@apply text-secondary text-sm font-semibold leading-tight tracking-[0.08em] uppercase;
 }
 
 @utility text-lead {
