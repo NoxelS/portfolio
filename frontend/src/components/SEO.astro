@@ -24,21 +24,46 @@ const {
 const siteUrl = Astro.site?.toString() ?? defaultSeo.site;
 const canonicalUrl = new URL(canonicalPath, siteUrl).toString();
 const absoluteImage = image ? new URL(image, siteUrl).toString() : undefined;
-const jsonLd = [
-	{
-		'@context': 'https://schema.org',
-		'@type': 'WebSite',
-		name: defaultSeo.siteName,
-		url: siteUrl,
-		inLanguage: 'en',
-	},
-	{
-		'@context': 'https://schema.org',
-		'@type': 'Person',
-		name: defaultSeo.authorName,
-		url: siteUrl,
-	},
-];
+const isStaging = import.meta.env.PUBLIC_DEPLOYMENT_ENV === 'staging';
+const pageId = `${canonicalUrl}#webpage`;
+const personId = `${siteUrl}#person`;
+const websiteId = `${siteUrl}#website`;
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@graph': [
+		{
+			'@type': 'WebSite',
+			'@id': websiteId,
+			name: defaultSeo.siteName,
+			url: siteUrl,
+			inLanguage: 'en',
+			publisher: { '@id': personId },
+		},
+		{
+			'@type': 'ProfilePage',
+			'@id': pageId,
+			url: canonicalUrl,
+			name: title,
+			description,
+			inLanguage: 'en',
+			isPartOf: { '@id': websiteId },
+			mainEntity: { '@id': personId },
+		},
+		{
+			'@type': 'Person',
+			'@id': personId,
+			name: defaultSeo.authorName,
+			url: siteUrl,
+			image: absoluteImage,
+			description: defaultSeo.description,
+			jobTitle: 'Freelance full-stack AI engineer',
+			worksFor: { '@type': 'Organization', name: defaultSeo.authorName },
+			areaServed: { '@type': 'Place', name: 'European Union' },
+			knowsAbout: ['Artificial intelligence', 'RAG', 'AI agents', 'Voice AI', 'Software engineering'],
+			sameAs: ['https://github.com/NoxelS', 'https://www.linkedin.com/in/noel-schwabenland/'],
+		},
+	],
+};
 ---
 
 <meta charset="utf-8" />
@@ -46,7 +71,7 @@ const jsonLd = [
 <meta name="generator" content={Astro.generator} />
 <title>{title}</title>
 {description && <meta name="description" content={description} />}
-{noindex && <meta name="robots" content="noindex,nofollow" />}
+{(noindex || isStaging) && <meta name="robots" content="noindex,nofollow" />}
 <link rel="canonical" href={canonicalUrl} />
 
 <meta property="og:site_name" content={defaultSeo.siteName} />
@@ -56,10 +81,14 @@ const jsonLd = [
 <meta property="og:url" content={canonicalUrl} />
 {absoluteImage && <meta property="og:image" content={absoluteImage} />}
 {absoluteImage && imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+{absoluteImage && <meta property="og:image:type" content="image/jpeg" />}
+{absoluteImage && <meta property="og:image:width" content="2060" />}
+{absoluteImage && <meta property="og:image:height" content="2060" />}
 
 <meta name="twitter:card" content={absoluteImage ? 'summary_large_image' : 'summary'} />
 <meta name="twitter:title" content={title} />
 {description && <meta name="twitter:description" content={description} />}
 {absoluteImage && <meta name="twitter:image" content={absoluteImage} />}
+{absoluteImage && imageAlt && <meta name="twitter:image:alt" content={imageAlt} />}
 
 <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

@@ -42,9 +42,22 @@ I help industrial and technology companies turn internal knowledge and complex w
 
 I am currently available for 20 hours per week.
 
+## Services
+
+- AI agent systems for operational workflows and internal tools
+- Retrieval-augmented generation (RAG) over governed company knowledge
+- Voice agents, speech-to-text, and text-to-speech pipelines
+- Full-stack software engineering, infrastructure, and deployment
+- Research, evaluation, and automation for production AI systems
+
 - Website: ${defaultSeo.site}/
 - GitHub: https://github.com/NoxelS
 - LinkedIn: https://www.linkedin.com/in/noel-schwabenland/
+
+## Machine-readable resources
+
+- Markdown portfolio: ${defaultSeo.site}/index.md
+- LLM-friendly overview: ${defaultSeo.site}/llms.txt
 
 ## How I work
 
