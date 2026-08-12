@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - main
+      - prod
 
 env:
   API_IMAGE_NAME: ghcr.io/noxels/portfolio-api
