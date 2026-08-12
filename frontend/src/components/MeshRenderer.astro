@@ -20,7 +20,11 @@ const {
 ---
 
 <div data-mesh-instance data-frame-id={frameId} data-interaction-id={interactionId} class="absolute inset-0">
-    <canvas id={canvasId} class="absolute inset-0 h-full w-full" aria-hidden="true"></canvas>
+    <canvas
+        id={canvasId}
+        class="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-1000 ease-out motion-reduce:opacity-100"
+        aria-hidden="true"
+    ></canvas>
 </div>
 
 <script>
@@ -58,6 +62,7 @@ const {
             initialised = true;
             const { init } = await import('../scripts/landing-hero');
             init(interaction, frame, canvas);
+            window.requestAnimationFrame(() => canvas.classList.add('opacity-100'));
         };
 
         const scheduleDuringIdle = () => {
