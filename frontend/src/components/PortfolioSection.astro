@@ -6,13 +6,12 @@
 type Props = {
 	id: string;
 	title: string;
-	eyebrow?: string;
 	description?: string;
 	class?: string;
 	noPadding?: boolean;
 };
 
-const { id, title, eyebrow, description, class: className = '', noPadding } = Astro.props;
+const { id, title, description, class: className = '', noPadding } = Astro.props;
 
 const sectionGaps = noPadding ? '' : 'md:gap-12 lg:gap-16 gap-8';
 const slotPadding = noPadding ? '' : 'py-4';
@@ -21,7 +20,6 @@ const slotPadding = noPadding ? '' : 'py-4';
 
 <section id={id} data-motion-reveal data-motion-section class:list={['motion-reveal grid min-w-0 grid-cols-1 py-8 md:py-16 lg:py-18', sectionGaps, className]}>
 	<div class="grid gap-4">
-		{eyebrow && <p class="text-eyebrow">{eyebrow}</p>}
 		<h2 class="lora text-display-md uppercase text-foreground max-w-full lg:max-w-1/2">{title}</h2>
 		{description && <p class="text-lg leading-relaxed text-muted-strong lg:max-w-2/3">{description}</p>}
 	</div>

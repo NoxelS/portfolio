@@ -8,19 +8,16 @@ import ActionLink from './ActionLink.astro';
 const chapters = [
 	{
 		title: 'Theoretical Physics',
-		label: 'A rigorous foundation',
 		body: 'Physics taught me to turn ambiguous problems into structured development and validation steps. It also taught me to stay calm when requirements change or technical depth becomes demanding. I work my way into difficult problems until I understand what needs to be built and how to validate it.',
 		cta: 'Explore my problem solving approach',
 	},
 	{
 		title: 'Software Development',
-		label: 'Ideas made real',
 		body: 'With more than six years of experience building and maintaining software for real users, I know that an application is only as strong as its foundations. I bring cloud infrastructure experience, sound engineering principles, and software architecture to create robust, maintainable systems. Coding agents can accelerate delivery, but they need clear architecture and informed direction.',
 		cta: 'Check out the Software I built for real users',
 	},
 	{
 		title: 'AI Systems',
-		label: 'Built for production',
 		body: 'I build production AI systems for real users, with a focus on on premises, open source solutions for European companies. My work includes agent systems, time series analysis and forecasting, speech pipelines, and the infrastructure behind them. The goal is useful insight and tangible outcomes while keeping models, data, and operations under the company’s control.',
 		cta: 'Explore Production AI systems I worked on',
 	},
@@ -28,18 +25,17 @@ const chapters = [
 ---
 
 <div class="grid w-full gap-6 md:gap-8">
-	<div class="grid w-full min-w-0 grid-cols-1 gap-8 md:gap-10 lg:grid-cols-[repeat(3,minmax(0,1fr))] lg:grid-rows-[auto_auto_1fr_auto] lg:gap-x-24 lg:gap-y-4">
+	<div class="grid w-full min-w-0 grid-cols-1 gap-8 md:gap-10 lg:grid-cols-[repeat(3,minmax(0,1fr))] lg:grid-rows-[auto_1fr_auto] lg:gap-x-24 lg:gap-y-4">
 		{chapters.map((chapter, index) => (
 			<article
 				class:list={[
-					'motion-reveal group row-span-4 grid h-full min-w-0 w-full gap-4 pl-0 lg:grid-rows-subgrid',
+					'motion-reveal group row-span-3 grid h-full min-w-0 w-full gap-4 pl-0 lg:grid-rows-subgrid',
 					index === 0 && 'lg:delay-0',
 					index === 1 && 'lg:delay-150',
 					index === 2 && 'lg:delay-300',
 				]}
 				data-motion-reveal
 			>
-				<p class="text-eyebrow">{chapter.label}</p>
 				<h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{chapter.title}</h3>
 				<p class="text-base leading-relaxed text-muted-strong">{chapter.body}</p>
 				<ActionLink href="#projects-banner" variant="secondary" class="w-full min-w-0 justify-between text-left" icon="iconoir:arrow-down">
