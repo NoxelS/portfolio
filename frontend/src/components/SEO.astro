@@ -7,6 +7,9 @@ interface Props {
 	canonicalPath?: string;
 	image?: string;
 	imageAlt?: string;
+	imageType?: string;
+	imageWidth?: number;
+	imageHeight?: number;
 	type?: 'website' | 'profile' | 'article';
 	noindex?: boolean;
 }
@@ -17,6 +20,9 @@ const {
 	canonicalPath = Astro.url.pathname,
 	image = defaultSeo.image,
 	imageAlt = defaultSeo.imageAlt,
+	imageType = 'image/jpeg',
+	imageWidth = 2060,
+	imageHeight = 2060,
 	type = 'website',
 	noindex = false,
 } = Astro.props;
@@ -83,9 +89,9 @@ const jsonLd = {
 <meta property="og:url" content={canonicalUrl} />
 {absoluteImage && <meta property="og:image" content={absoluteImage} />}
 {absoluteImage && imageAlt && <meta property="og:image:alt" content={imageAlt} />}
-{absoluteImage && <meta property="og:image:type" content="image/jpeg" />}
-{absoluteImage && <meta property="og:image:width" content="2060" />}
-{absoluteImage && <meta property="og:image:height" content="2060" />}
+{absoluteImage && <meta property="og:image:type" content={imageType} />}
+{absoluteImage && <meta property="og:image:width" content={imageWidth.toString()} />}
+{absoluteImage && <meta property="og:image:height" content={imageHeight.toString()} />}
 
 <meta name="twitter:card" content={absoluteImage ? 'summary_large_image' : 'summary'} />
 <meta name="twitter:title" content={title} />

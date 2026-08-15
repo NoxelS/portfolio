@@ -9,10 +9,15 @@ interface Props {
 	title?: string;
 	description?: string;
 	canonicalPath?: string;
+	image?: string;
+	imageAlt?: string;
+	imageType?: string;
+	imageWidth?: number;
+	imageHeight?: number;
 	noindex?: boolean;
 }
 
-const { title, description, canonicalPath, noindex } = Astro.props;
+const { title, description, canonicalPath, image, imageAlt, imageType, imageWidth, imageHeight, noindex } = Astro.props;
 const cloudflareImageResizingEnabled = import.meta.env.PUBLIC_CLOUDFLARE_IMAGE_RESIZING === 'true';
 const imageClientHintOrigin = Astro.site?.host ?? Astro.url.host;
 const openPanelConfig = getOpenPanelConfig();
@@ -29,7 +34,17 @@ const runtimeConfig = {
 		{cloudflareImageResizingEnabled && imageClientHintOrigin && (
 			<meta http-equiv="Delegate-CH" content={`sec-ch-dpr ${imageClientHintOrigin}; sec-ch-viewport-width ${imageClientHintOrigin}`} />
 		)}
-		<SEO title={title} description={description} canonicalPath={canonicalPath} noindex={noindex} />
+		<SEO
+			title={title}
+			description={description}
+			canonicalPath={canonicalPath}
+			image={image}
+			imageAlt={imageAlt}
+			imageType={imageType}
+			imageWidth={imageWidth}
+			imageHeight={imageHeight}
+			noindex={noindex}
+		/>
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
