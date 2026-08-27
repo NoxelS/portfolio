@@ -3,16 +3,17 @@ import type { APIRoute } from 'astro';
 import { defaultSeo } from '../data/site';
 import { getSortedProjects } from '../data/projects';
 import { setPublicDocumentCache } from '../lib/cache';
+import { getPublicEnv } from '../lib/public-env';
 
 // This endpoint is also the target of the root route's content negotiation.
 // Keep it on-demand so Astro can rewrite / to /index.md in server output.
 export const prerender = false;
 
 export function getIndexMarkdownBody(): string {
-	const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL ?? '';
-	const contactPhone = import.meta.env.PUBLIC_CONTACT_PHONE ?? '';
-	const contactPhoneSecondary = import.meta.env.PUBLIC_CONTACT_PHONE_SECONDARY ?? '';
-	const scheduleUrl = import.meta.env.PUBLIC_KOALENDAR_URL ?? 'https://koalendar.com/e/noel-pascal-schwabenland';
+	const contactEmail = getPublicEnv('PUBLIC_CONTACT_EMAIL');
+	const contactPhone = getPublicEnv('PUBLIC_CONTACT_PHONE');
+	const contactPhoneSecondary = getPublicEnv('PUBLIC_CONTACT_PHONE_SECONDARY');
+	const scheduleUrl = getPublicEnv('PUBLIC_KOALENDAR_URL', 'https://koalendar.com/e/noel-pascal-schwabenland');
 
 	const projects = getSortedProjects()
 		.map((project) => {

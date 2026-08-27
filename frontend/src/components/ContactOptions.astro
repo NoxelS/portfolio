@@ -6,6 +6,7 @@
  * PUBLIC_CONTACT_PHONE, PUBLIC_CONTACT_PHONE_SECONDARY, and PUBLIC_KOALENDAR_URL.
  */
 import ActionLink from './ActionLink.astro';
+import { getPublicEnv } from '../lib/public-env';
 
 type Props = {
     email?: string;
@@ -15,10 +16,10 @@ type Props = {
 };
 
 const { email, phone, phoneSecondary, koalendarUrl } = Astro.props;
-const contactEmail = email ?? import.meta.env.PUBLIC_CONTACT_EMAIL ?? '';
-const contactPhone = phone ?? import.meta.env.PUBLIC_CONTACT_PHONE ?? '';
-const contactPhoneSecondary = phoneSecondary ?? import.meta.env.PUBLIC_CONTACT_PHONE_SECONDARY ?? '';
-const scheduleUrl = koalendarUrl ?? import.meta.env.PUBLIC_KOALENDAR_URL ?? 'https://koalendar.com/e/noel-pascal-schwabenland';
+const contactEmail = email ?? getPublicEnv('PUBLIC_CONTACT_EMAIL');
+const contactPhone = phone ?? getPublicEnv('PUBLIC_CONTACT_PHONE');
+const contactPhoneSecondary = phoneSecondary ?? getPublicEnv('PUBLIC_CONTACT_PHONE_SECONDARY');
+const scheduleUrl = koalendarUrl ?? getPublicEnv('PUBLIC_KOALENDAR_URL', 'https://koalendar.com/e/noel-pascal-schwabenland');
 const phoneHref = contactPhone.replace(/[^+\d]/g, '');
 const phoneSecondaryHref = contactPhoneSecondary.replace(/[^+\d]/g, '');
 ---

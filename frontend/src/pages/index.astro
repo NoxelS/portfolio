@@ -19,6 +19,8 @@ import ActionLink from '../components/ActionLink.astro';
 import { Icon } from 'astro-icon/components';
 import { getAllTags, getSortedProjects } from '../data/projects';
 
+export const prerender = false;
+
 const projects = getSortedProjects();
 const projectTags = getAllTags();
 ---
