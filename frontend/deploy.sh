@@ -17,7 +17,6 @@ script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 network_name="${CADDY_NETWORK:-edge}"
 container_name="portfolio-${target}"
 image_name="portfolio:${target}"
-dockerfile="${script_dir}/Dockerfile.${target}"
 
 if ! docker network inspect "$network_name" >/dev/null; then
 	printf 'Docker network "%s" does not exist. Set CADDY_NETWORK to the network used by Caddy.\n' "$network_name" >&2
@@ -25,7 +24,7 @@ if ! docker network inspect "$network_name" >/dev/null; then
 fi
 
 docker image build \
-	--file "$dockerfile" \
+	--file "${script_dir}/Dockerfile" \
 	--tag "$image_name" \
 	--build-arg "PUBLIC_DEPLOYMENT_ENV=${target}" \
 	"$script_dir"

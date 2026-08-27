@@ -1,0 +1,52 @@
+name: Promote to production
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  promote:
+    name: Create production promotion PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Calculate next production version
+        id: version
+        working-directory: frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+          latest_tag="$(git tag --list 'v*' --sort=-version:refname | head -n 1)"
+          current_version="$(node -p "require('./package.json').version")"
+          if [[ -n "$latest_tag" ]]; then
+            npm version "${latest_tag#v}" --no-git-tag-version
+          else
+            npm version "$current_version" --no-git-tag-version
+          fi
+          release_version="$(npm version patch --no-git-tag-version)"
+          release_version="${release_version#v}"
+          echo "version=$release_version" >> "$GITHUB_OUTPUT"
+      - name: Create promotion pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          base: production
+          branch: release/${{ steps.version.outputs.version }}
+          delete-branch: true
+          commit-message: "chore(release): promote ${{ steps.version.outputs.version }}"
+          title: "chore(release): promote ${{ steps.version.outputs.version }}"
+          body: |
+            This PR promotes the current `main` commit to `production`.
+
+            - Version: `${{ steps.version.outputs.version }}`
+            - Source commit: `${{ github.sha }}`
+            - The production image will be built after merge.
+
+            Merge this PR only after staging verification is complete.

@@ -29,6 +29,7 @@ pnpm-debug.log*
 
 # Ignore markdown files
 *.md
+!CI-CD.md
 !content/*.md
 !content/**/*.md
 !instructions/*.md

@@ -1,0 +1,80 @@
+name: Build production image
+
+on:
+  push:
+    branches: [production]
+
+concurrency:
+  group: production-image
+  cancel-in-progress: false
+
+env:
+  IMAGE_NAME: ghcr.io/noxels/portfolio-frontend
+
+jobs:
+  publish:
+    name: Publish production image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Read and validate release version
+        id: version
+        working-directory: frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+          version="$(node -p "require('./package.json').version")"
+          if [[ "$version" == *-* || ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid stable production version: $version" >&2
+            exit 1
+          fi
+          if git tag --list "v${version}" | grep -q .; then
+            echo "Production version v${version} already exists" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Calculate image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ steps.version.outputs.version }}
+            type=raw,value=v${{ steps.version.outputs.version }}
+            type=sha,prefix=sha-
+          labels: |
+            org.opencontainers.image.environment=production
+            org.opencontainers.image.version=${{ steps.version.outputs.version }}
+      - name: Build and push production image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            PUBLIC_DEPLOYMENT_ENV=production
+            PUBLIC_BUILD_VERSION=${{ steps.version.outputs.version }}
+            PUBLIC_COMMIT_SHA=${{ github.sha }}
+            PUBLIC_BUILT_AT=${{ github.run_started_at }}
+          cache-from: type=gha,scope=frontend-production
+          cache-to: type=gha,mode=max,scope=frontend-production
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: gh release create "v${RELEASE_VERSION}" --target production --generate-notes

@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, production]
+  push:
+    branches: [main, production]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify frontend
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Audit dependencies
+        working-directory: frontend
+        run: npm audit --audit-level=high
+      - name: Build Astro app
+        working-directory: frontend
+        env:
+          PUBLIC_BUILD_VERSION: ${{ github.sha }}
+          PUBLIC_COMMIT_SHA: ${{ github.sha }}
+          PUBLIC_BUILT_AT: ${{ github.run_started_at }}
+          PUBLIC_DEPLOYMENT_ENV: staging
+        run: npm run build
+      - name: Report bundle size
+        working-directory: frontend
+        run: npm run report:bundle
