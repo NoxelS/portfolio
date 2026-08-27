@@ -24,7 +24,11 @@ jobs:
       - name: Read application version
         id: version
         working-directory: frontend
-        run: echo "version=$(node -p \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./package.json').version")"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to GHCR
