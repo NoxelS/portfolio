@@ -18,7 +18,21 @@ import { cloudflareImageUrl } from '../utils/cloudflare-image';
     <div class="relative z-20 grid w-full min-w-0 shrink-0 gap-6 p-6 py-8 sm:gap-8 sm:p-8 sm:py-12 md:py-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12">
         <div class="flex min-w-0 flex-col gap-4 sm:gap-6 md:gap-8">
             <div class="motion-reveal flex translate-y-10 flex-col gap-2 opacity-0" data-motion-reveal data-motion-immediate>
-                <h1 class="lora text-display-md max-w-full break-words uppercase text-foreground">Noël Pascal Schwabenland</h1>
+                <div class="flex items-stretch gap-4">
+                    <h1 class="lora min-w-0 flex-1 text-display-md max-w-full break-words uppercase text-foreground">
+                        Noël Pascal<span class="hidden md:inline lg:hidden"><br /></span><span class="md:hidden lg:inline"> </span>Schwabenland
+                    </h1>
+                    <div class="size-[clamp(3.5rem,18vw,4.5rem)] shrink-0 overflow-hidden rounded-full border-4 border-white/80 lg:hidden">
+                        <img
+                            src={cloudflareImageUrl('/profile1.png', { width: 384 })}
+                            alt=""
+                            class="block size-full min-h-0 min-w-0 object-cover"
+                            width="384"
+                            height="384"
+                            decoding="async"
+                        />
+                    </div>
+                </div>
             </div>
 
             <p class="motion-reveal translate-y-10 text-lg leading-relaxed text-muted-strong opacity-0 lg:max-w-2/3" data-motion-reveal data-motion-immediate>
@@ -34,11 +48,11 @@ import { cloudflareImageUrl } from '../utils/cloudflare-image';
             </div>
         </div>
 
-        <div class="motion-reveal hidden w-[clamp(12rem,20vw,18rem)] translate-y-10 overflow-hidden rounded-full border-4 border-white/80 opacity-0 lg:block" data-motion-reveal data-motion-immediate>
+        <div class="motion-reveal hidden aspect-square w-[clamp(12rem,20vw,18rem)] translate-y-10 overflow-hidden rounded-full border-4 border-white/80 opacity-0 lg:block" data-motion-reveal data-motion-immediate>
             <img
                 src={cloudflareImageUrl('/profile1.png', { width: 768 })}
                 alt="Portrait of Noel Pascal Schwabenland"
-                class="size-full object-cover"
+                class="block size-full object-cover"
                 width="384"
                 height="384"
                 decoding="async"
