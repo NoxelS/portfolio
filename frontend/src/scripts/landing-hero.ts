@@ -220,7 +220,7 @@ function heatRegion(
 
 function colourAt(x: number, y: number, brightness: number, layer: number) {
     const nx = x / LOGICAL_WIDTH, ny = y / LOGICAL_HEIGHT;
-    return `hsl(${354 + nx * 8} ${58 + (1 - nx) * 18}% ${34 + brightness * 47 + (1 - ny) * 6 - layer * 7}%)`;
+    return `hsl(${352 + nx * 6} ${48 + (1 - nx) * 16}% ${42 + brightness * 47 + (1 - ny) * 6 - layer * 7}%)`;
 }
 
 function createPoints(layer: 0 | 1): MeshPoint[] {

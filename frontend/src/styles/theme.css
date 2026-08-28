@@ -79,12 +79,14 @@
 	--color-oxblood-950: oklch(16.4% 0.040 25);
 
 	--color-primary: #2C0000;
+	--color-primary-text-color: #2C0000;
+	--color-mesh-background: #131416;
 	--color-secondary: #EF5350;
 
 	--color-canvas: oklch(99.2% 0.009 22);
-	--color-foreground: var(--color-oxblood-950);
-	--color-muted: var(--color-oxblood-600);
-	--color-muted-strong: var(--color-oxblood-700);
+	--color-foreground: var(--color-primary-text-color);
+	--color-muted: var(--color-primary-text-color);
+	--color-muted-strong: var(--color-primary-text-color);
 	--color-surface: oklch(97.7% 0.018 22);
 	--color-surface-raised: oklch(95.4% 0.035 22);
 	--color-border: var(--color-oxblood-200);
