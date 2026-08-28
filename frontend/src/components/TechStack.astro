@@ -6,6 +6,9 @@
  */
 import { Icon } from 'astro-icon/components';
 import { cloudflareImageUrl } from '../utils/cloudflare-image';
+import type { Copy } from '../i18n';
+
+const { copy } = Astro.props as { copy: Copy };
 
 type Technology = {
 	name: string;
@@ -27,7 +30,7 @@ const exploratoryUseClass = 'border-foreground bg-[repeating-linear-gradient(135
 
 const stackGroups: StackGroup[] = [
 	{
-		name: 'Frontend',
+		name: copy.stack.groups[0],
 		accent: 'bg-secondary',
 		technologies: [
 			{ name: 'Angular', logoUrl: 'https://cdn.simpleicons.org/angular/0F0F11', href: 'https://angular.dev/', productionUse: true },
@@ -46,7 +49,7 @@ const stackGroups: StackGroup[] = [
 		],
 	},
 	{
-		name: 'Backend',
+		name: copy.stack.groups[1],
 		accent: 'bg-secondary',
 		technologies: [
 			{ name: 'Python', logoUrl: 'https://cdn.simpleicons.org/python/3776AB', href: 'https://www.python.org/', productionUse: true },
@@ -60,7 +63,7 @@ const stackGroups: StackGroup[] = [
 		],
 	},
 	{
-		name: 'Databases',
+		name: copy.stack.groups[2],
 		accent: 'bg-secondary',
 		technologies: [
 			{ name: 'PostgreSQL', logoUrl: 'https://cdn.simpleicons.org/postgresql/4169E1', href: 'https://www.postgresql.org/', productionUse: true },
@@ -77,7 +80,7 @@ const stackGroups: StackGroup[] = [
 		],
 	},
 	{
-		name: 'Cloud & Infra',
+		name: copy.stack.groups[3],
 		accent: 'bg-secondary',
 		technologies: [
 			{ name: 'Azure', logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/a/a8/Microsoft_Azure_Logo.svg', href: 'https://azure.microsoft.com/', productionUse: true },
@@ -99,7 +102,7 @@ const stackGroups: StackGroup[] = [
 		],
 	},
 	{
-		name: 'MLOps',
+		name: copy.stack.groups[4],
 		accent: 'bg-secondary',
 		technologies: [
 			{ name: 'vLLM', logoUrl: 'https://cdn.simpleicons.org/vllm/30A2FF', href: 'https://docs.vllm.ai/', productionUse: true },
@@ -112,7 +115,7 @@ const stackGroups: StackGroup[] = [
 		],
 	},
 	{
-		name: 'Libraries*',
+		name: copy.stack.groups[5],
 		accent: 'bg-secondary',
 		technologies: [
 			{ name: 'LangGraph', logoUrl: 'https://cdn.simpleicons.org/langgraph/7FC8FF', href: 'https://langchain-ai.github.io/langgraph/', productionUse: true },
@@ -134,13 +137,13 @@ const stackGroups: StackGroup[] = [
 <div class="grid gap-4 mt-8 md:gap-8" data-tech-stack>
 	<div class="motion-reveal flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between self-end" data-motion-reveal>
 		<div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-base leading-tight text-muted-strong self-end" aria-label="Technology experience legend">
-			<span class="flex items-center gap-3"><span class="h-5 w-5 shrink-0 border border-foreground bg-canvas"></span>Used in real production environments</span>
-			<span class="flex items-center gap-3"><span class="h-5 w-5 shrink-0 border border-foreground bg-[repeating-linear-gradient(135deg,transparent_0,transparent_3px,rgba(0,0,0,0.25)_3px,rgba(0,0,0,0.25)_4px)]"></span>Used in research and personal projects</span>
+			<span class="flex items-center gap-3"><span class="h-5 w-5 shrink-0 border border-foreground bg-canvas"></span>{copy.stack.production}</span>
+			<span class="flex items-center gap-3"><span class="h-5 w-5 shrink-0 border border-foreground bg-[repeating-linear-gradient(135deg,transparent_0,transparent_3px,rgba(0,0,0,0.25)_3px,rgba(0,0,0,0.25)_4px)]"></span>{copy.stack.research}</span>
 		</div>
 		<label class="group flex min-w-0 items-center gap-3 border border-foreground bg-canvas px-4 py-3 text-foreground transition-colors focus-within:bg-foreground focus-within:text-canvas sm:w-72" for="tech-stack-search">
 			<Icon name="iconoir:search" class="h-5 w-5 shrink-0" aria-hidden="true" />
-			<span class="sr-only">Search technologies</span>
-			<input id="tech-stack-search" data-tech-stack-search type="search" placeholder="Search the stack" autocomplete="off" class="min-w-0 flex-1 bg-transparent text-base text-inherit outline-none placeholder:text-muted-strong group-focus-within:placeholder:text-canvas/65" />
+			<span class="sr-only">{copy.stack.search}</span>
+			<input id="tech-stack-search" data-tech-stack-search type="search" placeholder={copy.stack.search} autocomplete="off" class="min-w-0 flex-1 bg-transparent text-base text-inherit outline-none placeholder:text-muted-strong group-focus-within:placeholder:text-canvas/65" />
 		</label>
 	</div>
 
@@ -187,7 +190,7 @@ const stackGroups: StackGroup[] = [
 		))}
 	</div>
 
-	<p data-tech-stack-empty class="hidden border border-dashed border-foreground px-5 py-10 text-center text-muted-strong" aria-live="polite">No technologies match that search.</p>
+	<p data-tech-stack-empty class="hidden border border-dashed border-foreground px-5 py-10 text-center text-muted-strong" aria-live="polite">{copy.stack.noMatches}</p>
 </div>
 
 <script>

@@ -15,6 +15,9 @@
  */
 import { Icon } from 'astro-icon/components';
 import MeshRenderer from './MeshRenderer.astro';
+import type { Copy, Locale } from '../i18n';
+
+const { copy, locale } = Astro.props as { copy: Copy['hero']; locale: Locale };
 ---
 
 <div
@@ -25,14 +28,23 @@ import MeshRenderer from './MeshRenderer.astro';
 >
     <div class="absolute top-0 left-0 z-10 flex w-full justify-between px-6 py-8 sm:p-8">
         <div class="text-canvas">
-            <div class="px-4 py-2 text-base hidden"><span class="underline">EN</span> / DE / IT</div>
+			<nav class="flex items-center gap-2 text-base sm:text-lg" aria-label="Language">
+				{(['en', 'de'] as const).map((language) => (
+					<>
+						{language === 'de' && <span aria-hidden="true">/</span>}
+						<a href={`/_locale/${language}?returnTo=/${language}/`} aria-current={locale === language ? 'page' : undefined} class:list={['text-white no-underline hover:underline', locale === language && 'underline decoration-white underline-offset-4']}>
+						{language.toUpperCase()}
+					</a>
+					</>
+				))}
+            </nav>
         </div>
         <div class="text-canvas">
             <a
                 href="#contact"
                 class="inline-flex cursor-pointer border border-white px-4 py-2 text-base text-white no-underline hover:bg-white hover:text-primary"
             >
-                Give me a call
+				{copy.call}
             </a>
         </div>
     </div>
@@ -43,12 +55,12 @@ import MeshRenderer from './MeshRenderer.astro';
     <div class="motion-reveal absolute bottom-0 left-0 z-30 flex w-full translate-y-10 items-end justify-between px-6 py-8 opacity-0 sm:p-8" data-motion-reveal data-motion-immediate data-motion-distance="large">
         <div class="flex flex-col items-start gap-4">
             <div class="lora text-display-sm text-canvas opacity-85 md:leading-none">
-                I build with scalability, <br> maintainability and performance in mind
+                {copy.principle}
                 <span class="group relative ml-2 inline-flex align-middle" data-performance-toggle>
                     <button
                         type="button"
                         class="inline-flex h-[0.8em] w-[0.8em] items-center justify-center rounded-full pb-1 text-canvas/70 transition hover:bg-canvas/15 hover:text-canvas focus-visible:bg-canvas/15 focus-visible:text-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-canvas"
-                        aria-label="View site performance details"
+                        aria-label={copy.performanceLabel}
                         aria-describedby="site-performance-tooltip"
                         aria-expanded="false"
                     >
@@ -59,15 +71,13 @@ import MeshRenderer from './MeshRenderer.astro';
                         role="tooltip"
                         class="pointer-events-none invisible absolute right-0 bottom-full z-20 mb-3 w-72 rounded-sm bg-primary/95 p-4 font-sans text-sm leading-relaxed text-canvas opacity-0 shadow-xl ring-1 ring-secondary/25 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 data-[open=true]:visible data-[open=true]:opacity-100"
                     >
-                        Server delivery: <span class="font-semibold" data-site-load-time>…</span> ms. FCP:
-                        <span class="font-semibold" data-site-fcp>…</span> ms. Yes, I even over-optimized my
-                        portfolio website.
+                        {copy.performanceTooltip.replace('{server}', '…').split('{fcp}')[0]}<span class="font-semibold" data-site-fcp>…</span>{copy.performanceTooltip.replace('{server}', '…').split('{fcp}')[1]}
                     </span>
                 </span>
             </div>
         </div>
         <div class="hidden flex-col gap-2 sm:flex">
-            <div class="text-canvas uppercase text-sm">My socials</div>
+            <div class="text-canvas uppercase text-sm">{copy.socials}</div>
             <div class="flex flex-row gap-4">
                 <a
                     href="https://github.com/NoxelS"

@@ -18,35 +18,38 @@ import Footer from '../components/Footer.astro';
 import ActionLink from '../components/ActionLink.astro';
 import { Icon } from 'astro-icon/components';
 import { getAllTags, getSortedProjects } from '../data/projects';
+import { copy, type Locale } from '../i18n';
 
 export const prerender = false;
 
+const { locale = 'en' } = Astro.props as { locale?: Locale };
+const localizedCopy = copy[locale];
 const projects = getSortedProjects();
 const projectTags = getAllTags();
 ---
 
-<BaseLayout title="Noël Pascal Schwabenland">
-    <LandingPage />
+<BaseLayout locale={locale} title={localizedCopy.seo.title} description={localizedCopy.seo.description} canonicalPath={`/${locale}/`} imageAlt={localizedCopy.seo.imageAlt}>
+    <LandingPage copy={localizedCopy} locale={locale} />
 
     <div class="grid w-full min-w-0 grid-cols-1 gap-8 px-4 md:px-8">
         <BannerQuote
             id="work"
-            quote="Complex problems don't always require complex solutions"
-            subquote="Sometimes the simplest approach is the best. My background in both technical and business domains allows me to bridge the gap between these worlds."
+            quote={localizedCopy.work.quote}
+            subquote={localizedCopy.work.subquote}
         />
 
         <!-- Who I Am -->
         <PortfolioSection
             id="my-work"
-            title="How I work"
-            description="I combine scientific curiosity with practical software engineering to build AI systems that hold up in real operations."
+            title={localizedCopy.work.title}
+            description={localizedCopy.work.description}
         >
-            <StandoutStory />
+            <StandoutStory copy={localizedCopy} />
         </PortfolioSection>
 
-        <BannerQuote id="projects-banner" quote="Not only theory, but proven practice" subquote="">
+        <BannerQuote id="projects-banner" quote={localizedCopy.organisations.quote} subquote="">
             <div class="flex flex-col gap-4 pt-4">
-                <div class="flex text-canvas text-lg">I already got the chance to have contributed alongside some awesome organisations:</div>
+                <div class="flex text-canvas text-lg">{localizedCopy.organisations.introduction}</div>
                 <PartnerLogoCarousel
                     partners={[
                         { src: '/assets/companies/netcom.svg', alt: 'NetCom Sicherheitstechnik' },
@@ -65,19 +68,19 @@ const projectTags = getAllTags();
         <!-- My Projects -->
         <PortfolioSection
             id="my-projects"
-            title="My Projects"
-            description="From private AI platforms and voice agents to high-performance research pipelines, these projects solve real operational constraints with systems teams can use, govern, and scale."
+            title={localizedCopy.projects.title}
+            description={localizedCopy.projects.description}
             noPadding
         >
             <div class="grid gap-8">
-                <ProjectCarousel projects={projects} tags={projectTags} />
+                <ProjectCarousel projects={projects} tags={projectTags} copy={localizedCopy} />
                 <div class="grid gap-5 flex flex-col">
                     <p class="text-lg leading-relaxed text-muted-strong lg:max-w-2/3">
-                        These are selected projects only. If you are looking for experience in a specific area, feel free to get in touch with me.
+                        {localizedCopy.projects.selected}
                     </p>
                     <div class="flex flex-wrap gap-3">
-                        <ActionLink href="#tech-stack-banner" icon="iconoir:arrow-down">Explore my tech stack</ActionLink>
-                        <ActionLink href="#contact" variant="secondary" icon="iconoir:arrow-down">Get in touch</ActionLink>
+                        <ActionLink href="#tech-stack-banner" icon="iconoir:arrow-down">{localizedCopy.projects.exploreStack}</ActionLink>
+                        <ActionLink href="#contact" variant="secondary" icon="iconoir:arrow-down">{localizedCopy.projects.contact}</ActionLink>
                     </div>
                 </div>
             </div>
@@ -85,42 +88,42 @@ const projectTags = getAllTags();
 
         <BannerQuote
             id="tech-stack-banner"
-            quote="From ideas and requirements to reality"
-            subquote="With a broad skill set and a passion for learning, I help bring ideas to life."
+            quote={localizedCopy.stack.quote}
+            subquote={localizedCopy.stack.subquote}
         />
 
         <!-- My Tech Stack -->
         <PortfolioSection
             id="tech-stack"
-            title="My Tech Stack"
-            description="Quickly check whether our tech stacks already align. If a technology is missing, that's no issue. I only list technologies I'm comfortable with. I'm always ready to learn and can quickly find my way around a new stack."
+            title={localizedCopy.stack.title}
+            description={localizedCopy.stack.description}
             noPadding
         >
             <div class="grid gap-4">
-                <TechStack />
-                <p class="text-lg leading-relaxed text-muted-strong opacity-50"><Icon name="iconoir:asterisk" class="mr-1 inline-block h-4 w-4 align-[-0.15em]" aria-hidden="true" />Only a selection of the libraries and tools I use regularly is listed here.</p>
+                <TechStack copy={localizedCopy} />
+                <p class="text-lg leading-relaxed text-muted-strong opacity-50"><Icon name="iconoir:asterisk" class="mr-1 inline-block h-4 w-4 align-[-0.15em]" aria-hidden="true" />{localizedCopy.stack.selectionNote}</p>
                 <div class="flex flex-col items-start gap-4 pt-4">
-                    <p class="text-lg leading-relaxed text-muted-strong">Any more questions?</p>
-                    <ActionLink href="#contact" icon="iconoir:arrow-down">Get in touch</ActionLink>
+                    <p class="text-lg leading-relaxed text-muted-strong">{localizedCopy.stack.questions}</p>
+                    <ActionLink href="#contact" icon="iconoir:arrow-down">{localizedCopy.projects.contact}</ActionLink>
                 </div>
             </div>
         </PortfolioSection>
 
         <BannerQuote
             id="contact"
-            quote="Nothing beats a real conversation"
-            subquote="Even though I work with AI agents, I believe that personal connections are irreplaceable. So I always make time for face-to-face meetings and conversations."
+            quote={localizedCopy.contact.quote}
+            subquote={localizedCopy.contact.subquote}
         />
 
         <!-- Contact -->
         <PortfolioSection
             id="contact"
-            title="Let's build awesome things together"
-            description="Have a project, idea, or opportunity in mind?  Let's talk and see whether we're a good fit, and explore how we can create something valuable together."
+            title={localizedCopy.contact.title}
+            description={localizedCopy.contact.description}
         >
-            <ContactOptions />
+            <ContactOptions copy={localizedCopy} />
         </PortfolioSection>
 
-        <Footer />
+        <Footer copy={localizedCopy} locale={locale} />
     </div>
 </BaseLayout>

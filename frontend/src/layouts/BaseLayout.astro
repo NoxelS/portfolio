@@ -3,6 +3,7 @@ import AnalyticsConsent from '../components/AnalyticsConsent.astro';
 import NavBar from '../components/NavBar.astro';
 import SEO from '../components/SEO.astro';
 import { getOpenPanelConfig } from '../data/analytics';
+import { copy, type Locale } from '../i18n';
 import '../styles/global.css';
 
 interface Props {
@@ -15,9 +16,10 @@ interface Props {
 	imageWidth?: number;
 	imageHeight?: number;
 	noindex?: boolean;
+	locale: Locale;
 }
 
-const { title, description, canonicalPath, image, imageAlt, imageType, imageWidth, imageHeight, noindex } = Astro.props;
+const { title, description, canonicalPath, image, imageAlt, imageType, imageWidth, imageHeight, noindex, locale } = Astro.props;
 const cloudflareImageResizingEnabled = import.meta.env.PUBLIC_CLOUDFLARE_IMAGE_RESIZING === 'true';
 const imageClientHintOrigin = Astro.site?.host ?? Astro.url.host;
 const openPanelConfig = getOpenPanelConfig();
@@ -29,7 +31,7 @@ const runtimeConfig = {
 ---
 
 <!doctype html>
-<html lang="en" style="scroll-behavior: smooth">
+<html lang={locale} style="scroll-behavior: smooth">
 	<head>
 		{cloudflareImageResizingEnabled && imageClientHintOrigin && (
 			<meta http-equiv="Delegate-CH" content={`sec-ch-dpr ${imageClientHintOrigin}; sec-ch-viewport-width ${imageClientHintOrigin}`} />
@@ -44,6 +46,7 @@ const runtimeConfig = {
 			imageWidth={imageWidth}
 			imageHeight={imageHeight}
 			noindex={noindex}
+			locale={locale}
 		/>
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

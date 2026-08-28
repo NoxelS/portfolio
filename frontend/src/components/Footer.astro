@@ -1,19 +1,20 @@
 ---
+import type { Copy, Locale } from '../i18n';
+
 const currentYear = new Date().getFullYear();
+const { copy, locale } = Astro.props as { copy: Copy; locale: Locale };
 ---
 
 <footer class="-mx-4 w-[calc(100%+2rem)] min-w-0 bg-primary px-4 py-10 text-canvas md:-mx-8 md:w-[calc(100%+4rem)] md:px-8 md:py-12">
 	<div class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-12">
 		<div class="flex flex-col gap-2">
 			<p class="lora text-2xl">Noël Pascal Schwabenland</p>
-			<p class="text-sm text-canvas/65">© {currentYear} Noël Pascal Schwabenland. All rights reserved.</p>
+			<p class="text-sm text-canvas/65">© {currentYear} Noël Pascal Schwabenland. {copy.contact.rights}</p>
 		</div>
 
 		<nav aria-label="Legal and other links">
 			<ul class="flex flex-wrap gap-x-6 gap-y-3 text-sm">
-				<li><a href="/privacy" class="text-canvas/75 hover:text-canvas hover:decoration-canvas">Privacy</a></li>
-				<li><a href="/imprint" class="text-canvas/75 hover:text-canvas hover:decoration-canvas">Imprint</a></li>
-				<li><a href="/index.md" class="text-canvas/75 hover:text-canvas hover:decoration-canvas">For agents</a></li>
+				<li><a href={`/${locale}/index.md`} class="text-canvas/75 hover:text-canvas hover:decoration-canvas">{copy.contact.agents}</a></li>
 			</ul>
 		</nav>
 	</div>

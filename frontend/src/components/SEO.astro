@@ -1,5 +1,6 @@
 ---
 import { defaultSeo } from '../data/site';
+import { copy, locales, type Locale } from '../i18n';
 
 interface Props {
 	title?: string;
@@ -12,6 +13,7 @@ interface Props {
 	imageHeight?: number;
 	type?: 'website' | 'profile' | 'article';
 	noindex?: boolean;
+	locale: Locale;
 }
 
 const {
@@ -25,9 +27,11 @@ const {
 	imageHeight = 2060,
 	type = 'website',
 	noindex = false,
+	locale,
 } = Astro.props;
 
 const siteUrl = Astro.site?.toString() ?? defaultSeo.site;
+const localizedCopy = copy[locale];
 const canonicalUrl = new URL(canonicalPath, siteUrl).toString();
 const absoluteImage = image ? new URL(image, siteUrl).toString() : undefined;
 const isStaging = import.meta.env.PUBLIC_DEPLOYMENT_ENV === 'staging';
@@ -42,7 +46,7 @@ const jsonLd = {
 			'@id': websiteId,
 			name: defaultSeo.siteName,
 			url: siteUrl,
-			inLanguage: 'en',
+			inLanguage: locale,
 			publisher: { '@id': personId },
 		},
 		{
@@ -51,7 +55,7 @@ const jsonLd = {
 			url: canonicalUrl,
 			name: title,
 			description,
-			inLanguage: 'en',
+			inLanguage: locale,
 			isPartOf: { '@id': websiteId },
 			mainEntity: { '@id': personId },
 		},
@@ -79,8 +83,9 @@ const jsonLd = {
 {description && <meta name="description" content={description} />}
 {(noindex || isStaging) && <meta name="robots" content="noindex,nofollow" />}
 <link rel="canonical" href={canonicalUrl} />
+{locales.map((alternateLocale) => <link rel="alternate" hreflang={alternateLocale} href={new URL(`/${alternateLocale}/`, siteUrl)} />)}
+<link rel="alternate" hreflang="x-default" href={new URL('/en/', siteUrl)} />
 <link rel="describedby" href="/llms.txt" />
-<link rel="alternate" href="/index.md" type="text/markdown" />
 
 <meta property="og:site_name" content={defaultSeo.siteName} />
 <meta property="og:type" content={type} />

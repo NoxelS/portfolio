@@ -4,8 +4,11 @@
  * in physics, software development, and data/AI work to client outcomes.
  */
 import ActionLink from './ActionLink.astro';
+import type { Copy } from '../i18n';
 
-const chapters = [
+const { copy } = Astro.props as { copy: Copy };
+const chapters = copy.work.chapters;
+/* const chapters = [
 	{
 		title: 'Theoretical Physics',
 		body: 'Physics taught me to turn ambiguous problems into structured development and validation steps. It also taught me to stay calm when requirements change or technical depth becomes demanding. I work my way into difficult problems until I understand what needs to be built and how to validate it.',
@@ -21,7 +24,7 @@ const chapters = [
 		body: 'I build production AI systems for real users, with a focus on on premises, open source solutions for European companies. My work includes agent systems, time series analysis and forecasting, speech pipelines, and the infrastructure behind them. The goal is useful insight and tangible outcomes while keeping models, data, and operations under the company’s control.',
 		cta: 'Explore Production AI systems I worked on',
 	},
-];
+]; */
 ---
 
 <div class="grid w-full gap-6 md:gap-8">

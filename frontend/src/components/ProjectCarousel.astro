@@ -3,19 +3,21 @@ import '@glidejs/glide/dist/css/glide.core.min.css';
 import type { Project } from '../data/projects';
 import ActionLink from './ActionLink.astro';
 import { cloudflareImageUrl } from '../utils/cloudflare-image';
+import type { Copy } from '../i18n';
 
 type Props = {
     projects: Project[];
     tags: string[];
+    copy: Copy;
 };
 
-const { projects, tags } = Astro.props;
+const { projects, tags, copy } = Astro.props;
 ---
 
 <div class="grid gap-8" data-project-carousel>
     <div class="flex flex-col-reverse items-end gap-2 pt-4 sm:pt-0">
-        <span class="order-last ml-auto text-sm text-primary-text-color uppercase">Filter by</span>
-        <div class="flex flex-wrap justify-end gap-2" aria-label="Filter projects by tag" data-project-filters>
+        <span class="order-last ml-auto text-sm text-primary-text-color uppercase">{copy.projects.filterBy}</span>
+        <div class="flex flex-wrap justify-end gap-2" aria-label={copy.projects.filterLabel} data-project-filters>
             {
                 tags.map((tag, index) => (
                     <button
@@ -44,7 +46,7 @@ const { projects, tags } = Astro.props;
         </div>
     </div>
 
-    <div class="project-carousel glide min-w-0" aria-label="Projects carousel" data-project-glide>
+    <div class="project-carousel glide min-w-0" aria-label={copy.projects.carouselLabel} data-project-glide>
         <div class="relative min-w-0">
             <div class="glide__track overflow-hidden" data-glide-el="track">
                 <ul class="glide__slides py-4" data-project-slides>
@@ -125,7 +127,7 @@ const { projects, tags } = Astro.props;
             </div>
         </div>
 		<p class="hidden py-3 pl-4 text-copy-md text-primary-text-color" data-project-empty role="status">
-            No projects match the selected tags. Select one or more tags to see projects.
+            {copy.projects.noMatches}
         </p>
 
         <div class="mt-4 flex flex-wrap items-center justify-between gap-4 pt-5" data-glide-el="controls">
@@ -136,9 +138,9 @@ const { projects, tags } = Astro.props;
                 data-project-control
                 aria-label="Show previous project"
             >
-                Previous
+                {copy.projects.previous}
             </button>
-			<p class="text-copy-sm min-w-0 text-center text-primary-text-color uppercase" aria-live="polite" data-project-count>{projects.length} projects shown</p>
+            <p class="text-copy-sm min-w-0 text-center text-primary-text-color uppercase" aria-live="polite" data-project-count>{copy.projects.shown(projects.length)}</p>
             <button
                 class="focus-ring cursor-pointer border border-primary-text-color px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-primary-text-color transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-surface hover:text-primary-text-color disabled:cursor-not-allowed disabled:opacity-40"
                 type="button"
@@ -146,7 +148,7 @@ const { projects, tags } = Astro.props;
                 data-project-control
                 aria-label="Show next project"
             >
-                Next
+                {copy.projects.next}
             </button>
         </div>
     </div>

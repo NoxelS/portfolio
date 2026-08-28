@@ -9,12 +9,15 @@
 import LandingHero from './LandingHero.astro';
 import ActionLink from './ActionLink.astro';
 import { cloudflareImageUrl } from '../utils/cloudflare-image';
+import type { Copy, Locale } from '../i18n';
+
+const { copy, locale } = Astro.props as { copy: Copy; locale: Locale };
 ---
 
 <!-- Full-viewport section shell -->
 <section id="landing-page" class="relative flex h-[100svh] min-h-[100svh] w-full flex-col overflow-hidden">
     <!-- Renders the animated halftone mesh. -->
-    <LandingHero />
+    <LandingHero copy={copy.hero} locale={locale} />
     <div class="relative z-20 grid w-full min-w-0 shrink-0 gap-6 p-6 py-8 sm:gap-8 sm:p-8 sm:py-12 md:py-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12">
         <div class="flex min-w-0 flex-col gap-4 sm:gap-6 md:gap-8">
             <div class="motion-reveal flex translate-y-10 flex-col gap-2 opacity-0" data-motion-reveal data-motion-immediate>
@@ -36,22 +39,22 @@ import { cloudflareImageUrl } from '../utils/cloudflare-image';
             </div>
 
             <p class="motion-reveal translate-y-10 text-lg leading-relaxed text-muted-strong opacity-0 lg:max-w-2/3" data-motion-reveal data-motion-immediate>
-                <span class="sm:hidden">EU-based full-stack AI Engineer helping industrial and technology teams turn internal knowledge and complex workflows into governed, production-ready RAG, voice, and AI agent systems.</span>
-                <span class="hidden sm:inline">EU-based full-stack AI Engineer helping industrial and technology companies turn internal knowledge and complex workflows into production-ready RAG, voice, and AI agent solutions. I build with governed data and European regulatory requirements in mind.</span>
+                <span class="sm:hidden">{copy.hero.summaryCompact}</span>
+                <span class="hidden sm:inline">{copy.hero.summary}</span>
             </p>
 
             <!-- <p class="motion-reveal translate-y-10 text-caption opacity-0" data-motion-reveal data-motion-immediate>I'm currently available 20h/week</p> -->
 
             <div class="motion-reveal flex translate-y-10 flex-row flex-wrap gap-4 self-start opacity-0" data-motion-reveal data-motion-immediate>
-                <ActionLink href="#work" icon="iconoir:arrow-down" class="!gap-2 !px-3 !py-2.5 sm:!gap-3.5 sm:!px-4 sm:!py-3.5">Explore my work</ActionLink>
-                <ActionLink href="#contact" variant="secondary" class="!px-3 !py-2.5 sm:!px-4 sm:!py-3.5">Give me a call</ActionLink>
+                <ActionLink href="#work" icon="iconoir:arrow-down" class="!gap-2 !px-3 !py-2.5 sm:!gap-3.5 sm:!px-4 sm:!py-3.5">{copy.hero.exploreWork}</ActionLink>
+                <ActionLink href="#contact" variant="secondary" class="!px-3 !py-2.5 sm:!px-4 sm:!py-3.5">{copy.hero.call}</ActionLink>
             </div>
         </div>
 
         <div class="motion-reveal hidden aspect-square w-[clamp(12rem,20vw,18rem)] translate-y-10 overflow-hidden rounded-full border-4 border-white/80 opacity-0 lg:block" data-motion-reveal data-motion-immediate>
             <img
                 src={cloudflareImageUrl('/profile1.png', { width: 768 })}
-                alt="Portrait of Noel Pascal Schwabenland"
+                alt={copy.hero.portraitAlt}
                 class="block size-full object-cover"
                 width="384"
                 height="384"

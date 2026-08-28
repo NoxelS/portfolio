@@ -8,6 +8,11 @@ import { defineConfig } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://noel.fyi',
+	i18n: {
+		locales: ['en', 'de'],
+		defaultLocale: 'en',
+		routing: 'manual',
+	},
 	output: 'server',
 	prerender: {
 		default: true,

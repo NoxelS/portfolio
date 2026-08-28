@@ -7,15 +7,17 @@
  */
 import ActionLink from './ActionLink.astro';
 import { getPublicEnv } from '../lib/public-env';
+import type { Copy } from '../i18n';
 
 type Props = {
     email?: string;
     phone?: string;
     phoneSecondary?: string;
     koalendarUrl?: string;
+    copy: Copy;
 };
 
-const { email, phone, phoneSecondary, koalendarUrl } = Astro.props;
+const { email, phone, phoneSecondary, koalendarUrl, copy } = Astro.props;
 const contactEmail = email ?? getPublicEnv('PUBLIC_CONTACT_EMAIL');
 const contactPhone = phone ?? getPublicEnv('PUBLIC_CONTACT_PHONE');
 const contactPhoneSecondary = phoneSecondary ?? getPublicEnv('PUBLIC_CONTACT_PHONE_SECONDARY');
@@ -27,8 +29,8 @@ const phoneSecondaryHref = contactPhoneSecondary.replace(/[^+\d]/g, '');
 <div class="grid w-full min-w-0 grid-cols-1 gap-10 md:grid-cols-3 md:gap-8 lg:gap-12">
     <article class="motion-reveal grid min-w-0 grid-rows-[1fr_auto] gap-5 lg:delay-0" data-motion-reveal>
         <div class="grid gap-3">
-            <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">Give me a direct call</h3>
-            <p class="text-base leading-relaxed text-muted-strong">I'm always available during European business hours (8–18 CET), so feel free to give me a direct call.</p>
+            <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{copy.contact.directCallTitle}</h3>
+            <p class="text-base leading-relaxed text-muted-strong">{copy.contact.directCallBody}</p>
         </div>
 
         <div class="grid grid-cols-1 gap-3 self-end md:grid-cols-2">
@@ -48,8 +50,8 @@ const phoneSecondaryHref = contactPhoneSecondary.replace(/[^+\d]/g, '');
 
     <article class="motion-reveal grid min-w-0 grid-rows-[1fr_auto] gap-5 lg:delay-150" data-motion-reveal>
         <div class="grid gap-3">
-            <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">Send an E-Mail</h3>
-            <p class="text-base leading-relaxed text-muted-strong">Please include your contact details and the reason for your inquiry. With more information, I can provide a more accurate and helpful response.</p>
+            <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{copy.contact.emailTitle}</h3>
+            <p class="text-base leading-relaxed text-muted-strong">{copy.contact.emailBody}</p>
         </div>
 
         {contactEmail ? (
@@ -57,20 +59,18 @@ const phoneSecondaryHref = contactPhoneSecondary.replace(/[^+\d]/g, '');
                 {contactEmail}
             </ActionLink>
         ) : (
-            <p class="text-caption">An email address will appear here once configured.</p>
+            <p class="text-caption">{copy.contact.missingEmail}</p>
         )}
     </article>
 
     <article class="motion-reveal grid min-w-0 grid-rows-[1fr_auto] gap-5 lg:delay-300" data-motion-reveal>
         <div class="grid gap-3">
-            <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">schedule a call or meeting</h3>
-            <p class="text-base leading-relaxed text-muted-strong">Choose a convenient time for a quick chat directly in my calendar.
-				I will either call you per phone or we can meet via video conference.
-			</p>
+            <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{copy.contact.scheduleTitle}</h3>
+            <p class="text-base leading-relaxed text-muted-strong">{copy.contact.scheduleBody}</p>
         </div>
 
         <ActionLink href={scheduleUrl} target="_blank" rel="noreferrer" variant="secondary" icon="iconoir:calendar" class="h-14 w-full min-w-0 justify-between text-left">
-            Schedule a call
+            {copy.contact.schedule}
         </ActionLink>
     </article>
 </div>
