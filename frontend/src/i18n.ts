@@ -89,7 +89,7 @@ export const copy: Record<Locale, Copy> = {
             exploreWork: 'Explore my work',
             call: 'Give me a call',
             portraitAlt: 'Portrait of Noel Pascal Schwabenland',
-            principle: 'I build with scalability, maintainability and performance in mind',
+            principle: 'I build with scalability, <br/> maintainability and performance in mind',
             performanceLabel: 'View site performance details',
             performanceTooltip: 'Server delivery: {server} ms. FCP: {fcp} ms. Yes, I even over-optimized my portfolio website.',
             socials: 'My socials'

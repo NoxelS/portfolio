@@ -55,7 +55,7 @@ const { copy, locale } = Astro.props as { copy: Copy['hero']; locale: Locale };
     <div class="motion-reveal absolute bottom-0 left-0 z-30 flex w-full translate-y-10 items-end justify-between px-6 py-8 opacity-0 sm:p-8" data-motion-reveal data-motion-immediate data-motion-distance="large">
         <div class="flex flex-col items-start gap-4">
             <div class="lora text-display-sm text-canvas opacity-85 md:leading-none">
-                {copy.principle}
+                <span set:html={copy.principle}></span>
                 <span class="group relative ml-2 inline-flex align-middle" data-performance-toggle>
                     <button
                         type="button"
