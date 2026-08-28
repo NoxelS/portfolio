@@ -19,7 +19,7 @@
 }
 
 @utility link-primary-* {
-	color: --value(--color-medium-slate-blue-*);
+	color: --value(--color-oxblood-*);
 }
 
 @utility link-petal-* {
@@ -52,7 +52,7 @@
 }
 
 @utility project-filter-active {
-	@apply border-transparent bg-primary text-white;
+	@apply border-transparent bg-primary text-canvas;
 }
 
 @utility text-lead {
@@ -191,7 +191,7 @@
 	gap: --spacing(2);
 	transform: translate(calc(var(--spacing) * -1), calc(var(--spacing) * -1));
 	border: 1px solid var(--color-accent);
-	background-color: white;
+	background-color: var(--color-canvas);
 	transition-property: transform;
 	transition-duration: 120ms;
 	transition-timing-function: var(--ease-standard);
@@ -199,7 +199,7 @@
 
 @utility btn-secondary {
 	border-color: var(--color-accent);
-	background-color: white;
+	background-color: var(--color-canvas);
 	color: var(--color-accent);
 
 	&:hover {
@@ -334,7 +334,7 @@
 @utility field-control {
 	width: 100%;
 	border: 1px solid var(--color-border);
-	background-color: white;
+	background-color: var(--color-canvas);
 	padding: --spacing(2.5) --spacing(3);
 	color: var(--color-foreground);
 	font-size: var(--text-sm);
@@ -492,7 +492,7 @@
 
 @utility nav-tab {
 	border: 1px solid var(--color-border);
-	background-color: white;
+	background-color: var(--color-canvas);
 	color: var(--color-muted-strong);
 	font-size: var(--text-sm);
 	font-weight: var(--font-weight-semibold);
@@ -519,11 +519,11 @@
 
 @utility btn-danger {
 	border-color: var(--color-danger);
-	background-color: white;
+	background-color: var(--color-canvas);
 	color: var(--color-danger);
 
 	&:hover {
-		background-color: color-mix(in oklab, var(--color-danger) 8%, white);
+		background-color: color-mix(in oklab, var(--color-danger) 8%, var(--color-canvas));
 	}
 }
 
@@ -536,22 +536,22 @@
 
 @utility alert-info {
 	border-color: color-mix(in oklab, var(--color-accent) 45%, transparent);
-	background-color: color-mix(in oklab, var(--color-accent) 7%, white);
+	background-color: color-mix(in oklab, var(--color-accent) 7%, var(--color-canvas));
 }
 
 @utility alert-success {
 	border-color: color-mix(in oklab, var(--color-success) 45%, transparent);
-	background-color: color-mix(in oklab, var(--color-success) 8%, white);
+	background-color: color-mix(in oklab, var(--color-success) 8%, var(--color-canvas));
 }
 
 @utility alert-warning {
 	border-color: color-mix(in oklab, var(--color-warning) 45%, transparent);
-	background-color: color-mix(in oklab, var(--color-warning) 12%, white);
+	background-color: color-mix(in oklab, var(--color-warning) 12%, var(--color-canvas));
 }
 
 @utility alert-danger {
 	border-color: color-mix(in oklab, var(--color-danger) 45%, transparent);
-	background-color: color-mix(in oklab, var(--color-danger) 8%, white);
+	background-color: color-mix(in oklab, var(--color-danger) 8%, var(--color-canvas));
 }
 
 @utility card-interactive {
@@ -567,7 +567,7 @@
 
 @utility stat {
 	border: 1px solid var(--color-border);
-	background-color: white;
+	background-color: var(--color-canvas);
 	padding: --spacing(4);
 }
 
@@ -641,7 +641,7 @@
 	display: block;
 	overflow-x: auto;
 	border: 1px solid var(--color-border);
-	background-color: white;
+	background-color: var(--color-canvas);
 	padding: --spacing(4);
 	color: var(--color-muted-strong);
 	font-family: var(--font-mono);
@@ -651,7 +651,7 @@
 
 @utility kbd {
 	border: 1px solid var(--color-border-strong);
-	background-color: white;
+	background-color: var(--color-canvas);
 	box-shadow: 0 2px 0 var(--color-border-strong);
 	padding: 0.1em 0.45em;
 	font-family: var(--font-mono);
@@ -662,7 +662,7 @@
 @utility table-wrap {
 	overflow-x: auto;
 	border: 1px solid var(--color-border);
-	background-color: white;
+	background-color: var(--color-canvas);
 }
 
 @utility data-table {

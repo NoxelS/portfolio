@@ -19,18 +19,18 @@ import MeshRenderer from './MeshRenderer.astro';
 
 <div
     id="mesh-frame"
-    class="relative min-h-0 w-full flex-1 overflow-hidden bg-gray-950"
+    class="relative min-h-0 w-full flex-1 overflow-hidden bg-primary"
     aria-label="Abstract liquid halftone mesh"
     role="img"
 >
     <div class="absolute top-0 left-0 z-10 flex w-full justify-between px-6 py-8 sm:p-8">
-        <div class="text-white">
+        <div class="text-canvas">
             <div class="px-4 py-2 text-base hidden"><span class="underline">EN</span> / DE / IT</div>
         </div>
-        <div class="text-white">
+        <div class="text-canvas">
             <a
                 href="#contact-banner"
-                class="bg-primary/10 inline-flex text-white cursor-pointer border border-white px-4 py-2 text-base no-underline hover:text-primary hover:bg-white hover:border-white"
+                class="inline-flex cursor-pointer border border-white px-4 py-2 text-base text-white no-underline hover:bg-white hover:text-primary"
             >
                 Give me a call
             </a>
@@ -42,22 +42,22 @@ import MeshRenderer from './MeshRenderer.astro';
     <div class="mesh-grain"></div>
     <div class="motion-reveal absolute bottom-0 left-0 z-10 flex w-full translate-y-10 items-end justify-between px-6 py-8 opacity-0 sm:p-8" data-motion-reveal data-motion-immediate data-motion-distance="large">
         <div class="flex flex-col items-start gap-4">
-            <div class="lora text-display-sm text-white opacity-85 md:leading-none">
-                I build with scalability, <br> maintainability and performance in mind.
-                <span class="group relative ml-1 inline-flex align-middle" data-performance-toggle>
+            <div class="lora text-display-sm text-canvas opacity-85 md:leading-none">
+                I build with scalability, <br> maintainability and performance in mind
+                <span class="group relative ml-2 inline-flex align-middle" data-performance-toggle>
                     <button
                         type="button"
-                        class="inline-flex h-[0.8em] w-[0.8em] items-center justify-center rounded-full pb-1 text-white/70 transition hover:bg-white/15 hover:text-white focus-visible:bg-white/15 focus-visible:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                        class="inline-flex h-[0.8em] w-[0.8em] items-center justify-center rounded-full pb-1 text-canvas/70 transition hover:bg-canvas/15 hover:text-canvas focus-visible:bg-canvas/15 focus-visible:text-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-canvas"
                         aria-label="View site performance details"
                         aria-describedby="site-performance-tooltip"
                         aria-expanded="false"
                     >
-                        <Icon name="mdi:information-outline" class="h-[0.8em] w-[0.8em] text-white" aria-hidden="true" />
+                        <Icon name="mdi:information-outline" class="h-[0.8em] w-[0.8em] text-canvas" aria-hidden="true" />
                     </button>
                     <span
                         id="site-performance-tooltip"
                         role="tooltip"
-                        class="pointer-events-none invisible absolute right-0 bottom-full z-20 mb-3 w-72 rounded-sm bg-gray-950/95 p-4 font-sans text-sm leading-relaxed text-white opacity-0 shadow-xl ring-1 ring-white/15 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 data-[open=true]:visible data-[open=true]:opacity-100"
+                        class="pointer-events-none invisible absolute right-0 bottom-full z-20 mb-3 w-72 rounded-sm bg-primary/95 p-4 font-sans text-sm leading-relaxed text-canvas opacity-0 shadow-xl ring-1 ring-secondary/25 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 data-[open=true]:visible data-[open=true]:opacity-100"
                     >
                         Server delivery: <span class="font-semibold" data-site-load-time>…</span> ms. FCP:
                         <span class="font-semibold" data-site-fcp>…</span> ms. Yes, I even over-optimized my
@@ -67,14 +67,14 @@ import MeshRenderer from './MeshRenderer.astro';
             </div>
         </div>
         <div class="hidden flex-col gap-2 sm:flex">
-            <div class="text-white uppercase text-sm">My socials</div>
+            <div class="text-canvas uppercase text-sm">My socials</div>
             <div class="flex flex-row gap-4">
                 <a
                     href="https://github.com/NoxelS"
                     aria-label="GitHub profile"
                     target="_blank"
                     rel="noreferrer"
-                    class="flex w-8 h-8 items-center justify-center bg-white text-black transition hover:bg-white/85"
+                    class="flex w-8 h-8 items-center justify-center bg-canvas text-primary transition hover:bg-canvas/85"
                 >
                     <Icon name="mdi:github" class="h-5 w-5" aria-hidden="true" />
                 </a>
@@ -83,7 +83,7 @@ import MeshRenderer from './MeshRenderer.astro';
                     aria-label="LinkedIn profile"
                     target="_blank"
                     rel="noreferrer"
-                    class="flex w-8 h-8 items-center justify-center bg-white text-black transition hover:bg-white/85"
+                    class="flex w-8 h-8 items-center justify-center bg-canvas text-primary transition hover:bg-canvas/85"
                 >
                     <Icon name="mdi:linkedin" class="h-5 w-5" aria-hidden="true" />
                 </a>

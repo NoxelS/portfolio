@@ -15,33 +15,34 @@ import { cloudflareImageUrl } from '../utils/cloudflare-image';
 <section id="landing-page" class="relative flex h-[100svh] min-h-[100svh] w-full flex-col overflow-hidden">
     <!-- Renders the animated halftone mesh. -->
     <LandingHero />
-    <div class="relative z-20 flex w-full min-w-0 shrink-0 flex-col gap-4 p-6 py-8 sm:gap-6 sm:p-8 sm:py-12 md:gap-8 md:py-16">
-        <div class="motion-reveal flex translate-y-10 flex-col gap-4 opacity-0 sm:gap-6 md:flex-row md:items-center md:justify-between" data-motion-reveal data-motion-immediate>
-            <div class="flex min-w-0 flex-col gap-2">
+    <div class="relative z-20 grid w-full min-w-0 shrink-0 gap-6 p-6 py-8 sm:gap-8 sm:p-8 sm:py-12 md:py-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12">
+        <div class="flex min-w-0 flex-col gap-4 sm:gap-6 md:gap-8">
+            <div class="motion-reveal flex translate-y-10 flex-col gap-2 opacity-0" data-motion-reveal data-motion-immediate>
                 <h1 class="lora text-display-md max-w-full break-words uppercase text-foreground">Noël Pascal Schwabenland</h1>
             </div>
-            <div class="hidden size-48 shrink-0 overflow-hidden rounded-full border-4 border-white/80 lg:absolute lg:top-16 lg:right-8 lg:block">
-                <img
-                    src={cloudflareImageUrl('/IMG_0445.jpeg', { width: 384 })}
-                    alt="Portrait of Noel Pascal Schwabenland"
-                    class="size-full object-fit"
-                    width="384"
-                    height="384"
-                    decoding="async"
-                />
+
+            <p class="motion-reveal translate-y-10 text-lg leading-relaxed text-muted-strong opacity-0 lg:max-w-2/3" data-motion-reveal data-motion-immediate>
+                <span class="sm:hidden">EU-based full-stack AI Engineer helping industrial and technology teams turn internal knowledge and complex workflows into governed, production-ready RAG, voice, and AI agent systems.</span>
+                <span class="hidden sm:inline">EU-based full-stack AI Engineer helping industrial and technology companies turn internal knowledge and complex workflows into production-ready RAG, voice, and AI agent solutions. I build with governed data and European regulatory requirements in mind.</span>
+            </p>
+
+            <!-- <p class="motion-reveal translate-y-10 text-caption opacity-0" data-motion-reveal data-motion-immediate>I'm currently available 20h/week</p> -->
+
+            <div class="motion-reveal flex translate-y-10 flex-row flex-wrap gap-4 self-start opacity-0" data-motion-reveal data-motion-immediate>
+                <ActionLink href="#work-banner" icon="iconoir:arrow-down" class="!gap-2 !px-3 !py-2.5 sm:!gap-3.5 sm:!px-4 sm:!py-3.5">Explore my work</ActionLink>
+                <ActionLink href="#contact-banner" variant="secondary" class="!px-3 !py-2.5 sm:!px-4 sm:!py-3.5">Give me a call</ActionLink>
             </div>
         </div>
 
-        <p class="motion-reveal translate-y-10 text-lg leading-relaxed text-muted-strong opacity-0 lg:max-w-2/3" data-motion-reveal data-motion-immediate>
-            <span class="sm:hidden">EU-based full-stack AI Engineer helping industrial and technology teams turn internal knowledge and complex workflows into governed, production-ready RAG, voice, and AI agent systems.</span>
-            <span class="hidden sm:inline">EU-based full-stack AI Engineer helping industrial and technology companies turn internal knowledge and complex workflows into production-ready RAG, voice, and AI agent solutions. I build with governed data and European regulatory requirements in mind.</span>
-        </p>
-
-        <!-- <p class="motion-reveal translate-y-10 text-caption opacity-0" data-motion-reveal data-motion-immediate>I'm currently available 20h/week</p> -->
-        
-        <div class="motion-reveal flex translate-y-10 flex-row flex-wrap gap-4 self-start opacity-0" data-motion-reveal data-motion-immediate>
-            <ActionLink href="#work-banner" icon="iconoir:arrow-down" class="!gap-2 !px-3 !py-2.5 sm:!gap-3.5 sm:!px-4 sm:!py-3.5">Explore my work</ActionLink>
-            <ActionLink href="#contact-banner" variant="secondary" class="!px-3 !py-2.5 sm:!px-4 sm:!py-3.5">Give me a call</ActionLink>
+        <div class="motion-reveal hidden w-[clamp(12rem,20vw,18rem)] translate-y-10 overflow-hidden rounded-full border-4 border-white/80 opacity-0 lg:block" data-motion-reveal data-motion-immediate>
+            <img
+                src={cloudflareImageUrl('/profile1.png', { width: 768 })}
+                alt="Portrait of Noel Pascal Schwabenland"
+                class="size-full object-cover"
+                width="384"
+                height="384"
+                decoding="async"
+            />
         </div>
     </div>
 </section>
