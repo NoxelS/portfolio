@@ -1,5 +1,6 @@
 ---
 import type { Copy, Locale } from '../i18n';
+import { buildInfo } from '../lib/build-info';
 
 const currentYear = new Date().getFullYear();
 const { copy, locale } = Astro.props as { copy: Copy; locale: Locale };
@@ -10,6 +11,7 @@ const { copy, locale } = Astro.props as { copy: Copy; locale: Locale };
 		<div class="flex flex-col gap-2">
 			<p class="lora text-2xl">Noël Pascal Schwabenland</p>
 			<p class="text-sm text-canvas/65">© {currentYear} Noël Pascal Schwabenland. {copy.contact.rights}</p>
+			<p class="text-sm text-canvas/65">v{buildInfo.version}</p>
 		</div>
 
 		<nav aria-label="Legal and other links">
