@@ -18,9 +18,15 @@ RUN npm run build
 
 FROM node:22-alpine AS runtime
 WORKDIR /app
+ARG PUBLIC_BUILD_VERSION
+ARG PUBLIC_COMMIT_SHA
+ARG PUBLIC_BUILT_AT
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=4321
+ENV PUBLIC_BUILD_VERSION=${PUBLIC_BUILD_VERSION}
+ENV PUBLIC_COMMIT_SHA=${PUBLIC_COMMIT_SHA}
+ENV PUBLIC_BUILT_AT=${PUBLIC_BUILT_AT}
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY package.json ./package.json
 COPY --from=build /app/dist ./dist
