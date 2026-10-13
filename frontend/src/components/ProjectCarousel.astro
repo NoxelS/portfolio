@@ -1,17 +1,17 @@
 ---
 import '@glidejs/glide/dist/css/glide.core.min.css';
-import type { Project } from '../data/projects';
-import ActionLink from './ActionLink.astro';
+import type { Project, ProjectFilterOption } from '../data/projects';
 import { cloudflareImageUrl } from '../utils/cloudflare-image';
-import type { Copy } from '../i18n';
+import type { Copy, Locale } from '../i18n';
 
 type Props = {
     projects: Project[];
-    tags: string[];
+    tags: ProjectFilterOption[];
+    locale: Locale;
     copy: Copy;
 };
 
-const { projects, tags, copy } = Astro.props;
+const { projects, tags, copy, locale } = Astro.props;
 ---
 
 <div class="grid gap-8" data-project-carousel>
@@ -29,17 +29,17 @@ const { projects, tags, copy } = Astro.props;
                             index === 3 && 'lg:delay-150',
                             index === 4 && 'lg:delay-200',
                             index >= 5 && 'lg:delay-250',
-                            tag === 'Highlighted'
+                            tag.id === 'Highlighted'
                                 ? 'project-filter-active hover:bg-primary/90 hover:text-canvas'
                                 : 'border-primary-text-color bg-transparent text-primary-text-color hover:bg-surface hover:text-primary-text-color',
                         ]}
                         type="button"
-                        data-project-filter={tag}
+                        data-project-filter={tag.id}
                         data-motion-reveal
-                        aria-pressed={tag === 'Highlighted' ? 'true' : 'false'}
+                        aria-pressed={tag.id === 'Highlighted' ? 'true' : 'false'}
                     >
-                        <span class:list={{ hidden: tag !== 'Highlighted' }} aria-hidden="true">✓</span>
-                        {tag}
+                        <span class:list={{ hidden: tag.id !== 'Highlighted' }} aria-hidden="true">✓</span>
+                        {tag.label}
                     </button>
                 ))
             }
@@ -66,7 +66,7 @@ const { projects, tags, copy } = Astro.props;
                                                     href={project.companyUrl}
                                                     target="_blank"
                                                     rel="noreferrer"
-                                                    aria-label={`Open ${project.logoAlt ?? project.title} website in a new tab`}
+                                                    aria-label={`${locale === "de" ? "Unternehmenswebsite öffnen" : "Open company website"}: ${project.logoAlt ?? project.title}`}
                                                 >
                                                     <img class="max-h-full max-w-full object-contain grayscale" src={cloudflareImageUrl(project.logoSrc, { width: 256 })} alt="" loading="lazy" decoding="async" />
                                                 </a>
@@ -84,11 +84,12 @@ const { projects, tags, copy } = Astro.props;
                                     <div class="flex min-w-0 flex-row items-center gap-3">
 										<h3 class="lora min-w-0 max-w-full break-words text-2xl leading-tight text-primary-text-color sm:text-3xl">{project.title}</h3>
                                     </div>
+                                    <p class="text-sm leading-relaxed text-muted-strong">{project.context}</p>
                                 </header>
 
 								<p class="m-0 p-0 text-lg leading-relaxed text-primary-text-color">{project.summary}</p>
 
-                                <ol class="grid gap-6 md:grid-cols-3 md:gap-0" aria-label={`${project.title} case-study steps`}>
+                                <ol class="grid gap-6 md:grid-cols-3 md:gap-0" aria-label={project.title}>
                                     {project.steps.map((step, index) => (
                                         <li class="relative grid grid-cols-[1.75rem_minmax(0,1fr)] gap-3 md:grid-cols-1 md:gap-4 md:pr-6">
                                             {index < project.steps.length - 1 && (
@@ -136,27 +137,22 @@ const { projects, tags, copy } = Astro.props;
                 type="button"
                 data-glide-dir="<"
                 data-project-control
-                aria-label="Show previous project"
+                aria-label={copy.projects.previous}
             >
                 {copy.projects.previous}
             </button>
-            <p class="text-copy-sm min-w-0 text-center text-primary-text-color uppercase" aria-live="polite" data-project-count>{copy.projects.shown(projects.length)}</p>
+            <p class="text-copy-sm min-w-0 text-center text-primary-text-color uppercase" aria-live="polite" data-project-count data-count-one={copy.projects.shown(1).replace("1", "{count}")} data-count-many={copy.projects.shown(2).replace("2", "{count}")}>{copy.projects.shown(projects.length)}</p>
             <button
                 class="focus-ring cursor-pointer border border-primary-text-color px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-primary-text-color transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-surface hover:text-primary-text-color disabled:cursor-not-allowed disabled:opacity-40"
                 type="button"
                 data-glide-dir=">"
                 data-project-control
-                aria-label="Show next project"
+                aria-label={copy.projects.next}
             >
                 {copy.projects.next}
             </button>
         </div>
     </div>
-
-    <!-- <div class="flex flex-row gap-4">
-        <ActionLink href="#tech-stack" variant="primary" icon="iconoir:arrow-down" class="w-fit"> See my tech stack </ActionLink>
-        <ActionLink href="#contact" variant="secondary" icon="iconoir:arrow-down" class="w-fit"> Contact me about a project </ActionLink>
-    </div> -->
 </div>
 
 <script>
@@ -235,7 +231,8 @@ const { projects, tags, copy } = Astro.props;
                 return projectFilters.some(filter => selectedTags.has(filter));
             });
             slides.replaceChildren(...matchingSlides);
-            count.textContent = `${matchingSlides.length} ${matchingSlides.length === 1 ? 'project' : 'projects'} shown`;
+            const countTemplate = matchingSlides.length === 1 ? count.dataset.countOne : count.dataset.countMany;
+            count.textContent = (countTemplate ?? '{count}').replace('{count}', String(matchingSlides.length));
             emptyState.classList.toggle('hidden', matchingSlides.length !== 0);
             mountGlide(matchingSlides.length);
             requestAnimationFrame(syncCardHeight);

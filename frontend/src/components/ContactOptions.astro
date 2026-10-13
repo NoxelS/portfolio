@@ -29,6 +29,31 @@ const phoneSecondaryHref = contactPhoneSecondary.replace(/[^+\d]/g, '');
 <div class="grid w-full min-w-0 grid-cols-1 gap-10 md:grid-cols-3 md:gap-8 lg:gap-12">
     <article class="motion-reveal grid min-w-0 grid-rows-[1fr_auto] gap-5 lg:delay-0" data-motion-reveal>
         <div class="grid gap-3">
+            <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{copy.contact.scheduleTitle}</h3>
+            <p class="text-base leading-relaxed text-muted-strong">{copy.contact.scheduleBody}</p>
+        </div>
+
+        <ActionLink href={scheduleUrl} target="_blank" rel="noreferrer" variant="primary" icon="iconoir:calendar" class="h-14 w-full min-w-0 justify-between text-left">
+            {copy.contact.schedule}
+        </ActionLink>
+    </article>
+    <article class="motion-reveal grid min-w-0 grid-rows-[1fr_auto] gap-5 lg:delay-150" data-motion-reveal>
+        <div class="grid gap-3">
+            <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{copy.contact.emailTitle}</h3>
+            <p class="text-base leading-relaxed text-muted-strong">{copy.contact.emailBody}</p>
+        </div>
+
+        {contactEmail ? (
+            <ActionLink href={`mailto:${contactEmail}`} variant="secondary" icon="iconoir:mail" class="h-14 w-full min-w-0 justify-between text-left">
+                {contactEmail}
+            </ActionLink>
+        ) : (
+            <p class="text-caption">{copy.contact.missingEmail}</p>
+        )}
+    </article>
+
+    <article class="motion-reveal grid min-w-0 grid-rows-[1fr_auto] gap-5 lg:delay-300" data-motion-reveal>
+        <div class="grid gap-3">
             <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{copy.contact.directCallTitle}</h3>
             <p class="text-base leading-relaxed text-muted-strong">{copy.contact.directCallBody}</p>
         </div>
@@ -48,29 +73,4 @@ const phoneSecondaryHref = contactPhoneSecondary.replace(/[^+\d]/g, '');
         </div>
     </article>
 
-    <article class="motion-reveal grid min-w-0 grid-rows-[1fr_auto] gap-5 lg:delay-150" data-motion-reveal>
-        <div class="grid gap-3">
-            <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{copy.contact.emailTitle}</h3>
-            <p class="text-base leading-relaxed text-muted-strong">{copy.contact.emailBody}</p>
-        </div>
-
-        {contactEmail ? (
-            <ActionLink href={`mailto:${contactEmail}`} variant="secondary" icon="iconoir:mail" class="h-14 w-full min-w-0 justify-between text-left">
-                {contactEmail}
-            </ActionLink>
-        ) : (
-            <p class="text-caption">{copy.contact.missingEmail}</p>
-        )}
-    </article>
-
-    <article class="motion-reveal grid min-w-0 grid-rows-[1fr_auto] gap-5 lg:delay-300" data-motion-reveal>
-        <div class="grid gap-3">
-            <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{copy.contact.scheduleTitle}</h3>
-            <p class="text-base leading-relaxed text-muted-strong">{copy.contact.scheduleBody}</p>
-        </div>
-
-        <ActionLink href={scheduleUrl} target="_blank" rel="noreferrer" variant="secondary" icon="iconoir:calendar" class="h-14 w-full min-w-0 justify-between text-left">
-            {copy.contact.schedule}
-        </ActionLink>
-    </article>
 </div>

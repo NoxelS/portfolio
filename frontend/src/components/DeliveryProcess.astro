@@ -1,0 +1,19 @@
+---
+import type { Copy } from '../i18n';
+
+const { copy } = Astro.props as { copy: Copy };
+---
+
+<ol class="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-16">
+    {copy.delivery.steps.map((step, index) => (
+        <li class="grid content-start gap-4">
+            <span class="text-sm font-semibold text-primary" aria-hidden="true">{index + 1}</span>
+            <h3 class="lora text-2xl leading-tight uppercase text-foreground sm:text-3xl">{step.title}</h3>
+            <p class="text-base leading-relaxed text-muted-strong">{step.body}</p>
+        </li>
+    ))}
+</ol>
+<div id="about" class="mt-12 grid gap-4 border-t border-border pt-8 lg:max-w-2/3">
+    <h3 class="lora text-2xl leading-tight uppercase text-foreground">{copy.about.title}</h3>
+    <p class="text-base leading-relaxed text-muted-strong">{copy.about.body}</p>
+</div>

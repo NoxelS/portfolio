@@ -1,206 +1,292 @@
-/** Project records for the portfolio projects carousel.
- *
- * Each record defines a single case study: a short summary,
- * three narrative steps (Problem / How I solved it / Impact),
- * separate metadata for filtering and display.
- */
+import type { Locale } from '../i18n';
 
-export type ProjectStep = {
-    label: string;
-    content: string;
+const filterLabels = {
+    en: {
+        Highlighted: 'Selected',
+        'LLM Systems': 'AI infrastructure',
+        'Agent Systems': 'AI agents',
+        'Speech & Voice': 'Speech & voice',
+        Research: 'Research',
+        'Process Automation': 'Workflow automation',
+    },
+    de: {
+        Highlighted: 'Auswahl',
+        'LLM Systems': 'KI-Infrastruktur',
+        'Agent Systems': 'KI-Agenten',
+        'Speech & Voice': 'Sprachverarbeitung',
+        Research: 'Forschung',
+        'Process Automation': 'Prozessautomatisierung',
+    },
+} satisfies Record<Locale, Record<string, string>>;
+
+export type ProjectFilterId = keyof typeof filterLabels.en;
+export type ProjectFilterOption = { id: ProjectFilterId; label: string };
+export type ProjectStep = { label: string; content: string };
+
+type ProjectContent = {
+    title: string;
+    context: string;
+    summary: string;
+    problem: string;
+    contribution: string;
+    result: string;
+    tags: string[];
 };
 
-export type Project = {
-    title: string;
-    summary: string;
-    steps: ProjectStep[];
-    tags: string[];
-    filters: string[];
+type ProjectMetadata = {
+    id: string;
+    filters: ProjectFilterId[];
     logoSrc?: string;
     logoAlt?: string;
     companyUrl?: string;
 };
 
-export const projects: Project[] = [
+type ProjectRecord = ProjectMetadata & { content: Record<Locale, ProjectContent> };
+export type Project = ProjectMetadata & Pick<ProjectContent, 'title' | 'context' | 'summary' | 'tags'> & { steps: ProjectStep[] };
+
+/** Project facts are shared between HTML and Markdown; every record has both locales. */
+export const projects: ProjectRecord[] = [
     {
-        title: 'On-Premise AI Inference Platform @ NetCom',
-        summary:
-            'Built the governed AI platform that lets NetCom deploy language and agent systems on sensitive data without relying on external model providers.',
-        steps: [
-            {
-                label: 'Problem',
-                content:
-                    'European data-protection and client requirements made external AI providers unsuitable for sensitive workloads, leaving teams without a secure, scalable way to bring language AI into daily operations.',
-            },
-            {
-                label: 'How I solved it',
-                content:
-                    'I planned and implemented the on-premise inference stack, including model routing, load balancing, and operational foundations for reliable internal LLM and agent use.',
-            },
-            {
-                label: 'Impact',
-                content:
-                    'NetCom gained private, enterprise-ready AI capacity that keeps sensitive workloads under its control, supports regulated use cases, and reduces token costs by 20–30 % compared with hosted models.',
-            },
+        "id": "netcom-private-ai",
+        "filters": [
+            "Highlighted",
+            "LLM Systems"
         ],
-        tags: ['Private AI', 'LLM Platform'],
-        filters: ['Highlighted', 'LLM Systems'],
-        logoSrc: '/assets/companies/netcom.svg',
-        logoAlt: 'NetCom logo',
-        companyUrl: 'https://www.netcom.eu/',
+        "logoSrc": "/assets/companies/netcom.svg",
+        "logoAlt": "NetCom",
+        "companyUrl": "https://www.netcom.eu/",
+        "content": {
+            "en": {
+                "title": "Private AI infrastructure at NetCom",
+                "context": "AI infrastructure · Architecture and implementation",
+                "summary": "An on-premises inference platform for language-model applications and agents working with sensitive company data.",
+                "problem": "NetCom needed to run language models on its own infrastructure because of data-protection and client requirements.",
+                "contribution": "I planned and implemented the inference stack, including model routing, load balancing and integration into internal AI workflows.",
+                "result": "The platform provides internal inference capacity for applications and agents, with model selection and routing under the company's control.",
+                "tags": [
+                    "Private AI",
+                    "Model serving"
+                ]
+            },
+            "de": {
+                "title": "Private KI-Infrastruktur bei NetCom",
+                "context": "KI-Infrastruktur · Architektur und Umsetzung",
+                "summary": "Eine On-Premises-Plattform für Sprachmodelle und Agenten, die mit sensiblen Unternehmensdaten arbeiten.",
+                "problem": "Aufgrund von Datenschutz- und Kundenanforderungen benötigte NetCom eine Möglichkeit, Sprachmodelle auf eigener Infrastruktur zu betreiben.",
+                "contribution": "Ich plante und implementierte den Inferenz-Stack einschließlich Modellrouting, Lastverteilung und Anbindung an interne KI-Workflows.",
+                "result": "Die Plattform stellt interne Inferenzkapazität für Anwendungen und Agenten bereit. Modellauswahl und Routing bleiben unter der Kontrolle des Unternehmens.",
+                "tags": [
+                    "Private KI",
+                    "Modellbetrieb"
+                ]
+            }
+        }
     },
     {
-        title: 'Elevator Emergency Dispatch Agent @ NetCom',
-        summary:
-            'Built an on-premise voice agent that gathers critical incident details outside business hours, giving emergency dispatchers the context they need to respond appropriately.',
-        steps: [
-            {
-                label: 'Problem',
-                content:
-                    'After hours, elevator emergency calls were either handled by staff or forwarded to authorities with too little incident context to assess whether medical or fire services were needed.',
-            },
-            {
-                label: 'How I solved it',
-                content:
-                    'I built an on-premise speech-recognition, agent-orchestration, and speech-synthesis pipeline connected to the dispatch control centre, guiding callers through the information responders need.',
-            },
-            {
-                label: 'Impact',
-                content:
-                    'Dispatchers receive structured, actionable incident metadata before intervention. The system extends emergency coverage beyond working hours while preserving escalation to medical or fire services when required.',
-            },
+        "id": "netcom-dispatch-agent",
+        "filters": [
+            "Highlighted",
+            "Agent Systems",
+            "Speech & Voice"
         ],
-        tags: ['Voice Agent', 'Critical Operations'],
-        filters: ['Highlighted', 'Agent Systems', 'Speech & Voice'],
-        logoSrc: '/assets/companies/netcom.svg',
-        logoAlt: 'NetCom logo',
-        companyUrl: 'https://www.netcom.eu/',
+        "logoSrc": "/assets/companies/netcom.svg",
+        "logoAlt": "NetCom",
+        "companyUrl": "https://www.netcom.eu/",
+        "content": {
+            "en": {
+                "title": "Emergency-call agent at NetCom",
+                "context": "Agent systems · Speech processing and dispatch integration",
+                "summary": "An on-premises agent that collects incident details during elevator emergency calls and connects them to the dispatch workflow.",
+                "problem": "Emergency calls require consistent collection of incident details and integration with the control centre's existing dispatch software.",
+                "contribution": "I built the speech-recognition, agent-orchestration and speech-synthesis pipeline and connected it to the dispatch control centre.",
+                "result": "The implementation combines spoken interaction with structured incident information for dispatchers, bringing the agent into an existing operational workflow.",
+                "tags": [
+                    "Agent orchestration",
+                    "System integration"
+                ]
+            },
+            "de": {
+                "title": "Agent für Aufzugnotrufe bei NetCom",
+                "context": "Agentensysteme · Sprachverarbeitung und Leitstellenanbindung",
+                "summary": "Ein On-Premises-Agent, der bei Aufzugnotrufen Vorfalldaten erfasst und in den Leitstellenprozess einbindet.",
+                "problem": "Notrufe erfordern eine strukturierte Erfassung der Vorfalldaten und die Anbindung an die bestehende Software der Leitstelle.",
+                "contribution": "Ich entwickelte die Pipeline aus Spracherkennung, Agentensteuerung und Sprachsynthese und verband sie mit der Leitstelle.",
+                "result": "Die Umsetzung verbindet gesprochene Interaktion mit strukturierten Vorfalldaten für die Disposition. So wird der Agent Teil eines bestehenden betrieblichen Ablaufs.",
+                "tags": [
+                    "Agentensteuerung",
+                    "Systemintegration"
+                ]
+            }
+        }
     },
     {
-        title: 'HPC Molecular Embedding Pipeline @ Saarland University',
-        summary:
-            'Built a modular HPC pipeline that turns virtually generated molecules into centrally available chemical-space embeddings for high-throughput drug screening.',
-        steps: [
-            {
-                label: 'Problem',
-                content:
-                    'Drug-screening simulations generated large numbers of candidate molecules, but embedding them with TopoFormer across several systems created fragmented data ownership and a bottleneck before binding-energy filtering.',
-            },
-            {
-                label: 'How I solved it',
-                content:
-                    'I built a modular HPC pipeline that distributed TopoFormer embedding jobs, collected the resulting molecular representations centrally, and handed them off consistently to the next screening stage.',
-            },
-            {
-                label: 'Impact',
-                content:
-                    'Researchers gained a dependable, scalable path from molecule generation to chemical-space analysis, with centrally managed embeddings ready for downstream filtering and decision-making.',
-            },
+        "id": "saarland-hpc",
+        "filters": [
+            "Highlighted",
+            "Research"
         ],
-        tags: ['HPC', 'Drug Discovery'],
-        filters: ['Highlighted', 'Research'],
-        logoSrc: '/assets/companies/uds.svg.webp',
-        logoAlt: 'Saarland University logo',
-        companyUrl: 'https://www.uni-saarland.de/en/home/',
+        "logoSrc": "/assets/companies/uds.svg.webp",
+        "logoAlt": "Saarland University",
+        "companyUrl": "https://www.uni-saarland.de/en/home/",
+        "content": {
+            "en": {
+                "title": "Molecular embedding pipeline at Saarland University",
+                "context": "Research engineering · HPC pipeline implementation",
+                "summary": "A distributed pipeline that prepares molecular embeddings for the next stage of a drug-screening workflow.",
+                "problem": "Embedding generated molecules with TopoFormer across several systems left data fragmented and delayed downstream screening.",
+                "contribution": "I built a modular HPC pipeline to distribute embedding jobs, collect the representations centrally and pass them to the next screening stage.",
+                "result": "Researchers could work with centrally collected embeddings and a consistent handoff between molecule generation, embedding and filtering.",
+                "tags": [
+                    "HPC",
+                    "Data pipelines"
+                ]
+            },
+            "de": {
+                "title": "Pipeline für molekulare Embeddings an der Universität des Saarlandes",
+                "context": "Forschungssoftware · Umsetzung einer HPC-Pipeline",
+                "summary": "Eine verteilte Pipeline, die molekulare Embeddings für den nächsten Schritt eines Wirkstoffscreenings bereitstellt.",
+                "problem": "Die Berechnung von TopoFormer-Embeddings auf mehreren Systemen führte zu verteilten Datenbeständen und verzögerte das anschließende Screening.",
+                "contribution": "Ich entwickelte eine modulare HPC-Pipeline, die Embedding-Jobs verteilt, die Ergebnisse zentral sammelt und an den nächsten Screening-Schritt übergibt.",
+                "result": "Die Forschung konnte mit zentral gesammelten Embeddings und einer einheitlichen Übergabe zwischen Molekülgenerierung, Embedding-Berechnung und Filterung arbeiten.",
+                "tags": [
+                    "HPC",
+                    "Datenpipelines"
+                ]
+            }
+        }
     },
     {
-        title: 'Voting Theory Research Platform @ KPMG',
-        summary:
-            'Owned the software layer that made high-performance voting-theory simulations easier for a multidisciplinary research team to explore, interpret, and share.',
-        steps: [
-            {
-                label: 'Problem',
-                content:
-                    'The research team produced large volumes of synthetic simulation data, but lacked a cohesive way to analyse results, exchange findings, and make their implications interpretable across disciplines.',
-            },
-            {
-                label: 'How I solved it',
-                content:
-                    'I independently designed and built a modular analysis stack around the simulation workflow, giving the team flexible tools to explore outputs and share comparable results.',
-            },
-            {
-                label: 'Impact',
-                content:
-                    'The team could inspect and communicate simulation outcomes more effectively, improving the interpretability and collaborative value of its social-choice research.',
-            },
+        "id": "kpmg-research",
+        "filters": [
+            "Research",
+            "Process Automation"
         ],
-        tags: ['Simulation', 'Data Analysis'],
-        filters: ['Research', 'Process Automation'],
-        logoSrc: '/assets/companies/kpmg.svg',
-        logoAlt: 'KPMG logo',
-        companyUrl: 'https://kpmg.com/de/de.html',
+        "logoSrc": "/assets/companies/kpmg.svg",
+        "logoAlt": "KPMG",
+        "companyUrl": "https://kpmg.com/de/de.html",
+        "content": {
+            "en": {
+                "title": "Voting-theory research tools at KPMG",
+                "context": "Research software · Independent design and implementation",
+                "summary": "An analysis platform for exploring and comparing results from voting-theory simulations.",
+                "problem": "A multidisciplinary team needed a shared way to analyse large volumes of simulation data and communicate findings.",
+                "contribution": "I independently designed and built a modular analysis stack around the simulation workflow, with tools for exploring outputs and comparing results.",
+                "result": "The team gained a common software workflow for inspecting simulation outcomes and sharing findings across disciplines.",
+                "tags": [
+                    "Simulation",
+                    "Data analysis"
+                ]
+            },
+            "de": {
+                "title": "Forschungswerkzeuge für Wahltheorie bei KPMG",
+                "context": "Forschungssoftware · Eigenständige Konzeption und Umsetzung",
+                "summary": "Eine Analyseplattform zur Untersuchung und zum Vergleich von Ergebnissen aus wahltheoretischen Simulationen.",
+                "problem": "Ein interdisziplinäres Team benötigte eine gemeinsame Arbeitsweise, um große Mengen an Simulationsdaten auszuwerten und Erkenntnisse zu teilen.",
+                "contribution": "Ich konzipierte und entwickelte eigenständig einen modularen Analyse-Stack rund um die Simulationen, mit Werkzeugen zur Untersuchung und zum Vergleich der Ergebnisse.",
+                "result": "Das Team erhielt einen gemeinsamen Software-Workflow, um Simulationsergebnisse zu prüfen und Erkenntnisse über Fachgrenzen hinweg auszutauschen.",
+                "tags": [
+                    "Simulation",
+                    "Datenanalyse"
+                ]
+            }
+        }
     },
     {
-        title: 'School Grading CMS @ IGS Nieder-Olm',
-        summary:
-            'Delivered and maintained an on-premise grading CMS that replaced paper-based grade collection with secure, automatic per-student summaries.',
-        steps: [
-            {
-                label: 'Problem',
-                content:
-                    'Teachers recorded assessments on paper and had to manually collect grades from every subject to determine a student’s term grade—a slow process with sensitive data-governance requirements.',
-            },
-            {
-                label: 'How I solved it',
-                content:
-                    'For my first freelance engagement, I built and maintained a complete on-premise CMS where teachers record individual assessments and the system generates each student’s consolidated grading overview.',
-            },
-            {
-                label: 'Impact',
-                content:
-                    'Grade aggregation became structured and automatic, reducing administrative work for teachers while keeping student data within a solution designed for the school’s privacy requirements.',
-            },
+        "id": "igs-grading",
+        "filters": [
+            "Process Automation"
         ],
-        tags: ['Privacy-first', 'Full-stack'],
-        filters: ['Process Automation'],
-        logoSrc: '/assets/companies/IGS_NiederOlm_farbig.jpg',
-        logoAlt: 'IGS Nieder-Olm logo',
-        companyUrl: 'https://igsno.de/',
+        "logoSrc": "/assets/companies/IGS_NiederOlm_farbig.jpg",
+        "logoAlt": "IGS Nieder-Olm",
+        "companyUrl": "https://igsno.de/",
+        "content": {
+            "en": {
+                "title": "Grading application for IGS Nieder-Olm",
+                "context": "Freelance project · Full-stack development and maintenance",
+                "summary": "An on-premises application that replaced paper-based grade collection with automatic student summaries.",
+                "problem": "Teachers had to collect assessments from several subjects manually, while keeping sensitive student data within the school's requirements.",
+                "contribution": "I built and maintained the application for recording assessments and generating consolidated grading overviews for each student.",
+                "result": "Grade aggregation became automatic, and teachers could work from a consolidated overview within the school's own deployment.",
+                "tags": [
+                    "Full-stack development",
+                    "Workflow automation"
+                ]
+            },
+            "de": {
+                "title": "Notenverwaltung für die IGS Nieder-Olm",
+                "context": "Freiberufliches Projekt · Full-Stack-Entwicklung und Wartung",
+                "summary": "Eine On-Premises-Anwendung, die papierbasierte Notensammlung durch automatische Übersichten pro Schüler ersetzte.",
+                "problem": "Lehrkräfte mussten Bewertungen aus mehreren Fächern manuell zusammenführen und dabei die Anforderungen an sensible Schülerdaten berücksichtigen.",
+                "contribution": "Ich entwickelte und wartete die Anwendung zur Erfassung von Bewertungen und zur Erstellung zusammengefasster Notenübersichten.",
+                "result": "Die Noten wurden automatisch zusammengeführt. Lehrkräfte konnten mit einer zentralen Übersicht im schuleigenen System arbeiten.",
+                "tags": [
+                    "Full-Stack-Entwicklung",
+                    "Prozessautomatisierung"
+                ]
+            }
+        }
     },
     {
-        title: 'CNN-Based Molecular Backmapping @ Saarland University',
-        summary:
-            'Developed a CNN-based approach for reconstructing atomistic DOPC lipid structures from coarse-grained simulations, reaching a backmapping rate of about 23 molecules per second.',
-        steps: [
-            {
-                label: 'Problem',
-                content:
-                    'Coarse-grained molecular simulations make larger and longer experiments practical, but translating them back into atom-level detail traditionally requires significant manual oversight and computational effort.',
-            },
-            {
-                label: 'How I solved it',
-                content:
-                    'For my bachelor’s thesis, I developed and evaluated CNNs that predict molecular internal coordinates from coarse-grained DOPC representations, using a dataset of roughly 160,000 paired structures.',
-            },
-            {
-                label: 'Impact',
-                content:
-                    'The research demonstrated a viable, efficient backmapping approach that preserves structural detail while reducing manual intervention, creating a foundation for broader molecular-dynamics and drug-discovery research.',
-            },
+        "id": "saarland-backmapping",
+        "filters": [
+            "Research"
         ],
-        tags: ['Deep Learning', 'Biophysics'],
-        filters: ['Research'],
-        logoSrc: '/assets/companies/uds.svg.webp',
-        logoAlt: 'Saarland University logo',
-        companyUrl: 'https://www.uni-saarland.de/en/home/',
-    },
+        "logoSrc": "/assets/companies/uds.svg.webp",
+        "logoAlt": "Saarland University",
+        "companyUrl": "https://www.uni-saarland.de/en/home/",
+        "content": {
+            "en": {
+                "title": "Molecular reconstruction with CNNs at Saarland University",
+                "context": "Bachelor's thesis · Model development and evaluation",
+                "summary": "A deep-learning approach to reconstructing atomistic lipid structures from coarse-grained molecular simulations.",
+                "problem": "Coarse-grained simulations make larger experiments possible, but reconstructing atom-level structures adds computational effort and manual work.",
+                "contribution": "For my bachelor's thesis, I developed and evaluated CNNs on roughly 160,000 paired DOPC structures to predict molecular internal coordinates.",
+                "result": "The thesis evaluation achieved a backmapping rate of about 23 molecules per second and demonstrated the approach for the studied DOPC structures.",
+                "tags": [
+                    "Deep learning",
+                    "Model evaluation"
+                ]
+            },
+            "de": {
+                "title": "Molekulare Rekonstruktion mit CNNs an der Universität des Saarlandes",
+                "context": "Bachelorarbeit · Modellentwicklung und Evaluation",
+                "summary": "Ein Deep-Learning-Ansatz zur Rekonstruktion atomarer Lipidstrukturen aus vergröberten molekularen Simulationen.",
+                "problem": "Vergröberte Simulationen ermöglichen größere Experimente. Die Rückführung auf atomare Strukturen verursacht jedoch zusätzlichen Rechenaufwand und manuelle Arbeit.",
+                "contribution": "In meiner Bachelorarbeit entwickelte und evaluierte ich CNNs anhand von rund 160.000 gepaarten DOPC-Strukturen, um interne molekulare Koordinaten vorherzusagen.",
+                "result": "Die Evaluation erreichte etwa 23 rekonstruierte Moleküle pro Sekunde und zeigte die Umsetzbarkeit des Ansatzes für die untersuchten DOPC-Strukturen.",
+                "tags": [
+                    "Deep Learning",
+                    "Modellevaluation"
+                ]
+            }
+        }
+    }
 ];
 
-/** Returns projects sorted with Highlighted-filtered projects first, preserving relative order. */
-export function getSortedProjects(): Project[] {
-    return [...projects].sort((a, b) => {
-        const aHighlighted = a.filters.includes('Highlighted');
-        const bHighlighted = b.filters.includes('Highlighted');
-        if (aHighlighted === bHighlighted) return 0;
-        return aHighlighted ? -1 : 1;
-    });
+/** Keep featured projects first, preserving the relative order within each group. */
+export function getSortedProjects(locale: Locale = 'en'): Project[] {
+    const labels = locale === 'de'
+        ? ['Ausgangslage', 'Mein Beitrag', 'Ergebnis']
+        : ['Problem', 'My contribution', 'Result'];
+    return [...projects]
+        .sort((a, b) => Number(b.filters.includes('Highlighted')) - Number(a.filters.includes('Highlighted')))
+        .map(({ content, ...metadata }) => {
+            const { title, context, summary, tags, problem, contribution, result } = content[locale];
+            return {
+                ...metadata, title, context, summary, tags,
+                steps: [problem, contribution, result].map((text, index) => ({ label: labels[index]!, content: text })),
+            };
+        });
 }
 
-/** Returns a deduplicated, sorted list of all project filters. */
-export function getAllTags(): string[] {
-    return Array.from(new Set(projects.flatMap((project) => project.filters))).sort((a, b) => {
-        if (a === 'Highlighted') return -1;
-        if (b === 'Highlighted') return 1;
-        return a.localeCompare(b);
-    });
+/** Stable filter IDs drive selection; only the visitor-facing labels are translated. */
+export function getAllTags(locale: Locale = 'en'): ProjectFilterOption[] {
+    return Array.from(new Set(projects.flatMap(project => project.filters)))
+        .sort((a, b) => {
+            if (a === b) return 0;
+            if (a === 'Highlighted') return -1;
+            if (b === 'Highlighted') return 1;
+            return filterLabels[locale][a].localeCompare(filterLabels[locale][b], locale);
+        })
+        .map(id => ({ id, label: filterLabels[locale][id] }));
 }

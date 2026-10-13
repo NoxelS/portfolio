@@ -16,7 +16,8 @@ This is a concise machine-readable overview of the portfolio. Use the full Markd
 
 ## Resources
 
-- Full portfolio: ${defaultSeo.site}/index.md
+- English portfolio: ${defaultSeo.site}/en/index.md
+- German portfolio: ${defaultSeo.site}/de/index.md
 - Website: ${defaultSeo.site}/
 - GitHub: https://github.com/NoxelS
 - LinkedIn: https://www.linkedin.com/in/noel-schwabenland/
@@ -25,7 +26,8 @@ This is a concise machine-readable overview of the portfolio. Use the full Markd
 
 - AI agent systems
 - Retrieval-augmented generation (RAG)
-- Voice AI and speech pipelines
+- Knowledge systems and enterprise search
+- Custom AI applications and workflow automation
 - Full-stack software engineering
 - AI infrastructure, evaluation, and automation
 `;

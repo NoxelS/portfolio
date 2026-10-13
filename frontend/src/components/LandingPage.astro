@@ -39,15 +39,14 @@ const { copy, locale } = Astro.props as { copy: Copy; locale: Locale };
             </div>
 
             <p class="motion-reveal translate-y-10 text-lg leading-relaxed text-muted-strong opacity-0 lg:max-w-2/3" data-motion-reveal data-motion-immediate>
+                <strong class="mb-2 block font-semibold text-foreground">{copy.hero.headline}</strong>
                 <span class="sm:hidden">{copy.hero.summaryCompact}</span>
                 <span class="hidden sm:inline">{copy.hero.summary}</span>
             </p>
 
-            <!-- <p class="motion-reveal translate-y-10 text-caption opacity-0" data-motion-reveal data-motion-immediate>I'm currently available 20h/week</p> -->
-
             <div class="motion-reveal flex translate-y-10 flex-row flex-wrap gap-4 self-start opacity-0" data-motion-reveal data-motion-immediate>
-                <ActionLink href="#work" icon="iconoir:arrow-down" class="!gap-2 !px-3 !py-2.5 sm:!gap-3.5 sm:!px-4 sm:!py-3.5">{copy.hero.exploreWork}</ActionLink>
-                <ActionLink href="#contact" variant="secondary" class="!px-3 !py-2.5 sm:!px-4 sm:!py-3.5">{copy.hero.call}</ActionLink>
+                <ActionLink href="#project-contact" class="!px-3 !py-2.5 sm:!px-4 sm:!py-3.5">{copy.projects.contact}</ActionLink>
+                <ActionLink href="#my-projects" variant="secondary" icon="iconoir:arrow-down" class="!gap-2 !px-3 !py-2.5 sm:!gap-3.5 sm:!px-4 sm:!py-3.5">{copy.hero.exploreWork}</ActionLink>
             </div>
         </div>
 

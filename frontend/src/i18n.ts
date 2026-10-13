@@ -13,6 +13,7 @@ export function localePath(locale: Locale, path = ''): string {
 export type Copy = {
     seo: { title: string; description: string; imageAlt: string };
     hero: {
+        headline: string;
         summaryCompact: string;
         summary: string;
         exploreWork: string;
@@ -23,7 +24,9 @@ export type Copy = {
         performanceTooltip: string;
         socials: string;
     };
-    work: { quote: string; subquote: string; title: string; description: string; chapters: { title: string; body: string; cta: string }[] };
+    work: { quote: string; subquote: string; title: string; description: string; chapters: { title: string; body: string }[] };
+    delivery: { title: string; description: string; steps: { title: string; body: string }[] };
+    about: { title: string; body: string };
     organisations: { quote: string; introduction: string };
     projects: {
         title: string;
@@ -74,205 +77,240 @@ export type Copy = {
 };
 
 export const copy: Record<Locale, Copy> = {
-    en: {
-        seo: {
-            title: 'Noel Schwabenland | Freelance Full-Stack AI Engineer',
-            description:
-                'Noel Schwabenland is an EU-based freelance full-stack AI engineer building governed, production-ready RAG, voice, and AI agent systems for industrial and technology companies.',
-            imageAlt: 'Portrait of Noel Pascal Schwabenland'
+    "en": {
+        "seo": {
+            "title": "Noel Schwabenland | Freelance AI Engineer",
+            "description": "Freelance AI engineer building knowledge systems, RAG, AI agents and custom applications. Architecture, implementation, evaluation and deployment for technical teams.",
+            "imageAlt": "Portrait of Noel Pascal Schwabenland"
         },
-        hero: {
-            summaryCompact:
-                'EU-based full-stack AI Engineer helping industrial and technology teams turn internal knowledge and complex workflows into governed, production-ready RAG, voice, and AI agent systems.',
-            summary:
-                'EU-based full-stack AI Engineer helping industrial and technology companies turn internal knowledge and complex workflows into governed, production-ready RAG, voice, and AI agent solutions. I build with governed data and European regulatory requirements in mind.',
-            exploreWork: 'Explore my work',
-            call: 'Give me a call',
-            portraitAlt: 'Portrait of Noel Pascal Schwabenland',
-            principle: 'I build with scalability, <br/> maintainability and performance in mind',
-            performanceLabel: 'View site performance details',
-            performanceTooltip: 'Server delivery: {server} ms. FCP: {fcp} ms. Yes, I even over-optimized my portfolio website.',
-            socials: 'My socials'
+        "hero": {
+            "summaryCompact": "Freelance AI engineer building knowledge systems, agents and custom applications for engineering teams.",
+            "summary": "Freelance AI engineer based in the EU. I help engineering teams build knowledge systems, AI agents and custom applications that work with their data and existing software, from architecture and implementation to evaluation and deployment.",
+            "exploreWork": "See selected projects",
+            "call": "Give me a call",
+            "portraitAlt": "Portrait of Noel Pascal Schwabenland",
+            "principle": "I build with scalability, <br/> maintainability and performance in mind",
+            "performanceLabel": "View site performance details",
+            "performanceTooltip": "Server delivery: {server} ms. FCP: {fcp} ms. Yes, I even over-optimized my portfolio website.",
+            "socials": "My socials",
+            "headline": "AI applications and agents, from idea to production."
         },
-        work: {
-            quote: "Complex problems don't always require complex solutions",
-            subquote:
-                'Sometimes the simplest approach is the best. My background in both technical and business domains allows me to bridge the gap between these worlds.',
-            title: 'How I work',
-            description: 'I combine scientific curiosity with practical software engineering to build AI systems that hold up in real operations.',
-            chapters: [
+        "work": {
+            "quote": "Complex problems don't always require complex solutions",
+            "subquote": "Sometimes the simplest approach is the best. My background in both technical and business domains allows me to bridge the gap between these worlds.",
+            "title": "What I can help you build",
+            "description": "I take on defined projects or work alongside an existing engineering team, connecting models, data and software from the first implementation through deployment.",
+            "chapters": [
                 {
-                    title: 'Theoretical Physics',
-                    body: 'Physics taught me to turn ambiguous problems into structured development and validation steps. It also taught me to stay calm when requirements change or technical depth becomes demanding. I work my way into difficult problems until I understand what needs to be built and how to validate it.',
-                    cta: 'Explore my problem solving approach'
+                    "title": "Knowledge systems & RAG",
+                    "body": "Make company knowledge accessible through search and AI assistants. I build retrieval pipelines and data integrations, with access permissions, source references and answer evaluation considered from the start."
                 },
                 {
-                    title: 'Software Development',
-                    body: 'With more than six years of experience building and maintaining software for real users, I know that an application is only as strong as its foundations. I bring cloud infrastructure experience, sound engineering principles, and software architecture to create robust, maintainable systems. Coding agents can accelerate delivery, but they need clear architecture and informed direction.',
-                    cta: 'Check out the software I built for real users'
+                    "title": "AI agents & workflows",
+                    "body": "Build agents that use tools and APIs to carry out multi-step tasks. I connect them to existing systems and define where validation, human approval and failure handling belong."
                 },
                 {
-                    title: 'AI Systems',
-                    body: 'I build production AI systems for real users, with a focus on on-premises, open-source solutions for European companies. My work includes agent systems, time-series analysis and forecasting, speech pipelines, and the infrastructure behind them. The goal is useful insight and tangible outcomes while keeping models, data, and operations under the company’s control.',
-                    cta: 'Explore production AI systems I worked on'
+                    "title": "Custom AI applications",
+                    "body": "Develop an AI feature, internal tool or complete application around a concrete use case. I work across user interfaces, backends, model integration and deployment."
                 }
             ]
         },
-        organisations: {
-            quote: 'Not only theory, but proven practice',
-            introduction: 'I already got the chance to have contributed alongside some awesome organisations:'
+        "organisations": {
+            "quote": "Not only theory, but proven practice",
+            "introduction": "I already got the chance to have contributed alongside some awesome organisations:"
         },
-        projects: {
-            title: 'My Projects',
-            description:
-                'From private AI platforms and voice agents to high-performance research pipelines, these projects solve real operational constraints with systems teams can use, govern, and scale.',
-            selected: 'These are selected projects only. If you are looking for experience in a specific area, feel free to get in touch with me.',
-            exploreStack: 'Explore my tech stack',
-            contact: 'Get in touch',
-            filterBy: 'Filter by',
-            filterLabel: 'Filter projects by tag',
-            carouselLabel: 'Projects carousel',
-            noMatches: 'No projects match the selected tags. Select one or more tags to see projects.',
-            previous: 'Previous',
-            next: 'Next',
-            shown: count => `${count} ${count === 1 ? 'project' : 'projects'} shown`
+        "projects": {
+            "title": "Selected work",
+            "description": "Selected work in AI infrastructure, agent systems, research and software delivery. Each example outlines the requirements, my contribution and the resulting implementation.",
+            "selected": "Have a related challenge? Share the use case, existing systems and the part you need help with.",
+            "exploreStack": "View the tech stack",
+            "contact": "Discuss your project",
+            "filterBy": "Explore by area",
+            "filterLabel": "Filter projects by area",
+            "carouselLabel": "Projects carousel",
+            "noMatches": "No projects match the selection. Choose one or more areas to see projects.",
+            "previous": "Previous",
+            "next": "Next",
+            "shown": (count: number) => `${count} ${count === 1 ? "project" : "projects"} shown`
         },
-        stack: {
-            quote: 'From ideas and requirements to reality',
-            subquote: 'With a broad skill set and a passion for learning, I help bring ideas to life.',
-            title: 'My Tech Stack',
-            description:
-                "Quickly check whether our tech stacks already align. If a technology is missing, that's no issue. I only list technologies I'm comfortable with. I'm always ready to learn and can quickly find my way around a new stack.",
-            selectionNote: 'Only a selection of the libraries and tools I use regularly is listed here.',
-            questions: 'Any more questions?',
-            production: 'Used in real production environments',
-            research: 'Used in research and personal projects',
-            search: 'Search the stack',
-            noMatches: 'No technologies match that search.',
-            useProduction: 'production use',
-            useResearch: 'research and side projects',
-            groups: ['Frontend', 'Backend', 'Databases', 'Cloud & Infrastructure', 'MLOps', 'Libraries*']
+        "stack": {
+            "quote": "From ideas and requirements to reality",
+            "subquote": "With a broad skill set and a passion for learning, I help bring ideas to life.",
+            "title": "Technologies I work with",
+            "description": "A selection of technologies I work with across applications, data and infrastructure. The labels distinguish production experience from research and personal projects.",
+            "selectionNote": "These tools reflect my experience. The project requirements determine the stack.",
+            "questions": "Need support with your stack?",
+            "production": "Used in real production environments",
+            "research": "Used in research and personal projects",
+            "search": "Search the stack",
+            "noMatches": "No technologies match that search.",
+            "useProduction": "production use",
+            "useResearch": "research and side projects",
+            "groups": [
+                "Frontend",
+                "Backend",
+                "Databases",
+                "Cloud & Infrastructure",
+                "MLOps",
+                "Libraries*"
+            ]
         },
-        contact: {
-            quote: 'Nothing beats a real conversation',
-            subquote:
-                'Even though I work with AI agents, I believe that personal connections are irreplaceable. So I always make time for face-to-face meetings and conversations.',
-            title: "Let's build awesome things together",
-            description:
-                "Have a project, idea, or opportunity in mind? Let's talk and see whether we're a good fit, and explore how we can create something valuable together.",
-            directCallTitle: 'Give me a direct call',
-            directCallBody: "I'm always available during European business hours (8–18 CET), so feel free to give me a direct call.",
-            emailTitle: 'Send an email',
-            emailBody:
-                'Please include your contact details and the reason for your inquiry. With more information, I can provide a more accurate and helpful response.',
-            missingEmail: 'An email address will appear here once configured.',
-            scheduleTitle: 'Schedule a call or meeting',
-            scheduleBody:
-                'Choose a convenient time for a quick chat directly in my calendar. I will either call you by phone or we can meet by video conference.',
-            schedule: 'Schedule a call',
-            language: 'Language',
-            rights: 'All rights reserved.',
-            agents: 'For agents'
+        "contact": {
+            "quote": "Nothing beats a real conversation",
+            "subquote": "Even though I work with AI agents, I believe that personal connections are irreplaceable. So I always make time for face-to-face meetings and conversations.",
+            "title": "Discuss your AI project",
+            "description": "Tell me what you are building, where you are stuck and your target timeline. We will discuss the technical requirements, whether I am a good fit and a practical next step.",
+            "directCallTitle": "Call directly",
+            "directCallBody": "For a direct conversation, call during European business hours. Use the calendar to arrange a specific time.",
+            "emailTitle": "Send a project outline",
+            "emailBody": "A short description of the use case, existing software and the help you need is enough to start the conversation.",
+            "missingEmail": "Use the calendar to get in touch.",
+            "scheduleTitle": "Schedule a conversation",
+            "scheduleBody": "Choose a time to discuss the use case, technical constraints and how I could support the project. We can meet by video or phone.",
+            "schedule": "Schedule a conversation",
+            "language": "Language",
+            "rights": "All rights reserved.",
+            "agents": "For agents"
+        },
+        "delivery": {
+            "title": "How we work together",
+            "description": "Start with a new use case, an existing prototype or a system that needs further development. We agree the scope and responsibilities before implementation.",
+            "steps": [
+                {
+                    "title": "Define the requirements",
+                    "body": "We clarify the users, data sources, existing systems and operational constraints, then agree on the scope and how to assess the result."
+                },
+                {
+                    "title": "Build and integrate",
+                    "body": "I implement the application and its integrations in reviewable steps. Regular feedback keeps the work aligned with the use case and the engineering team."
+                },
+                {
+                    "title": "Evaluate and hand over",
+                    "body": "We check quality and failure cases against the agreed criteria. Deployment, monitoring and documentation are part of the scope, so the team knows how to run and maintain the system."
+                }
+            ]
+        },
+        "about": {
+            "title": "Engineering background",
+            "body": "I bring more than six years of experience building and maintaining software, alongside a background in theoretical physics. That combination helps me turn unclear requirements into concrete implementation steps, test assumptions and work through technically demanding problems."
         }
     },
-    de: {
-        seo: {
-            title: 'Noel Schwabenland | Freelance Full-Stack AI Engineer',
-            description:
-                'Noel Schwabenland ist ein freiberuflicher Full-Stack AI Engineer aus der EU. Er entwickelt steuerbare, produktionsreife RAG-, Sprach- und KI-Agenten-Systeme für Industrie- und Technologieunternehmen.',
-            imageAlt: 'Porträt von Noel Pascal Schwabenland'
+    "de": {
+        "seo": {
+            "title": "Noel Schwabenland | Freelance AI Engineer",
+            "description": "Freiberuflicher AI Engineer für Wissenssysteme, RAG, KI-Agenten und individuelle Anwendungen. Von Architektur und Entwicklung bis zu Evaluation und Deployment.",
+            "imageAlt": "Porträt von Noel Pascal Schwabenland"
         },
-        hero: {
-            summaryCompact:
-                'Full-Stack AI Engineer aus der EU. Ich helfe Industrie- und Technologieunternehmen, internes Wissen und komplexe Abläufe in steuerbare, produktionsreife RAG-, Sprach- und KI-Agenten-Systeme zu überführen.',
-            summary:
-                'Full-Stack AI Engineer aus der EU. Ich helfe Industrie- und Technologieunternehmen, internes Wissen und komplexe Abläufe in steuerbare, produktionsreife RAG-, Sprach- und KI-Agenten-Lösungen zu überführen. Dabei berücksichtige ich Daten-Governance und europäische regulatorische Anforderungen.',
-            exploreWork: 'Meine Arbeit entdecken',
-            call: 'Rufen Sie mich an',
-            portraitAlt: 'Porträt von Noel Pascal Schwabenland',
-            principle: 'Ich entwickle mit Blick auf Skalierbarkeit, Wartbarkeit und Performance',
-            performanceLabel: 'Details zur Website-Performance anzeigen',
-            performanceTooltip: 'Server-Auslieferung: {server} ms. FCP: {fcp} ms. Ja, ich habe sogar meine Portfolio-Website überoptimiert.',
-            socials: 'Meine Profile'
+        "hero": {
+            "summaryCompact": "Freiberuflicher AI Engineer für Wissenssysteme, Agenten und individuelle Anwendungen. Ich unterstütze Entwicklungsteams bei der Umsetzung.",
+            "summary": "Als freiberuflicher AI Engineer mit Sitz in der EU unterstütze ich Entwicklungsteams beim Aufbau von Wissenssystemen, KI-Agenten und individuellen Anwendungen. Ich verbinde Modelle mit vorhandenen Daten und Software, von der Architektur und Entwicklung bis zu Evaluation und Deployment.",
+            "exploreWork": "Projekte ansehen",
+            "call": "Kontakt aufnehmen",
+            "portraitAlt": "Porträt von Noel Pascal Schwabenland",
+            "principle": "Ich entwickle mit Blick auf Skalierbarkeit, <br/> Wartbarkeit und Performance",
+            "performanceLabel": "Website-Performance ansehen",
+            "performanceTooltip": "Server-Antwortzeit: {server} ms. FCP: {fcp} ms. Ja, auch diese Portfolio-Website ist bewusst überoptimiert.",
+            "socials": "Soziale Medien",
+            "headline": "KI-Anwendungen und Agenten, von der Idee bis zum Einsatz."
         },
-        work: {
-            quote: 'Komplexe Probleme brauchen nicht immer komplexe Lösungen',
-            subquote:
-                'Manchmal ist der einfachste Ansatz der beste. Mein Hintergrund in technischen und wirtschaftlichen Bereichen hilft mir, beide Welten zu verbinden.',
-            title: 'So arbeite ich',
-            description: 'Ich verbinde wissenschaftliche Neugier mit praxisnaher Softwareentwicklung, um KI-Systeme zu bauen, die im Betrieb bestehen.',
-            chapters: [
+        "work": {
+            "quote": "Komplexe Probleme brauchen nicht immer komplexe Lösungen",
+            "subquote": "Manchmal ist die einfachste Lösung die beste. Meine Erfahrung an der Schnittstelle von Technik und Wirtschaft hilft mir, beide Welten zu verbinden.",
+            "title": "KI für Wissen, Prozesse und Produkte",
+            "description": "Ich übernehme klar abgegrenzte Projekte oder unterstütze bestehende Entwicklungsteams. Dabei verbinde ich Modelle, Daten und Software, von der ersten Umsetzung bis zum Deployment.",
+            "chapters": [
                 {
-                    title: 'Theoretische Physik',
-                    body: 'Die Physik hat mich gelehrt, mehrdeutige Probleme in strukturierte Entwicklungs- und Validierungsschritte zu übersetzen. Sie hat mir auch geholfen, bei sich ändernden Anforderungen oder hoher technischer Tiefe ruhig zu bleiben. Ich arbeite mich in schwierige Themen ein, bis ich verstehe, was gebaut und wie es validiert werden muss.',
-                    cta: 'Meinen Problemlösungsansatz entdecken'
+                    "title": "Wissenssysteme & RAG",
+                    "body": "Unternehmenswissen über Suche und KI-Assistenten zugänglich machen. Ich entwickle Retrieval-Pipelines und Datenanbindungen und berücksichtige Zugriffsrechte, Quellenangaben und die Bewertung der Antwortqualität von Anfang an."
                 },
                 {
-                    title: 'Softwareentwicklung',
-                    body: 'Mit mehr als sechs Jahren Erfahrung in der Entwicklung und Pflege von Software für reale Nutzer weiß ich: Eine Anwendung ist nur so stark wie ihre Grundlagen. Ich verbinde Erfahrung mit Cloud-Infrastruktur, solide Engineering-Prinzipien und Softwarearchitektur zu robusten, wartbaren Systemen. Coding Agents können die Umsetzung beschleunigen, brauchen aber eine klare Architektur und fundierte Führung.',
-                    cta: 'Software für reale Nutzer ansehen'
+                    "title": "KI-Agenten & Workflows",
+                    "body": "Agenten entwickeln, die über Tools und APIs mehrstufige Aufgaben bearbeiten. Ich binde sie in bestehende Systeme ein und definiere, wo Validierung, menschliche Freigaben und Fehlerbehandlung erforderlich sind."
                 },
                 {
-                    title: 'KI-Systeme',
-                    body: 'Ich entwickle produktive KI-Systeme für reale Nutzer, mit Fokus auf On-Premises- und Open-Source-Lösungen für europäische Unternehmen. Meine Arbeit umfasst Agentensysteme, Zeitreihenanalyse und -prognosen, Sprachpipelines und die zugrunde liegende Infrastruktur. Das Ziel sind nutzbare Erkenntnisse und greifbare Ergebnisse bei voller Kontrolle über Modelle, Daten und Betrieb.',
-                    cta: 'Produktive KI-Systeme entdecken'
+                    "title": "Individuelle KI-Anwendungen",
+                    "body": "Eine KI-Funktion, ein internes Werkzeug oder eine vollständige Anwendung für einen konkreten Anwendungsfall entwickeln. Ich arbeite über Benutzeroberflächen, Backends, Modellanbindung und Deployment hinweg."
                 }
             ]
         },
-        organisations: {
-            quote: 'Nicht nur Theorie, sondern erprobte Praxis',
-            introduction: 'Ich hatte bereits die Gelegenheit, mit großartigen Organisationen zusammenzuarbeiten:'
+        "organisations": {
+            "quote": "Nicht nur Theorie, sondern erprobte Praxis",
+            "introduction": "Ich durfte bereits mit großartigen Organisationen zusammenarbeiten:"
         },
-        projects: {
-            title: 'Meine Projekte',
-            description:
-                'Von privaten KI-Plattformen und Sprachagenten bis zu leistungsfähigen Forschungspipelines: Diese Projekte lösen reale betriebliche Anforderungen mit Systemen, die Teams nutzen, steuern und skalieren können.',
-            selected: 'Dies ist nur eine Auswahl. Wenn Sie Erfahrung in einem bestimmten Bereich suchen, melden Sie sich gerne bei mir.',
-            exploreStack: 'Meinen Tech-Stack entdecken',
-            contact: 'Kontakt aufnehmen',
-            filterBy: 'Filtern nach',
-            filterLabel: 'Projekte nach Tags filtern',
-            carouselLabel: 'Projektkarussell',
-            noMatches: 'Keine Projekte entsprechen den ausgewählten Tags. Wählen Sie einen oder mehrere Tags aus.',
-            previous: 'Zurück',
-            next: 'Weiter',
-            shown: count => `${count} ${count === 1 ? 'Projekt' : 'Projekte'} angezeigt`
+        "projects": {
+            "title": "Ausgewählte Projekte",
+            "description": "Einblicke in KI-Infrastruktur, Agentensysteme, Forschung und Softwareentwicklung. Jedes Beispiel zeigt die Anforderungen, meinen Beitrag und die entstandene Lösung.",
+            "selected": "Für ein ähnliches Vorhaben helfen ein kurzer Überblick zum Anwendungsfall, zur bestehenden Software und zur gesuchten Unterstützung.",
+            "exploreStack": "Tech-Stack ansehen",
+            "contact": "Projekt besprechen",
+            "filterBy": "Nach Bereich filtern",
+            "filterLabel": "Projekte nach Bereich filtern",
+            "carouselLabel": "Projektkarussell",
+            "noMatches": "Keine Projekte entsprechen der Auswahl. Einen oder mehrere Bereiche auswählen.",
+            "previous": "Zurück",
+            "next": "Weiter",
+            "shown": (count: number) => `${count} ${count === 1 ? "Projekt" : "Projekte"} angezeigt`
         },
-        stack: {
-            quote: 'Von Ideen und Anforderungen zur Realität',
-            subquote: 'Mit einem breiten Skill-Set und Freude am Lernen helfe ich dabei, Ideen in die Praxis zu bringen.',
-            title: 'Mein Tech-Stack',
-            description:
-                'Prüfen Sie schnell, ob unsere Tech-Stacks bereits zusammenpassen. Fehlt eine Technologie, ist das kein Problem: Ich liste nur Technologien auf, mit denen ich sicher arbeite. Ich lerne gern und finde mich schnell in neuen Stacks zurecht.',
-            selectionNote: 'Hier ist nur eine Auswahl der Bibliotheken und Werkzeuge aufgeführt, die ich regelmäßig nutze.',
-            questions: 'Noch Fragen?',
-            production: 'In realen Produktionsumgebungen eingesetzt',
-            research: 'In Forschung und persönlichen Projekten eingesetzt',
-            search: 'Tech-Stack durchsuchen',
-            noMatches: 'Keine Technologien entsprechen der Suche.',
-            useProduction: 'Produktionseinsatz',
-            useResearch: 'Forschung und persönliche Projekte',
-            groups: ['Frontend', 'Backend', 'Datenbanken', 'Cloud & Infrastruktur', 'MLOps', 'Bibliotheken*']
+        "stack": {
+            "quote": "Von der Idee zur Umsetzung",
+            "subquote": "Mit einem breiten Skill-Set und großer Lernfreude bringe ich Ideen in die Praxis.",
+            "title": "Technologien im Einsatz",
+            "description": "Eine Auswahl der Technologien, mit denen ich Anwendungen, Datenverarbeitung und Infrastruktur umsetze. Die Kennzeichnung unterscheidet produktive Erfahrung von Forschung und eigenen Projekten.",
+            "selectionNote": "Die Tools zeigen meine Erfahrung. Die Anforderungen des Projekts bestimmen den Tech-Stack.",
+            "questions": "Unterstützung im bestehenden Tech-Stack gesucht?",
+            "production": "Im produktiven Einsatz",
+            "research": "In Forschung und eigenen Projekten eingesetzt",
+            "search": "Tech-Stack durchsuchen",
+            "noMatches": "Keine Technologien entsprechen der Suche.",
+            "useProduction": "produktiver Einsatz",
+            "useResearch": "Forschung und eigene Projekte",
+            "groups": [
+                "Frontend",
+                "Backend",
+                "Datenbanken",
+                "Cloud & Infrastruktur",
+                "MLOps",
+                "Bibliotheken*"
+            ]
         },
-        contact: {
-            quote: 'Nichts ersetzt ein echtes Gespräch',
-            subquote:
-                'Auch wenn ich mit KI-Agenten arbeite, sind persönliche Beziehungen für mich unersetzlich. Deshalb nehme ich mir immer Zeit für persönliche Treffen und Gespräche.',
-            title: 'Lassen Sie uns gemeinsam großartige Dinge bauen',
-            description:
-                'Sie haben ein Projekt, eine Idee oder eine Gelegenheit im Kopf? Lassen Sie uns sprechen, herausfinden, ob wir gut zusammenpassen, und gemeinsam etwas Wertvolles schaffen.',
-            directCallTitle: 'Direkt anrufen',
-            directCallBody: 'Ich bin während der europäischen Geschäftszeiten (8–18 Uhr CET) erreichbar. Rufen Sie mich gerne direkt an.',
-            emailTitle: 'E-Mail senden',
-            emailBody: 'Bitte nennen Sie Ihre Kontaktdaten und den Grund Ihrer Anfrage. Mit mehr Informationen kann ich präziser und hilfreicher antworten.',
-            missingEmail: 'Sobald eine E-Mail-Adresse konfiguriert ist, erscheint sie hier.',
-            scheduleTitle: 'Gespräch oder Termin vereinbaren',
-            scheduleBody:
-                'Wählen Sie direkt in meinem Kalender einen passenden Termin für ein kurzes Gespräch. Ich rufe Sie an oder wir treffen uns per Videokonferenz.',
-            schedule: 'Gespräch vereinbaren',
-            language: 'Sprache',
-            rights: 'Alle Rechte vorbehalten.',
-            agents: 'Für Agenten'
+        "contact": {
+            "quote": "Nichts ersetzt ein persönliches Gespräch",
+            "subquote": "Auch wenn ich mit KI-Agenten arbeite: Persönliche Beziehungen sind für mich unersetzlich. Deshalb nehme ich mir immer Zeit für Gespräche und Treffen.",
+            "title": "Ein KI-Projekt besprechen",
+            "description": "Ein kurzer Überblick zum Vorhaben, zu offenen Fragen und zum Zeitrahmen ist ein guter Einstieg. Im ersten Gespräch klären wir die technischen Anforderungen, die mögliche Zusammenarbeit und einen sinnvollen nächsten Schritt.",
+            "directCallTitle": "Direkt anrufen",
+            "directCallBody": "Ein direkter Anruf ist während europäischer Geschäftszeiten möglich. Für einen festen Gesprächstermin steht der Kalender zur Verfügung.",
+            "emailTitle": "Vorhaben per E-Mail skizzieren",
+            "emailBody": "Eine kurze Beschreibung des Anwendungsfalls, der bestehenden Software und der gesuchten Unterstützung genügt für den Einstieg.",
+            "missingEmail": "Für die Kontaktaufnahme steht der Kalender zur Verfügung.",
+            "scheduleTitle": "Gespräch planen",
+            "scheduleBody": "Im Gespräch geht es um den Anwendungsfall, technische Rahmenbedingungen und die mögliche Unterstützung. Der Termin kann per Video oder Telefon stattfinden.",
+            "schedule": "Gespräch planen",
+            "language": "Sprache",
+            "rights": "Alle Rechte vorbehalten.",
+            "agents": "Für Agenten"
+        },
+        "delivery": {
+            "title": "So läuft die Zusammenarbeit",
+            "description": "Ausgangspunkt kann ein neuer Anwendungsfall, ein vorhandener Prototyp oder die Weiterentwicklung eines bestehenden Systems sein. Umfang und Verantwortlichkeiten klären wir vor der Umsetzung.",
+            "steps": [
+                {
+                    "title": "Anforderungen klären",
+                    "body": "Wir klären Nutzer, Datenquellen, bestehende Systeme und betriebliche Rahmenbedingungen. Daraus leiten wir den Umfang und die Kriterien zur Bewertung des Ergebnisses ab."
+                },
+                {
+                    "title": "Entwickeln und integrieren",
+                    "body": "Ich setze die Anwendung und ihre Anbindungen in überprüfbaren Schritten um. Regelmäßiges Feedback hält die Entwicklung nah am Anwendungsfall und am Team."
+                },
+                {
+                    "title": "Prüfen und übergeben",
+                    "body": "Wir prüfen Qualität und Fehlerfälle anhand der vereinbarten Kriterien. Deployment, Monitoring und Dokumentation gehören zum Umfang, damit das Team das System betreiben und weiterentwickeln kann."
+                }
+            ]
+        },
+        "about": {
+            "title": "Technischer Hintergrund",
+            "body": "Ich bringe über sechs Jahre Erfahrung in der Entwicklung und Wartung von Software sowie einen Hintergrund in theoretischer Physik mit. Diese Verbindung hilft mir, unklare Anforderungen in konkrete Umsetzungsschritte zu übersetzen, Annahmen zu prüfen und technisch anspruchsvolle Probleme zu bearbeiten."
         }
     }
 };
