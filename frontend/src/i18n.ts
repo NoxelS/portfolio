@@ -1,4 +1,4 @@
-import { defaultSeo, professionalTitle } from './data/site';
+import { defaultSeo } from './data/site';
 
 export const locales = ['en', 'de'] as const;
 export type Locale = (typeof locales)[number];
@@ -85,9 +85,9 @@ export const copy: Record<Locale, Copy> = {
         },
         hero: {
             summaryCompact:
-                `${professionalTitle} based in the EU, helping industrial and technology teams turn internal knowledge and complex workflows into governed, production-ready RAG, voice, and AI agent systems.`,
+                `I’m an EU-based freelance Applied AI Engineer building and deploying production AI systems, from inference infrastructure to autonomous agents and enterprise applications, with a focus on reliability, open technologies, and data sovereignty.`,
             summary:
-                `${professionalTitle} based in the EU, helping industrial and technology companies turn internal knowledge and complex workflows into governed, production-ready RAG, voice, and AI agent solutions. I build with governed data and European regulatory requirements in mind.`,
+                `I’m an EU-based freelance Applied AI Engineer specialising in building and deploying production AI systems. I work across the AI stack, from model serving and inference infrastructure to autonomous agents and enterprise applications, with a focus on reliability, open technologies, and data sovereignty.`,
             exploreWork: 'Explore my work',
             call: 'Give me a call',
             portraitAlt: 'Portrait of Noel Pascal Schwabenland',
@@ -181,14 +181,14 @@ export const copy: Record<Locale, Copy> = {
         seo: {
             title: defaultSeo.title,
             description:
-                `Noel Schwabenland ist als ${professionalTitle} in der EU tätig. Er entwickelt steuerbare, produktionsreife RAG-, Sprach- und KI-Agenten-Systeme für Industrie- und Technologieunternehmen.`,
+                `Noel Schwabenland ist freiberuflicher Applied AI Engineer mit Sitz in der EU. Er entwickelt produktive KI-Systeme, von Inferenzinfrastruktur bis zu autonomen Agenten, mit Fokus auf Zuverlässigkeit und Datensouveränität.`,
             imageAlt: 'Porträt von Noel Pascal Schwabenland'
         },
         hero: {
             summaryCompact:
-                `${professionalTitle} aus der EU. Ich helfe Industrie- und Technologieunternehmen, internes Wissen und komplexe Abläufe in steuerbare, produktionsreife RAG-, Sprach- und KI-Agenten-Systeme zu überführen.`,
+                `Ich bin freiberuflicher Applied AI Engineer mit Sitz in der EU und entwickle KI-Systeme für den produktiven Einsatz, von Inferenzinfrastruktur bis zu autonomen Agenten und Unternehmensanwendungen. Dabei lege ich Wert auf Zuverlässigkeit, offene Technologien und Datensouveränität.`,
             summary:
-                `${professionalTitle} aus der EU. Ich helfe Industrie- und Technologieunternehmen, internes Wissen und komplexe Abläufe in steuerbare, produktionsreife RAG-, Sprach- und KI-Agenten-Lösungen zu überführen. Dabei berücksichtige ich Daten-Governance und europäische regulatorische Anforderungen.`,
+                `Ich bin freiberuflicher Applied AI Engineer mit Sitz in der EU, spezialisiert auf die Entwicklung und Bereitstellung von KI-Systemen für den produktiven Einsatz. Meine Arbeit umfasst den gesamten KI-Stack, von Model Serving und Inferenzinfrastruktur bis hin zu autonomen Agenten und Unternehmensanwendungen. Dabei lege ich Wert auf Zuverlässigkeit, offene Technologien und Datensouveränität.`,
             exploreWork: 'Meine Arbeit entdecken',
             call: 'Rufen Sie mich an',
             portraitAlt: 'Porträt von Noel Pascal Schwabenland',

@@ -6,7 +6,7 @@ export const defaultSeo = {
 	authorName: 'Noel Pascal Schwabenland',
 	title: `Noel Schwabenland | ${professionalTitle}`,
 	description:
-		`Noel Schwabenland is an EU-based ${professionalTitle} building governed, production-ready RAG, voice, and AI agent systems for industrial and technology companies.`,
+		`Noel Schwabenland is an EU-based freelance Applied AI Engineer building production AI systems, from inference infrastructure to autonomous agents, with a focus on reliability and data sovereignty.`,
 	image: '/profile1.png',
 	imageAlt: 'Portrait of Noel Pascal Schwabenland',
 };
