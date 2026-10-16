@@ -25,5 +25,10 @@
     "marked": "^18.0.3",
     "ogl": "^1.0.11",
     "tailwindcss": "^4.3.0"
+  },
+  "overrides": {
+    "@tailwindcss/typography": {
+      "postcss-selector-parser": "7.1.6"
+    }
   }
 }
