@@ -18,20 +18,34 @@ export type Copy = {
         summaryCompact: string;
         summary: string;
         exploreWork: string;
-        call: string;
+        contact: string;
         portraitAlt: string;
         principle: string;
         performanceLabel: string;
         performanceTooltip: string;
         socials: string;
     };
-    work: { quote: string; subquote: string; title: string; description: string; chapters: { title: string; body: string; cta: string }[] };
+    services: {
+        title: string;
+        description: string;
+        areas: { title: string; body: string; cta: string }[];
+    };
+    work: {
+        quote: string;
+        subquote: string;
+        banner: { quote: string; subquote: string };
+        exploreStack: string;
+        contact: string;
+        title: string;
+        description: string;
+        chapters: { title: string; body: string }[];
+    };
     organisations: { quote: string; introduction: string };
     projects: {
         title: string;
         description: string;
         selected: string;
-        exploreStack: string;
+        exploreBackground: string;
         contact: string;
         filterBy: string;
         filterLabel: string;
@@ -48,6 +62,7 @@ export type Copy = {
         description: string;
         selectionNote: string;
         questions: string;
+        contact: string;
         production: string;
         research: string;
         search: string;
@@ -88,35 +103,60 @@ export const copy: Record<Locale, Copy> = {
                 `I’m an EU-based freelance Applied AI Engineer building and deploying production AI systems, from inference infrastructure to autonomous agents and enterprise applications, with a focus on reliability, open technologies, and data sovereignty.`,
             summary:
                 `I’m an EU-based freelance Applied AI Engineer specialising in building and deploying production AI systems. I work across the AI stack, from model serving and inference infrastructure to autonomous agents and enterprise applications, with a focus on reliability, open technologies, and data sovereignty.`,
-            exploreWork: 'Explore my work',
-            call: 'Give me a call',
+            exploreWork: 'Explore what I build',
+            contact: 'Get in touch',
             portraitAlt: 'Portrait of Noel Pascal Schwabenland',
             principle: 'I build with scalability, <br/> maintainability and performance in mind',
             performanceLabel: 'View site performance details',
             performanceTooltip: /* 'Server delivery: {server} ms. ' + */ 'FCP: {fcp} ms. Yes, I even over-optimized my portfolio website.',
             socials: 'My socials'
         },
+        services: {
+            title: 'What I build',
+            description:
+                'I help business and engineering teams design, build and improve AI systems, with consulting and full-stack delivery across infrastructure, data, models, backends and user interfaces.',
+            areas: [
+                {
+                    title: 'AI infrastructure',
+                    body: 'I design and build the foundations for running AI: model serving, inference gateways, data storage and deployment infrastructure. This includes cloud and on-premises setups, with monitoring, access controls and operational tooling. I can review an existing platform, plan an architecture, or implement the stack.',
+                    cta: 'See selected projects'
+                },
+                {
+                    title: 'Internal AI systems',
+                    body: 'I build internal applications that connect company knowledge, people and workflows. Examples include RAG-based search, assistants, agents and process automation. I work across user interfaces, backend services and integrations, so the result fits the way teams work and the systems they already use.',
+                    cta: 'See selected projects'
+                },
+                {
+                    title: 'ML workflows',
+                    body: 'I build data and machine-learning workflows for processing, training, evaluation and inference. This includes research pipelines, batch jobs and model integrations. I can help turn an experimental workflow into a reproducible pipeline, connect it to an application, or improve how it runs in production.',
+                    cta: 'See selected projects'
+                }
+            ]
+        },
         work: {
             quote: "Complex problems don't always require complex solutions",
             subquote:
                 'Sometimes the simplest approach is the best. My background in both technical and business domains allows me to bridge the gap between these worlds.',
-            title: 'How I work',
+            banner: {
+                quote: 'Good engineering starts with good questions',
+                subquote: 'I combine scientific curiosity with practical experience to understand problems, question assumptions, and choose a useful approach.'
+            },
+            exploreStack: 'Explore my tech stack',
+            contact: 'Learn more about my background',
+            title: 'My background',
             description: 'I combine scientific curiosity with practical software engineering to build AI systems that hold up in real operations.',
             chapters: [
                 {
                     title: 'Theoretical Physics',
                     body: 'Physics taught me to turn ambiguous problems into structured development and validation steps. It also taught me to stay calm when requirements change or technical depth becomes demanding. I work my way into difficult problems until I understand what needs to be built and how to validate it.',
-                    cta: 'Explore my problem solving approach'
                 },
                 {
                     title: 'Software Development',
                     body: 'With more than six years of experience building and maintaining software for real users, I know that an application is only as strong as its foundations. I bring cloud infrastructure experience, sound engineering principles, and software architecture to create robust, maintainable systems. Coding agents can accelerate delivery, but they need clear architecture and informed direction.',
-                    cta: 'Check out the software I built for real users'
                 },
                 {
                     title: 'AI Systems',
                     body: 'I build production AI systems for real users, with a focus on on-premises, open-source solutions for European companies. My work includes agent systems, time-series analysis and forecasting, speech pipelines, and the infrastructure behind them. The goal is useful insight and tangible outcomes while keeping models, data, and operations under the company’s control.',
-                    cta: 'Explore production AI systems I worked on'
                 }
             ]
         },
@@ -129,7 +169,7 @@ export const copy: Record<Locale, Copy> = {
             description:
                 'From private AI platforms and voice agents to high-performance research pipelines, these projects solve real operational constraints with systems teams can use, govern, and scale.',
             selected: 'These are selected projects only. If you are looking for experience in a specific area, feel free to get in touch with me.',
-            exploreStack: 'Explore my tech stack',
+            exploreBackground: 'About my background',
             contact: 'Get in touch',
             filterBy: 'Filter by',
             filterLabel: 'Filter projects by tag',
@@ -147,6 +187,7 @@ export const copy: Record<Locale, Copy> = {
                 "Quickly check whether our tech stacks already align. If a technology is missing, that's no issue. I only list technologies I'm comfortable with. I'm always ready to learn and can quickly find my way around a new stack.",
             selectionNote: 'Only a selection of the libraries and tools I use regularly is listed here.',
             questions: 'Any more questions?',
+            contact: 'Discuss your project',
             production: 'Used in real production environments',
             research: 'Used in research and personal projects',
             search: 'Search the stack',
@@ -189,35 +230,60 @@ export const copy: Record<Locale, Copy> = {
                 `Ich bin freiberuflicher Applied AI Engineer mit Sitz in der EU und entwickle KI-Systeme für den produktiven Einsatz, von Inferenzinfrastruktur bis zu autonomen Agenten und Unternehmensanwendungen. Dabei lege ich Wert auf Zuverlässigkeit, offene Technologien und Datensouveränität.`,
             summary:
                 `Ich bin freiberuflicher Applied AI Engineer mit Sitz in der EU, spezialisiert auf die Entwicklung und Bereitstellung von KI-Systemen für den produktiven Einsatz. Meine Arbeit umfasst den gesamten KI-Stack, von Model Serving und Inferenzinfrastruktur bis hin zu autonomen Agenten und Unternehmensanwendungen. Dabei lege ich Wert auf Zuverlässigkeit, offene Technologien und Datensouveränität.`,
-            exploreWork: 'Meine Arbeit entdecken',
-            call: 'Rufen Sie mich an',
+            exploreWork: 'Meine Leistungen entdecken',
+            contact: 'Kontakt aufnehmen',
             portraitAlt: 'Porträt von Noel Pascal Schwabenland',
             principle: 'Ich entwickle mit Blick auf Skalierbarkeit, Wartbarkeit und Performance',
             performanceLabel: 'Details zur Website-Performance anzeigen',
             performanceTooltip: /* 'Server-Auslieferung: {server} ms. ' + */ 'FCP: {fcp} ms. Ja, ich habe sogar meine Portfolio-Website überoptimiert.',
             socials: 'Meine Profile'
         },
+        services: {
+            title: 'Was ich entwickle',
+            description:
+                'Ich unterstütze Fachbereiche und Entwicklungsteams bei der Konzeption, Entwicklung und Verbesserung von KI-Systemen. Meine Arbeit umfasst Beratung und Full-Stack-Umsetzung: Infrastruktur, Daten, Modelle, Backend und Benutzeroberflächen.',
+            areas: [
+                {
+                    title: 'KI-Infrastruktur',
+                    body: 'Ich konzipiere und entwickle die technische Grundlage für den KI-Betrieb: Model Serving, Inferenz-Gateways, Datenspeicherung und Bereitstellung. Dazu gehören Cloud- und On-Premises-Umgebungen mit Monitoring, Zugriffskontrollen und Betriebswerkzeugen. Ich prüfe bestehende Plattformen, plane Architekturen und setze die Infrastruktur um.',
+                    cta: 'Ausgewählte Projekte ansehen'
+                },
+                {
+                    title: 'Interne KI-Systeme',
+                    body: 'Ich entwickle interne Anwendungen, die Unternehmenswissen, Menschen und Arbeitsabläufe verbinden. Dazu zählen RAG-basierte Suche, Assistenten, Agenten und Prozessautomatisierung. Ich verbinde Benutzeroberflächen, Backend-Dienste und Schnittstellen zu Anwendungen, die zu den bestehenden Prozessen und Systemen passen.',
+                    cta: 'Ausgewählte Projekte ansehen'
+                },
+                {
+                    title: 'ML-Workflows',
+                    body: 'Ich entwickle Daten- und Machine-Learning-Workflows für Verarbeitung, Training, Evaluation und Inferenz. Dazu gehören Forschungspipelines, Batch-Verarbeitung und Modellintegrationen. Ich überführe experimentelle Abläufe in reproduzierbare Pipelines, binde sie in Anwendungen ein und verbessere ihren Betrieb.',
+                    cta: 'Ausgewählte Projekte ansehen'
+                }
+            ]
+        },
         work: {
             quote: 'Komplexe Probleme brauchen nicht immer komplexe Lösungen',
             subquote:
                 'Manchmal ist der einfachste Ansatz der beste. Mein Hintergrund in technischen und wirtschaftlichen Bereichen hilft mir, beide Welten zu verbinden.',
-            title: 'So arbeite ich',
+            banner: {
+                quote: 'Gute technische Lösungen beginnen mit guten Fragen',
+                subquote: 'Ich verbinde wissenschaftliche Neugier mit praktischer Erfahrung, um Probleme zu verstehen, Annahmen zu hinterfragen und einen sinnvollen Lösungsweg zu wählen.'
+            },
+            exploreStack: 'Meinen Tech-Stack entdecken',
+            contact: 'Mehr über meinen Hintergrund erfahren',
+            title: 'Mein Hintergrund',
             description: 'Ich verbinde wissenschaftliche Neugier mit praxisnaher Softwareentwicklung, um KI-Systeme zu bauen, die im Betrieb bestehen.',
             chapters: [
                 {
                     title: 'Theoretische Physik',
                     body: 'Die Physik hat mich gelehrt, mehrdeutige Probleme in strukturierte Entwicklungs- und Validierungsschritte zu übersetzen. Sie hat mir auch geholfen, bei sich ändernden Anforderungen oder hoher technischer Tiefe ruhig zu bleiben. Ich arbeite mich in schwierige Themen ein, bis ich verstehe, was gebaut und wie es validiert werden muss.',
-                    cta: 'Meinen Problemlösungsansatz entdecken'
                 },
                 {
                     title: 'Softwareentwicklung',
                     body: 'Mit mehr als sechs Jahren Erfahrung in der Entwicklung und Pflege von Software für reale Nutzer weiß ich: Eine Anwendung ist nur so stark wie ihre Grundlagen. Ich verbinde Erfahrung mit Cloud-Infrastruktur, solide Engineering-Prinzipien und Softwarearchitektur zu robusten, wartbaren Systemen. Coding Agents können die Umsetzung beschleunigen, brauchen aber eine klare Architektur und fundierte Führung.',
-                    cta: 'Software für reale Nutzer ansehen'
                 },
                 {
                     title: 'KI-Systeme',
                     body: 'Ich entwickle produktive KI-Systeme für reale Nutzer, mit Fokus auf On-Premises- und Open-Source-Lösungen für europäische Unternehmen. Meine Arbeit umfasst Agentensysteme, Zeitreihenanalyse und -prognosen, Sprachpipelines und die zugrunde liegende Infrastruktur. Das Ziel sind nutzbare Erkenntnisse und greifbare Ergebnisse bei voller Kontrolle über Modelle, Daten und Betrieb.',
-                    cta: 'Produktive KI-Systeme entdecken'
                 }
             ]
         },
@@ -229,13 +295,13 @@ export const copy: Record<Locale, Copy> = {
             title: 'Meine Projekte',
             description:
                 'Von privaten KI-Plattformen und Sprachagenten bis zu leistungsfähigen Forschungspipelines: Diese Projekte lösen reale betriebliche Anforderungen mit Systemen, die Teams nutzen, steuern und skalieren können.',
-            selected: 'Dies ist nur eine Auswahl. Wenn Sie Erfahrung in einem bestimmten Bereich suchen, melden Sie sich gerne bei mir.',
-            exploreStack: 'Meinen Tech-Stack entdecken',
+            selected: 'Dies ist eine Auswahl meiner Projekte. Weitere Beispiele und Erfahrungen in bestimmten Bereichen erläutere ich gerne im Gespräch.',
+            exploreBackground: 'Über meinen Hintergrund',
             contact: 'Kontakt aufnehmen',
             filterBy: 'Filtern nach',
             filterLabel: 'Projekte nach Tags filtern',
             carouselLabel: 'Projektkarussell',
-            noMatches: 'Keine Projekte entsprechen den ausgewählten Tags. Wählen Sie einen oder mehrere Tags aus.',
+            noMatches: 'Keine Projekte entsprechen den ausgewählten Tags. Über die Filter lassen sich passende Projekte auswählen.',
             previous: 'Zurück',
             next: 'Weiter',
             shown: count => `${count} ${count === 1 ? 'Projekt' : 'Projekte'} angezeigt`
@@ -245,9 +311,10 @@ export const copy: Record<Locale, Copy> = {
             subquote: 'Mit einem breiten Skill-Set und Freude am Lernen helfe ich dabei, Ideen in die Praxis zu bringen.',
             title: 'Mein Tech-Stack',
             description:
-                'Prüfen Sie schnell, ob unsere Tech-Stacks bereits zusammenpassen. Fehlt eine Technologie, ist das kein Problem: Ich liste nur Technologien auf, mit denen ich sicher arbeite. Ich lerne gern und finde mich schnell in neuen Stacks zurecht.',
+                'Die Übersicht zeigt eine Auswahl der Technologien, mit denen ich sicher arbeite. Fehlt eine Technologie, ist das kein Hindernis: Ich lerne gern und finde mich schnell in neuen Stacks zurecht.',
             selectionNote: 'Hier ist nur eine Auswahl der Bibliotheken und Werkzeuge aufgeführt, die ich regelmäßig nutze.',
             questions: 'Noch Fragen?',
+            contact: 'Projekt besprechen',
             production: 'In realen Produktionsumgebungen eingesetzt',
             research: 'In Forschung und persönlichen Projekten eingesetzt',
             search: 'Tech-Stack durchsuchen',
@@ -260,18 +327,18 @@ export const copy: Record<Locale, Copy> = {
             quote: 'Nichts ersetzt ein echtes Gespräch',
             subquote:
                 'Auch wenn ich mit KI-Agenten arbeite, sind persönliche Beziehungen für mich unersetzlich. Deshalb nehme ich mir immer Zeit für persönliche Treffen und Gespräche.',
-            title: 'Lassen Sie uns gemeinsam großartige Dinge bauen',
+            title: 'Gemeinsam Ideen in die Praxis bringen',
             description:
-                'Sie haben ein Projekt, eine Idee oder eine Gelegenheit im Kopf? Lassen Sie uns sprechen, herausfinden, ob wir gut zusammenpassen, und gemeinsam etwas Wertvolles schaffen.',
+                'Ein Projekt, eine Idee oder eine offene Frage? In einem Gespräch lässt sich klären, welche Unterstützung sinnvoll ist und ob eine Zusammenarbeit passt.',
             directCallTitle: 'Direkt anrufen',
-            directCallBody: 'Ich bin während der europäischen Geschäftszeiten (8–18 Uhr CET) erreichbar. Rufen Sie mich gerne direkt an.',
+            directCallBody: 'Während der europäischen Geschäftszeiten (8–18 Uhr CET) bin ich telefonisch erreichbar.',
             emailTitle: 'E-Mail senden',
-            emailBody: 'Bitte nennen Sie Ihre Kontaktdaten und den Grund Ihrer Anfrage. Mit mehr Informationen kann ich präziser und hilfreicher antworten.',
+            emailBody: 'Kontaktdaten und eine kurze Beschreibung des Anliegens helfen mir, die Anfrage einzuordnen und gezielt zu antworten.',
             missingEmail: 'Sobald eine E-Mail-Adresse konfiguriert ist, erscheint sie hier.',
             scheduleTitle: 'Gespräch oder Termin vereinbaren',
             scheduleBody:
-                'Wählen Sie direkt in meinem Kalender einen passenden Termin für ein kurzes Gespräch. Ich rufe Sie an oder wir treffen uns per Videokonferenz.',
-            schedule: 'Gespräch vereinbaren',
+                'Ein passender Termin lässt sich direkt im Kalender auswählen. Das Gespräch kann telefonisch oder per Videokonferenz stattfinden.',
+            schedule: 'Gespräch planen',
             language: 'Sprache',
             rights: 'Alle Rechte vorbehalten.',
             agents: 'Für Agenten'

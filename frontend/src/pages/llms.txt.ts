@@ -23,11 +23,13 @@ This is a concise machine-readable overview of the portfolio. Use the full Markd
 
 ## Topics
 
+- AI consulting, architecture reviews, and implementation support
+- AI infrastructure, internal AI systems, and ML workflows
 - AI agent systems
 - Retrieval-augmented generation (RAG)
 - Voice AI and speech pipelines
 - Full-stack software engineering
-- AI infrastructure, evaluation, and automation
+- Data pipelines, model training, evaluation, and inference
 `;
 	const headers = new Headers({
 		'Content-Type': 'text/markdown; charset=utf-8',

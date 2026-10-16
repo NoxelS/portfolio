@@ -1,0 +1,28 @@
+---
+import ActionLink from './ActionLink.astro';
+import type { Copy } from '../i18n';
+
+const { copy } = Astro.props as { copy: Copy['services'] };
+---
+
+<div class="grid w-full gap-6 md:gap-8">
+    <div class="grid w-full min-w-0 grid-cols-1 gap-8 md:gap-10 lg:grid-cols-[repeat(3,minmax(0,1fr))] lg:grid-rows-[auto_1fr_auto] lg:gap-x-24 lg:gap-y-4">
+        {copy.areas.map((area, index) => (
+            <article
+                class:list={[
+                    'motion-reveal group row-span-3 grid h-full min-w-0 w-full grid-cols-1 gap-4 pl-0 lg:grid-rows-subgrid',
+                    index === 0 && 'lg:delay-0',
+                    index === 1 && 'lg:delay-150',
+                    index === 2 && 'lg:delay-300',
+                ]}
+                data-motion-reveal
+            >
+                <h3 class="lora min-w-0 break-words hyphens-auto text-2xl leading-none uppercase text-foreground sm:text-3xl">{area.title}</h3>
+                <p class="min-w-0 text-base leading-relaxed text-muted-strong">{area.body}</p>
+                <ActionLink href="#projects" variant="secondary" class="w-full min-w-0 justify-between text-left" icon="iconoir:arrow-down">
+                    {area.cta}
+                </ActionLink>
+            </article>
+        ))}
+    </div>
+</div>

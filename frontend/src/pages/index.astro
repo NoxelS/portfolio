@@ -11,6 +11,7 @@ import ProjectCarousel from '../components/ProjectCarousel.astro';
 import BannerQuote from '../components/BannerQuote.astro';
 import PortfolioSection from '../components/PortfolioSection.astro';
 import StandoutStory from '../components/StandoutStory.astro';
+import ConsultingServices from '../components/ConsultingServices.astro';
 import PartnerLogoCarousel from '../components/PartnerLogoCarousel.astro';
 import TechStack from '../components/TechStack.astro';
 import ContactOptions from '../components/ContactOptions.astro';
@@ -37,16 +38,15 @@ const projectTags = getAllTags();
             subquote={localizedCopy.work.subquote}
         />
 
-        <!-- Who I Am -->
         <PortfolioSection
-            id="my-work"
-            title={localizedCopy.work.title}
-            description={localizedCopy.work.description}
+            id="work-details"
+            title={localizedCopy.services.title}
+            description={localizedCopy.services.description}
         >
-            <StandoutStory copy={localizedCopy} />
+            <ConsultingServices copy={localizedCopy.services} />
         </PortfolioSection>
 
-        <BannerQuote id="projects-banner" quote={localizedCopy.organisations.quote} subquote="">
+        <BannerQuote id="projects" quote={localizedCopy.organisations.quote} subquote="">
             <div class="flex flex-col gap-4 pt-4">
                 <div class="flex text-canvas text-lg">{localizedCopy.organisations.introduction}</div>
                 <PartnerLogoCarousel
@@ -66,7 +66,7 @@ const projectTags = getAllTags();
 
         <!-- My Projects -->
         <PortfolioSection
-            id="my-projects"
+            id="projects-details"
             title={localizedCopy.projects.title}
             description={localizedCopy.projects.description}
             noPadding
@@ -78,7 +78,7 @@ const projectTags = getAllTags();
                         {localizedCopy.projects.selected}
                     </p>
                     <div class="flex flex-wrap gap-3">
-                        <ActionLink href="#tech-stack-banner" icon="iconoir:arrow-down">{localizedCopy.projects.exploreStack}</ActionLink>
+                        <ActionLink href="#background" icon="iconoir:arrow-down">{localizedCopy.projects.exploreBackground}</ActionLink>
                         <ActionLink href="#contact" variant="secondary" icon="iconoir:arrow-down">{localizedCopy.projects.contact}</ActionLink>
                     </div>
                 </div>
@@ -86,14 +86,34 @@ const projectTags = getAllTags();
         </PortfolioSection>
 
         <BannerQuote
-            id="tech-stack-banner"
+            id="background"
+            quote={localizedCopy.work.banner.quote}
+            subquote={localizedCopy.work.banner.subquote}
+        />
+
+        <PortfolioSection
+            id="background-details"
+            title={localizedCopy.work.title}
+            description={localizedCopy.work.description}
+        >
+            <div class="grid gap-8">
+                <StandoutStory copy={localizedCopy.work} />
+                <div class="flex flex-wrap gap-3">
+                    <ActionLink href="#tech-stack" icon="iconoir:arrow-down">{localizedCopy.work.exploreStack}</ActionLink>
+                    <ActionLink href="#contact" variant="secondary" icon="iconoir:arrow-down">{localizedCopy.work.contact}</ActionLink>
+                </div>
+            </div>
+        </PortfolioSection>
+
+        <BannerQuote
+            id="tech-stack"
             quote={localizedCopy.stack.quote}
             subquote={localizedCopy.stack.subquote}
         />
 
         <!-- My Tech Stack -->
         <PortfolioSection
-            id="tech-stack"
+            id="tech-stack-details"
             title={localizedCopy.stack.title}
             description={localizedCopy.stack.description}
             noPadding
@@ -103,7 +123,7 @@ const projectTags = getAllTags();
                 <p class="text-lg leading-relaxed text-muted-strong opacity-50"><Icon name="iconoir:asterisk" class="mr-1 inline-block h-4 w-4 align-[-0.15em]" aria-hidden="true" />{localizedCopy.stack.selectionNote}</p>
                 <div class="flex flex-col items-start gap-4 pt-4">
                     <p class="text-lg leading-relaxed text-muted-strong">{localizedCopy.stack.questions}</p>
-                    <ActionLink href="#contact" icon="iconoir:arrow-down">{localizedCopy.projects.contact}</ActionLink>
+                    <ActionLink href="#contact" icon="iconoir:arrow-down">{localizedCopy.stack.contact}</ActionLink>
                 </div>
             </div>
         </PortfolioSection>
@@ -116,7 +136,7 @@ const projectTags = getAllTags();
 
         <!-- Contact -->
         <PortfolioSection
-            id="contact"
+            id="contact-details"
             title={localizedCopy.contact.title}
             description={localizedCopy.contact.description}
         >

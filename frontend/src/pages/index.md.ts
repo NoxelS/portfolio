@@ -11,6 +11,7 @@ import { getPublicEnv } from '../lib/public-env';
 export const prerender = false;
 
 export function getIndexMarkdownBody(): string {
+	const services = copy.en.services;
 	const contactEmail = getPublicEnv('PUBLIC_CONTACT_EMAIL');
 	const contactPhone = getPublicEnv('PUBLIC_CONTACT_PHONE');
 	const contactPhoneSecondary = getPublicEnv('PUBLIC_CONTACT_PHONE_SECONDARY');
@@ -42,13 +43,11 @@ export function getIndexMarkdownBody(): string {
 
 I am currently available for 20 hours per week.
 
-## Services
+## ${services.title}
 
-- AI agent systems for operational workflows and internal tools
-- Retrieval-augmented generation (RAG) over governed company knowledge
-- Voice agents, speech-to-text, and text-to-speech pipelines
-- Full-stack software engineering, infrastructure, and deployment
-- Research, evaluation, and automation for production AI systems
+${services.description}
+
+${services.areas.map((area) => `### ${area.title}\n\n${area.body}\n\n[${area.cta}](${defaultSeo.site}/en/#projects)`).join('\n\n')}
 
 - Website: ${defaultSeo.site}/
 - GitHub: https://github.com/NoxelS
@@ -59,27 +58,25 @@ I am currently available for 20 hours per week.
 - Markdown portfolio: ${defaultSeo.site}/index.md
 - LLM-friendly overview: ${defaultSeo.site}/llms.txt
 
-## How I work
-
-I combine scientific curiosity with practical software engineering to build AI systems that hold up in real operations. Complex problems do not always require complex solutions. My background in technical and business domains helps me bridge the gap between these worlds.
-
-### Theoretical Physics — a rigorous foundation
-
-Physics taught me to turn ambiguous problems into structured development and validation steps. It also taught me to stay calm when requirements change or technical depth becomes demanding. I work my way into difficult problems until I understand what needs to be built and how to validate it.
-
-### Software Development — ideas made real
-
-With more than six years of experience building and maintaining software for real users, I know that an application is only as strong as its foundations. I bring cloud infrastructure experience, sound engineering principles, and software architecture to create robust, maintainable systems. Coding agents can accelerate delivery, but they need clear architecture and informed direction.
-
-### AI Systems — built for production
-
-I build production AI systems for real users, with a focus on on-premises, open-source solutions for European companies. My work includes agent systems, time-series analysis and forecasting, speech pipelines, and the infrastructure behind them. The goal is useful insight and tangible outcomes while keeping models, data, and operations under the company’s control.
-
 ## Selected work
 
 From private AI platforms and voice agents to high-performance research pipelines, these projects solve real operational constraints with systems teams can use, govern, and scale.
 
 ${projects}
+
+[${copy.en.projects.exploreBackground}](${defaultSeo.site}/en/#background) · [${copy.en.projects.contact}](${defaultSeo.site}/en/#contact)
+
+> ${copy.en.work.banner.quote}
+>
+> ${copy.en.work.banner.subquote}
+
+## ${copy.en.work.title}
+
+${copy.en.work.description}
+
+${copy.en.work.chapters.map((chapter) => `### ${chapter.title}\n\n${chapter.body}`).join('\n\n')}
+
+[${copy.en.work.exploreStack}](${defaultSeo.site}/en/#tech-stack) · [${copy.en.work.contact}](${defaultSeo.site}/en/#contact)
 
 ## Organisations I have worked alongside
 
@@ -169,6 +166,8 @@ ${['Angular', 'Vue.js', 'HTML', 'CSS', 'SCSS', 'JavaScript', 'TypeScript', 'Tail
 - AgentOS — research
 - PyTorch — research
 - Transformers — research
+
+[${copy.en.stack.contact}](${defaultSeo.site}/en/#contact)
 
 ## Start a conversation
 
