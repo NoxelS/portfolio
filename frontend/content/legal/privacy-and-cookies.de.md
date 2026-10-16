@@ -45,7 +45,7 @@ Ein externer Link öffnet die jeweilige Website, für die die Datenschutzhinweis
 
 ## Cookies und ähnliche Technologien
 
-Cookies speichern kleine Datenmengen im Browser. Technische Cookies unterstützen eine angeforderte Funktion oder den notwendigen Betrieb einer Website.
+Cookies speichern kleine Datenmengen im Browser. Technische Cookies unterstützen eine angeforderte Funktion oder den notwendigen Betrieb einer Website. Der Sitzungsspeicher hält Informationen für den jeweiligen Browser-Tab vor.
 
 ### Spracheinstellung
 
@@ -57,7 +57,15 @@ Das Cookie lässt sich in den Browsereinstellungen löschen. Anschließend verwe
 
 ### Cloudflare-Cookies
 
-Aktivierte Schutz- und Verfügbarkeitsfunktionen von Cloudflare können technische Cookies unter der Domain der aufgerufenen Website setzen. Welche Cookies erforderlich sind, hängt von der jeweiligen Funktion und Situation ab.
+Cloudflare Precursor verarbeitet Signale zu Browser und Sitzungsinteraktionen, um automatisierte Zugriffe zu erkennen und die Website zu schützen. Dabei werden folgende Cookies und Browserspeicher verwendet:
+
+| Name | Speicherart | Zweck | Speicherdauer |
+| --- | --- | --- | --- |
+| `cf_clearance` | Cookie für noel.fyi und dessen Subdomains. | Speichert Ergebnisse der Sicherheitsprüfung und den Sitzungsstatus. | Bis zu ein Jahr; kann während der Nutzung erneuert werden. |
+| `__cf_ob` | Cookie unter dem aufgerufenen Hostnamen, beschränkt auf `/cdn-cgi/challenge-platform`. | Unterstützt die Sicherheitsprüfung und den Sitzungsstatus von Precursor. | Browsersitzung. |
+| `_cfPre_tabId` | Sitzungsspeicher des Browsers (`sessionStorage`). | Identifiziert den Browser-Tab für die Sicherheitsprüfung. | Sitzung des Tabs. |
+
+Die [Precursor-Dokumentation von Cloudflare](https://developers.cloudflare.com/cloudflare-challenges/precursor/) erläutert die fortlaufende Sicherheitsprüfung. Cookies und Sitzungsspeicher lassen sich über die Browsereinstellungen löschen.
 
 Wenn die Funktion Always Online eingesetzt wird, sind dafür insbesondere folgende kurzlebige Cookies vorgesehen:
 
@@ -89,7 +97,7 @@ Informationen zu den geltenden Garantien und eine Kopie können über [contact@n
 | Sicherheits- und Auslieferungsdaten von Cloudflare | Cloudflare bestimmt die Speicherdauer anhand des Dienstzwecks und rechtlicher Verpflichtungen unter Berücksichtigung von Art und Sensibilität der Daten sowie von Sicherheitsrisiken. Siehe [Datenschutzerklärung von Cloudflare, Abschnitt 11](https://www.cloudflare.com/privacypolicy/). |
 | Anfrage- und Termininformationen | Solange die Informationen zur Beantwortung der Anfrage, zur Organisation und Durchführung des Gesprächs sowie für damit verbundene Rückfragen erforderlich sind. Informationen, die für einen Auftrag, eine gesetzliche Pflicht oder einen konkreten Rechtsanspruch benötigt werden, können für den jeweiligen Zweck und Zeitraum aufbewahrt werden. |
 | Sprach-Cookie | Bis zu ein Jahr, sofern es nicht vorher gelöscht wird. |
-| Weitere technische Cookies | Entsprechend den Angaben für die jeweilige Funktion im Abschnitt zu Cloudflare-Cookies. |
+| Cloudflare-Cookies und Browserspeicher | Entsprechend den Angaben für die jeweilige Funktion im Abschnitt zu Cloudflare-Cookies. |
 
 ## Datenschutzrechte
 

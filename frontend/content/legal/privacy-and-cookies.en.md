@@ -45,7 +45,7 @@ Following an external link opens the relevant website, where that provider's own
 
 ## Cookies and similar technologies
 
-Cookies store small amounts of information in your browser. Technical cookies support a requested function or necessary website operation.
+Cookies store small amounts of information in your browser. Technical cookies support a requested function or necessary website operation. Session storage holds information for the current browser tab.
 
 ### Language preference
 
@@ -57,7 +57,15 @@ You can delete the cookie in your browser settings. The website will then use it
 
 ### Cloudflare cookies
 
-Depending on the security and availability features enabled, Cloudflare may set technical cookies on the website domain being visited.
+Cloudflare Precursor processes browser and session interaction signals to distinguish automated traffic and protect the website. It uses the following cookies and browser storage:
+
+| Name | Storage | Purpose | Lifetime |
+| --- | --- | --- | --- |
+| `cf_clearance` | Cookie for noel.fyi and its subdomains. | Stores security-verification results and session state. | Up to one year; may be renewed during use. |
+| `__cf_ob` | Cookie on the visited website hostname, restricted to `/cdn-cgi/challenge-platform`. | Supports Precursor's security verification and session state. | Browser session. |
+| `_cfPre_tabId` | Browser session storage (`sessionStorage`). | Identifies the browser tab for security verification. | Tab session. |
+
+Cloudflare's [Precursor documentation](https://developers.cloudflare.com/cloudflare-challenges/precursor/) explains its continuous security verification. Cookies and session storage can be cleared through your browser settings.
 
 When Cloudflare's Always Online feature is used, the following short-lived cookies may be set:
 
@@ -89,7 +97,7 @@ For information about the applicable safeguards, or to request a copy, contact [
 | Cloudflare security and delivery records | Cloudflare uses service-purpose and legal-obligation criteria, considering the nature and sensitivity of information and security risks. See its [privacy policy, section 11](https://www.cloudflare.com/privacypolicy/). |
 | Enquiry and appointment information | For as long as needed to answer the enquiry, arrange and conduct the conversation, and handle related follow-up. Information needed for an engagement, a legal obligation or a specific legal claim may be kept for the corresponding purpose and period. |
 | Language cookie | Up to one year, unless you delete it sooner. |
-| Other technical cookies | According to the applicable feature and lifetimes described above. |
+| Cloudflare cookies and browser storage | According to the applicable feature and lifetimes described above. |
 
 ## Your rights
 
