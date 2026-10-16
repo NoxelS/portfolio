@@ -46,7 +46,7 @@ const { projects, tags, copy } = Astro.props;
         </div>
     </div>
 
-    <div class="project-carousel glide min-w-0" aria-label={copy.projects.carouselLabel} data-project-glide>
+    <div class="project-carousel glide min-w-0 min-[1025px]:-mx-8 min-[1025px]:w-[calc(100%+4rem)]!" aria-label={copy.projects.carouselLabel} data-project-glide>
         <div class="relative min-w-0">
             <div class="glide__track overflow-hidden" data-glide-el="track">
                 <ul class="glide__slides py-4" data-project-slides>
@@ -125,12 +125,14 @@ const { projects, tags, copy } = Astro.props;
                 }
                 </ul>
             </div>
+            <div class="pointer-events-none absolute inset-y-0 left-0 z-20 hidden w-[10%] bg-linear-to-r from-canvas/95 via-canvas/55 to-canvas/0 min-[1025px]:block" aria-hidden="true" />
+            <div class="pointer-events-none absolute inset-y-0 right-0 z-20 hidden w-[10%] bg-linear-to-l from-canvas/95 via-canvas/55 to-canvas/0 min-[1025px]:block" aria-hidden="true" />
         </div>
 		<p class="hidden py-3 pl-4 text-copy-md text-primary-text-color" data-project-empty role="status">
             {copy.projects.noMatches}
         </p>
 
-        <div class="mt-4 flex flex-wrap items-center justify-between gap-4 pt-5" data-glide-el="controls">
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-4 pt-5 min-[1025px]:mx-8" data-glide-el="controls">
             <button
                 class="focus-ring cursor-pointer border border-primary-text-color px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-primary-text-color transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-black/5 hover:text-primary-text-color disabled:cursor-not-allowed disabled:opacity-40"
                 type="button"
