@@ -93,7 +93,7 @@ export const copy: Record<Locale, Copy> = {
             portraitAlt: 'Portrait of Noel Pascal Schwabenland',
             principle: 'I build with scalability, <br/> maintainability and performance in mind',
             performanceLabel: 'View site performance details',
-            performanceTooltip: 'Server delivery: {server} ms. FCP: {fcp} ms. Yes, I even over-optimized my portfolio website.',
+            performanceTooltip: /* 'Server delivery: {server} ms. ' + */ 'FCP: {fcp} ms. Yes, I even over-optimized my portfolio website.',
             socials: 'My socials'
         },
         work: {
@@ -194,7 +194,7 @@ export const copy: Record<Locale, Copy> = {
             portraitAlt: 'Porträt von Noel Pascal Schwabenland',
             principle: 'Ich entwickle mit Blick auf Skalierbarkeit, Wartbarkeit und Performance',
             performanceLabel: 'Details zur Website-Performance anzeigen',
-            performanceTooltip: 'Server-Auslieferung: {server} ms. FCP: {fcp} ms. Ja, ich habe sogar meine Portfolio-Website überoptimiert.',
+            performanceTooltip: /* 'Server-Auslieferung: {server} ms. ' + */ 'FCP: {fcp} ms. Ja, ich habe sogar meine Portfolio-Website überoptimiert.',
             socials: 'Meine Profile'
         },
         work: {
