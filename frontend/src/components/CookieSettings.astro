@@ -1,0 +1,38 @@
+---
+import { legalCopy } from '../data/legal';
+import type { Locale } from '../i18n';
+
+const { locale } = Astro.props as { locale: Locale };
+const labels = legalCopy[locale];
+---
+
+<dialog id="cookie-settings-dialog" aria-labelledby="cookie-settings-title" aria-describedby="cookie-settings-description" class="fixed inset-0 m-auto max-h-[85dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto bg-canvas p-6 text-black shadow-xl backdrop:bg-black/50 md:p-8">
+	<h2 id="cookie-settings-title" class="font-serif text-2xl">{labels.cookieTitle}</h2>
+	<p id="cookie-settings-description" class="mt-4 leading-relaxed">{labels.cookieDescription}</p>
+	<div class="mt-4 p-2 border border-black">
+		<div class="flex flex-wrap items-center justify-between gap-3">
+			<h3 class="font-semibold">{labels.necessary}</h3>
+			<span class="border-primary border text-black px-2 py-1 text-xs font-medium">{labels.alwaysActive}</span>
+		</div>
+		<p class="mt-3 text-sm leading-relaxed">{labels.necessaryDescription}</p>
+	</div>
+	<div class="mt-6 flex flex-wrap items-center justify-between gap-4">
+		<a href={`/${locale}/cookies/`} class="text-sm">{labels.details}</a>
+		<form method="dialog">
+			<button class="cursor-pointer border border-primary bg-primary px-5 py-2 text-canvas focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" autofocus>{labels.close}</button>
+		</form>
+	</div>
+</dialog>
+
+<script>
+	const dialog = document.querySelector<HTMLDialogElement>('#cookie-settings-dialog');
+	if (dialog && typeof dialog.showModal === 'function') {
+		document.querySelectorAll<HTMLAnchorElement>('[data-cookie-settings]').forEach((trigger) => {
+			trigger.addEventListener('click', (event) => {
+				if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+				event.preventDefault();
+				dialog.showModal();
+			});
+		});
+	}
+</script>

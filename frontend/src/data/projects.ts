@@ -16,8 +16,7 @@ export type Project = {
     steps: ProjectStep[];
     tags: string[];
     filters: string[];
-    logoSrc?: string;
-    logoAlt?: string;
+    companyName?: string;
     companyUrl?: string;
 };
 
@@ -45,8 +44,7 @@ export const projects: Project[] = [
         ],
         tags: ['Private AI', 'LLM Platform'],
         filters: ['Highlighted', 'LLM Systems'],
-        logoSrc: '/assets/companies/netcom.svg',
-        logoAlt: 'NetCom logo',
+        companyName: 'NetCom',
         companyUrl: 'https://www.netcom.eu/',
     },
     {
@@ -72,8 +70,7 @@ export const projects: Project[] = [
         ],
         tags: ['Voice Agent', 'Critical Operations'],
         filters: ['Highlighted', 'Agent Systems', 'Speech & Voice'],
-        logoSrc: '/assets/companies/netcom.svg',
-        logoAlt: 'NetCom logo',
+        companyName: 'NetCom',
         companyUrl: 'https://www.netcom.eu/',
     },
     {
@@ -99,8 +96,7 @@ export const projects: Project[] = [
         ],
         tags: ['HPC', 'Drug Discovery'],
         filters: ['Highlighted', 'Research'],
-        logoSrc: '/assets/companies/uds.svg.webp',
-        logoAlt: 'Saarland University logo',
+        companyName: 'Saarland University',
         companyUrl: 'https://www.uni-saarland.de/en/home/',
     },
     {
@@ -126,8 +122,7 @@ export const projects: Project[] = [
         ],
         tags: ['Simulation', 'Data Analysis'],
         filters: ['Research', 'Process Automation'],
-        logoSrc: '/assets/companies/kpmg.svg',
-        logoAlt: 'KPMG logo',
+        companyName: 'KPMG',
         companyUrl: 'https://kpmg.com/de/de.html',
     },
     {
@@ -153,8 +148,7 @@ export const projects: Project[] = [
         ],
         tags: ['Privacy-first', 'Full-stack'],
         filters: ['Process Automation'],
-        logoSrc: '/assets/companies/IGS_NiederOlm_farbig.jpg',
-        logoAlt: 'IGS Nieder-Olm logo',
+        companyName: 'IGS Nieder-Olm',
         companyUrl: 'https://igsno.de/',
     },
     {
@@ -180,8 +174,7 @@ export const projects: Project[] = [
         ],
         tags: ['Deep Learning', 'Biophysics'],
         filters: ['Research'],
-        logoSrc: '/assets/companies/uds.svg.webp',
-        logoAlt: 'Saarland University logo',
+        companyName: 'Saarland University',
         companyUrl: 'https://www.uni-saarland.de/en/home/',
     },
 ];

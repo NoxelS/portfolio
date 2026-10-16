@@ -2,7 +2,6 @@
 import '@glidejs/glide/dist/css/glide.core.min.css';
 import type { Project } from '../data/projects';
 import ActionLink from './ActionLink.astro';
-import { cloudflareImageUrl } from '../utils/cloudflare-image';
 import type { Copy } from '../i18n';
 
 type Props = {
@@ -31,7 +30,7 @@ const { projects, tags, copy } = Astro.props;
                             index >= 5 && 'lg:delay-250',
                             tag === 'Highlighted'
                                 ? 'project-filter-active hover:bg-primary/90 hover:text-canvas'
-                                : 'border-primary-text-color bg-transparent text-primary-text-color hover:bg-surface hover:text-primary-text-color',
+                                : 'border-primary-text-color bg-transparent text-primary-text-color hover:bg-black/5 hover:text-primary-text-color',
                         ]}
                         type="button"
                         data-project-filter={tag}
@@ -58,29 +57,13 @@ const { projects, tags, copy } = Astro.props;
                         >
 																	<article class="relative flex h-auto min-w-0 w-full max-w-full max-h-none flex-col gap-4 overflow-y-visible border-0 bg-canvas p-0 sm:max-h-[56rem] sm:overflow-y-auto sm:border sm:border-primary-text-color sm:p-8" data-project-card>
                                 <header class="flex min-w-0 flex-col items-start gap-3">
-                                    <div class="relative flex h-14 w-28 shrink-0 items-center justify-start overflow-hidden">
-                                        {project.logoSrc && (
-                                            project.companyUrl ? (
-                                                <a
-                                                    class="focus-ring flex h-14 w-28 items-center justify-start"
-                                                    href={project.companyUrl}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                    aria-label={`Open ${project.logoAlt ?? project.title} website in a new tab`}
-                                                >
-                                                    <img class="max-h-full max-w-full object-contain grayscale" src={cloudflareImageUrl(project.logoSrc, { width: 256 })} alt="" loading="lazy" decoding="async" />
-                                                </a>
-                                            ) : (
-                                                <div
-                                                    class="flex h-14 w-28 items-center justify-start"
-                                                    role="img"
-                                                    aria-label={project.logoAlt ?? `${project.title} logo`}
-                                                >
-                                                    <img class="max-h-full max-w-full object-contain grayscale" src={cloudflareImageUrl(project.logoSrc, { width: 256 })} alt="" loading="lazy" decoding="async" />
-                                                </div>
-                                            )
-                                        )}
-                                    </div>
+                                    {project.companyName && (
+                                        <p class="m-0 text-sm font-semibold leading-tight text-primary-text-color">
+                                            {project.companyUrl ? (
+                                                <a href={project.companyUrl} target="_blank" rel="noreferrer">{project.companyName}</a>
+                                            ) : project.companyName}
+                                        </p>
+                                    )}
                                     <div class="flex min-w-0 flex-row items-center gap-3">
 										<h3 class="lora min-w-0 max-w-full break-words text-2xl leading-tight text-primary-text-color sm:text-3xl">{project.title}</h3>
                                     </div>
@@ -132,7 +115,7 @@ const { projects, tags, copy } = Astro.props;
 
         <div class="mt-4 flex flex-wrap items-center justify-between gap-4 pt-5" data-glide-el="controls">
             <button
-                class="focus-ring cursor-pointer border border-primary-text-color px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-primary-text-color transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-surface hover:text-primary-text-color disabled:cursor-not-allowed disabled:opacity-40"
+                class="focus-ring cursor-pointer border border-primary-text-color px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-primary-text-color transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-black/5 hover:text-primary-text-color disabled:cursor-not-allowed disabled:opacity-40"
                 type="button"
                 data-glide-dir="<"
                 data-project-control
@@ -142,7 +125,7 @@ const { projects, tags, copy } = Astro.props;
             </button>
             <p class="text-copy-sm min-w-0 text-center text-primary-text-color uppercase" aria-live="polite" data-project-count>{copy.projects.shown(projects.length)}</p>
             <button
-                class="focus-ring cursor-pointer border border-primary-text-color px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-primary-text-color transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-surface hover:text-primary-text-color disabled:cursor-not-allowed disabled:opacity-40"
+                class="focus-ring cursor-pointer border border-primary-text-color px-4 py-3.5 text-sm font-medium uppercase tracking-[0.08em] leading-[1.1] text-primary-text-color transition-[background-color,color,border-color,opacity] duration-150 ease-[var(--ease-standard)] hover:bg-black/5 hover:text-primary-text-color disabled:cursor-not-allowed disabled:opacity-40"
                 type="button"
                 data-glide-dir=">"
                 data-project-control
@@ -204,7 +187,7 @@ const { projects, tags, copy } = Astro.props;
                 filter.classList.toggle('text-primary-text-color', !isSelected);
                 filter.classList.toggle('hover:bg-primary/90', isSelected);
                 filter.classList.toggle('hover:text-canvas', isSelected);
-                filter.classList.toggle('hover:bg-surface', !isSelected);
+                filter.classList.toggle('hover:bg-black/5', !isSelected);
                 filter.classList.toggle('hover:text-primary-text-color', !isSelected);
                 filter.querySelector('span')!.classList.toggle('hidden', !isSelected);
             });

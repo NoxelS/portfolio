@@ -1,8 +1,9 @@
 ---
-import AnalyticsConsent from '../components/AnalyticsConsent.astro';
+import { Font } from 'astro:assets';
+import Footer from '../components/Footer.astro';
+import CookieSettings from '../components/CookieSettings.astro';
 import NavBar from '../components/NavBar.astro';
 import SEO from '../components/SEO.astro';
-import { getOpenPanelConfig } from '../data/analytics';
 import { copy, type Locale } from '../i18n';
 import '../styles/global.css';
 
@@ -22,7 +23,6 @@ interface Props {
 const { title, description, canonicalPath, image, imageAlt, imageType, imageWidth, imageHeight, noindex, locale } = Astro.props;
 const cloudflareImageResizingEnabled = import.meta.env.PUBLIC_CLOUDFLARE_IMAGE_RESIZING === 'true';
 const imageClientHintOrigin = Astro.site?.host ?? Astro.url.host;
-const openPanelConfig = getOpenPanelConfig();
 const runtimeConfig = {
 	PUBLIC_BUILD_VERSION: process.env.PUBLIC_BUILD_VERSION ?? '',
 	PUBLIC_COMMIT_SHA: process.env.PUBLIC_COMMIT_SHA ?? '',
@@ -48,12 +48,8 @@ const runtimeConfig = {
 			noindex={noindex}
 			locale={locale}
 		/>
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Lora:wght@400..700&family=Source+Sans+3:ital,wght@0,400..700;1,400..700&display=swap"
-			rel="stylesheet"
-		/>
+		<Font cssVariable="--font-portfolio-lora" preload={false} />
+		<Font cssVariable="--font-portfolio-source-sans" preload={false} />
 		<link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon_io/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon_io/favicon-16x16.png">
@@ -65,24 +61,11 @@ const runtimeConfig = {
 		<main class="min-h-screen w-screen max-w-[100vw]">
 			<slot />
 		</main>
+		<Footer copy={copy[locale]} locale={locale} />
+		<CookieSettings locale={locale} />
 		<script define:vars={{ runtimeConfig }}>
 			window.__PORTFOLIO_RUNTIME__ = runtimeConfig;
 		</script>
-		{openPanelConfig && <AnalyticsConsent />}
-		{
-			openPanelConfig && (
-				<script define:vars={{ openPanelConfig }}>
-					window.__PORTFOLIO_ANALYTICS__ = openPanelConfig;
-				</script>
-			)
-		}
-		{
-			openPanelConfig && (
-				<script>
-					import '../scripts/analytics-loader';
-				</script>
-			)
-		}
 		</body>
 		<script>
 			import '../scripts/motion';

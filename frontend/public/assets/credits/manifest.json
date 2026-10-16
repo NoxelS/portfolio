@@ -1,0 +1,68 @@
+[
+  {
+    "name": "Lora italic",
+    "file": "src/assets/fonts/lora/Lora-italic-variable.woff2",
+    "source": "https://fonts.gstatic.com/s/lora/v37/0QIhMX1D_JOuMw_LIftLtfOm8w.woff2",
+    "terms": "https://raw.githubusercontent.com/google/fonts/main/ofl/lora/OFL.txt",
+    "sha256": "3d536d49566e82a7905c8b0096758005f6616029ac08528d1f4789c1100dff6a",
+    "bytes": 40648,
+    "retrieved": "2026-10-16",
+    "weight": "400 700",
+    "subset": "latin",
+    "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+  },
+  {
+    "name": "Lora regular",
+    "file": "src/assets/fonts/lora/Lora-variable.woff2",
+    "source": "https://fonts.gstatic.com/s/lora/v37/0QIvMX1D_JOuMwr7I_FMl_E.woff2",
+    "terms": "https://raw.githubusercontent.com/google/fonts/main/ofl/lora/OFL.txt",
+    "sha256": "6b102ab35aa1f2b315788bb4853434ed1e52137603bf7a3da71a682276748d45",
+    "bytes": 37792,
+    "retrieved": "2026-10-16",
+    "weight": "400 700",
+    "subset": "latin",
+    "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+  },
+  {
+    "name": "Source Sans 3 italic",
+    "file": "src/assets/fonts/source-sans-3/SourceSans3-italic-variable.woff2",
+    "source": "https://fonts.gstatic.com/s/sourcesans3/v20/nwpMtKy2OAdR1K-IwhWudF-R3woqZ-LYxnV18A.woff2",
+    "terms": "https://raw.githubusercontent.com/google/fonts/main/ofl/sourcesans3/OFL.txt",
+    "sha256": "bf6aa2f7b9a411fe5f7e489ad2b54b69594ccb656f54b3abacca2b69a945384d",
+    "bytes": 28488,
+    "retrieved": "2026-10-16",
+    "weight": "200 900",
+    "subset": "latin",
+    "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+  },
+  {
+    "name": "Source Sans 3 regular",
+    "file": "src/assets/fonts/source-sans-3/SourceSans3-variable.woff2",
+    "source": "https://fonts.gstatic.com/s/sourcesans3/v20/nwpStKy2OAdR1K-IwhWudF-R3w8aZejf5Hc.woff2",
+    "terms": "https://raw.githubusercontent.com/google/fonts/main/ofl/sourcesans3/OFL.txt",
+    "sha256": "587435ca9d90732b8c1ce4958222c6ad3ade2b875500188e1d318efbcb61f4c5",
+    "bytes": 28804,
+    "retrieved": "2026-10-16",
+    "weight": "200 900",
+    "subset": "latin",
+    "unicodeRange": "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+  },
+  {
+    "name": "Lora licence",
+    "file": "public/assets/credits/lora-OFL.txt",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/lora/OFL.txt",
+    "terms": "",
+    "sha256": "1d9a970809ac804b582a6ce7f0ebc4e7fefcbfd7ff6299cad35ee656a21be716",
+    "bytes": 4423,
+    "retrieved": "2026-10-16"
+  },
+  {
+    "name": "Source Sans 3 licence",
+    "file": "public/assets/credits/source-sans-3-OFL.txt",
+    "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/sourcesans3/OFL.txt",
+    "terms": "",
+    "sha256": "09746787287a289323b0ec3cff4d1a4a801331b82b7207c1e186f5d26619a392",
+    "bytes": 4579,
+    "retrieved": "2026-10-16"
+  }
+]

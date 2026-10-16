@@ -3,11 +3,43 @@ import tailwindcss from '@tailwindcss/vite';
 import node from '@astrojs/node';
 import sitemap from '@astrojs/sitemap';
 import icon from 'astro-icon';
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://noel.fyi',
+	fonts: [
+		{
+			name: 'Lora',
+			cssVariable: '--font-portfolio-lora',
+			provider: fontProviders.local(),
+			weights: ['400 700'],
+			styles: ['normal', 'italic'],
+			formats: ['woff2'],
+			optimizedFallbacks: false,
+			options: {
+				variants: [
+					{ weight: '400 700', style: 'italic', src: ['./src/assets/fonts/lora/Lora-italic-variable.woff2'] },
+					{ weight: '400 700', style: 'normal', src: ['./src/assets/fonts/lora/Lora-variable.woff2'] },
+				],
+			},
+		},
+		{
+			name: 'Source Sans 3',
+			cssVariable: '--font-portfolio-source-sans',
+			provider: fontProviders.local(),
+			weights: ['200 900'],
+			styles: ['normal', 'italic'],
+			formats: ['woff2'],
+			optimizedFallbacks: false,
+			options: {
+				variants: [
+					{ weight: '200 900', style: 'italic', src: ['./src/assets/fonts/source-sans-3/SourceSans3-italic-variable.woff2'] },
+					{ weight: '200 900', style: 'normal', src: ['./src/assets/fonts/source-sans-3/SourceSans3-variable.woff2'] },
+				],
+			},
+		},
+	],
 	i18n: {
 		locales: ['en', 'de'],
 		defaultLocale: 'en',
