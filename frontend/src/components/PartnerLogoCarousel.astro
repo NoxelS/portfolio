@@ -3,12 +3,8 @@
  * PartnerLogoCarousel — a low motion logo strip for the portfolio banners.
  */
 type Partner = {
-    src: string;
-    alt: string;
-    className?: string;
+    name: string;
 };
-
-import { cloudflareImageUrl } from '../utils/cloudflare-image';
 
 const { partners } = Astro.props as { partners: Partner[] };
 const carouselPartners = [...partners, ...partners, ...partners];
@@ -18,16 +14,7 @@ const carouselPartners = [...partners, ...partners, ...partners];
     <div class="flex gap-10 will-change-transform" data-partner-logo-track>
         {carouselPartners.map((partner, index) => (
             <div class="group flex h-12 w-36 shrink-0 items-center justify-center" data-partner-logo-item aria-hidden={index >= partners.length ? 'true' : undefined}>
-                <img
-                    src={cloudflareImageUrl(partner.src, { width: 320 })}
-                    alt={index < partners.length ? partner.alt : ''}
-                    class:list={[
-                        'max-h-10 max-w-full opacity-80 transition-opacity duration-300 group-hover:opacity-100',
-                        partner.className ?? 'grayscale invert mix-blend-screen',
-                    ]}
-                    loading="lazy"
-                    decoding="async"
-                />
+                <span class="max-w-full text-center text-sm font-semibold leading-tight text-canvas">{partner.name}</span>
             </div>
         ))}
     </div>

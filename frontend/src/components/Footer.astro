@@ -1,23 +1,47 @@
 ---
 import type { Copy, Locale } from '../i18n';
 import { buildInfo } from '../lib/build-info';
+import { legalCopy, operator } from '../data/legal';
 
 const currentYear = new Date().getFullYear();
 const { copy, locale } = Astro.props as { copy: Copy; locale: Locale };
+const labels = legalCopy[locale];
+const linkClass = 'text-canvas/85 decoration-canvas/40 hover:text-canvas hover:decoration-canvas focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-canvas';
 ---
 
-<footer class="-mx-4 w-[calc(100%+2rem)] min-w-0 bg-primary px-4 py-10 text-canvas md:-mx-8 md:w-[calc(100%+4rem)] md:px-8 md:py-12">
-	<div class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-12">
-		<div class="flex flex-col gap-2">
-			<p class="lora text-2xl">Noël Pascal Schwabenland</p>
-			<p class="text-sm text-canvas/65">© {currentYear} Noël Pascal Schwabenland. {copy.contact.rights}</p>
-			<p class="text-sm text-canvas/65">v{buildInfo.version}</p>
+<footer class="w-full min-w-0 bg-primary px-4 py-12 text-canvas md:px-8 md:py-16">
+	<div class="grid w-full gap-10 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr] lg:gap-16">
+		<div class="min-w-0">
+			<a href={`/${locale}/`} class="font-serif text-2xl text-canvas no-underline hover:text-canvas md:text-3xl">{operator.name}</a>
+			<p class="mt-3 text-sm text-canvas/75">{labels.activity}</p>
+			<address class="mt-5 text-sm not-italic leading-relaxed text-canvas/85">
+				{operator.street}<br />
+				{operator.city}, {labels.country}
+			</address>
+			<p class="mt-3 text-sm font-medium tracking-wide">P. IVA {operator.vat}</p>
 		</div>
-
-		<nav aria-label="Legal and other links">
-			<ul class="flex flex-wrap gap-x-6 gap-y-3 text-sm">
-				<li><a href={`/${locale}/index.md`} class="text-canvas/75 hover:text-canvas hover:decoration-canvas">{copy.contact.agents}</a></li>
+		<div>
+			<h2 class="text-sm font-semibold">{labels.contact}</h2>
+			<ul class="mt-5 grid gap-3 text-sm">
+				<li><a class={linkClass} href={`mailto:${operator.email}`}>{operator.email}</a></li>
+				<li><a class={linkClass} href={`tel:${operator.phoneHref}`}>{operator.phone}</a></li>
+			</ul>
+		</div>
+		<nav aria-label={labels.title}>
+			<h2 class="text-sm font-semibold">{labels.title}</h2>
+			<ul class="mt-5 grid gap-3 text-sm">
+				<li><a class={linkClass} href={`/${locale}/legal-notice/`}>{labels.notice}</a></li>
+				<li><a class={linkClass} href={`/${locale}/privacy/`}>{labels.privacy}</a></li>
+				<li><a class={linkClass} href={`/${locale}/cookies/`}>{labels.cookies}</a></li>
+				<li><a class={linkClass} href={`/${locale}/cookies/#cookie-settings`} data-cookie-settings>{labels.settings}</a></li>
 			</ul>
 		</nav>
+	</div>
+	<div class="mt-10 flex w-full flex-col gap-4 pt-6 text-xs text-canvas/65 sm:flex-row sm:items-center sm:justify-between">
+		<p>© {currentYear} {operator.name}. {copy.contact.rights}</p>
+		<div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+			<a href="/index.md" class={linkClass}>{copy.contact.agents}</a>
+			<span>v{buildInfo.version}</span>
+		</div>
 	</div>
 </footer>

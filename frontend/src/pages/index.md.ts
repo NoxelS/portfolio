@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-import { defaultSeo } from '../data/site';
+import { defaultSeo, professionalTitle } from '../data/site';
 import { getSortedProjects } from '../data/projects';
 import { setPublicDocumentCache } from '../lib/cache';
 import { getPublicEnv } from '../lib/public-env';
@@ -37,7 +37,7 @@ export function getIndexMarkdownBody(): string {
 
 	const body = `# ${defaultSeo.authorName}
 
-> Freelance full-stack AI engineer based in the EU, building governed, production-ready RAG, voice, and AI agent systems for industrial and technology companies.
+> ${professionalTitle} based in the EU, building governed, production-ready RAG, voice, and AI agent systems for industrial and technology companies.
 
 I help industrial and technology companies turn internal knowledge and complex workflows into production-ready RAG, voice, and AI agent solutions. I build with governed data and European regulatory requirements in mind.
 

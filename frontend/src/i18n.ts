@@ -1,3 +1,5 @@
+import { defaultSeo, professionalTitle } from './data/site';
+
 export const locales = ['en', 'de'] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = 'en';
@@ -76,16 +78,16 @@ export type Copy = {
 export const copy: Record<Locale, Copy> = {
     en: {
         seo: {
-            title: 'Noel Schwabenland | Freelance Full-Stack AI Engineer',
+            title: defaultSeo.title,
             description:
-                'Noel Schwabenland is an EU-based freelance full-stack AI engineer building governed, production-ready RAG, voice, and AI agent systems for industrial and technology companies.',
+                defaultSeo.description,
             imageAlt: 'Portrait of Noel Pascal Schwabenland'
         },
         hero: {
             summaryCompact:
-                'EU-based full-stack AI Engineer helping industrial and technology teams turn internal knowledge and complex workflows into governed, production-ready RAG, voice, and AI agent systems.',
+                `${professionalTitle} based in the EU, helping industrial and technology teams turn internal knowledge and complex workflows into governed, production-ready RAG, voice, and AI agent systems.`,
             summary:
-                'EU-based full-stack AI Engineer helping industrial and technology companies turn internal knowledge and complex workflows into governed, production-ready RAG, voice, and AI agent solutions. I build with governed data and European regulatory requirements in mind.',
+                `${professionalTitle} based in the EU, helping industrial and technology companies turn internal knowledge and complex workflows into governed, production-ready RAG, voice, and AI agent solutions. I build with governed data and European regulatory requirements in mind.`,
             exploreWork: 'Explore my work',
             call: 'Give me a call',
             portraitAlt: 'Portrait of Noel Pascal Schwabenland',
@@ -151,7 +153,7 @@ export const copy: Record<Locale, Copy> = {
             noMatches: 'No technologies match that search.',
             useProduction: 'production use',
             useResearch: 'research and side projects',
-            groups: ['Frontend', 'Backend', 'Databases', 'Cloud & Infrastructure', 'MLOps', 'Libraries*']
+            groups: ['Frontend', 'Backend', 'Databases', 'Cloud & Infra', 'MLOps', 'Libraries*']
         },
         contact: {
             quote: 'Nothing beats a real conversation',
@@ -177,16 +179,16 @@ export const copy: Record<Locale, Copy> = {
     },
     de: {
         seo: {
-            title: 'Noel Schwabenland | Freelance Full-Stack AI Engineer',
+            title: defaultSeo.title,
             description:
-                'Noel Schwabenland ist ein freiberuflicher Full-Stack AI Engineer aus der EU. Er entwickelt steuerbare, produktionsreife RAG-, Sprach- und KI-Agenten-Systeme für Industrie- und Technologieunternehmen.',
+                `Noel Schwabenland ist als ${professionalTitle} in der EU tätig. Er entwickelt steuerbare, produktionsreife RAG-, Sprach- und KI-Agenten-Systeme für Industrie- und Technologieunternehmen.`,
             imageAlt: 'Porträt von Noel Pascal Schwabenland'
         },
         hero: {
             summaryCompact:
-                'Full-Stack AI Engineer aus der EU. Ich helfe Industrie- und Technologieunternehmen, internes Wissen und komplexe Abläufe in steuerbare, produktionsreife RAG-, Sprach- und KI-Agenten-Systeme zu überführen.',
+                `${professionalTitle} aus der EU. Ich helfe Industrie- und Technologieunternehmen, internes Wissen und komplexe Abläufe in steuerbare, produktionsreife RAG-, Sprach- und KI-Agenten-Systeme zu überführen.`,
             summary:
-                'Full-Stack AI Engineer aus der EU. Ich helfe Industrie- und Technologieunternehmen, internes Wissen und komplexe Abläufe in steuerbare, produktionsreife RAG-, Sprach- und KI-Agenten-Lösungen zu überführen. Dabei berücksichtige ich Daten-Governance und europäische regulatorische Anforderungen.',
+                `${professionalTitle} aus der EU. Ich helfe Industrie- und Technologieunternehmen, internes Wissen und komplexe Abläufe in steuerbare, produktionsreife RAG-, Sprach- und KI-Agenten-Lösungen zu überführen. Dabei berücksichtige ich Daten-Governance und europäische regulatorische Anforderungen.`,
             exploreWork: 'Meine Arbeit entdecken',
             call: 'Rufen Sie mich an',
             portraitAlt: 'Porträt von Noel Pascal Schwabenland',

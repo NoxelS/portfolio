@@ -37,3 +37,6 @@ pnpm-debug.log*
 
 # Ignore rag evaluation outputs
 backend/tests/evaluations/outputs/*.json
+
+# Legal copy rendered by the frontend
+!frontend/content/legal/*.md

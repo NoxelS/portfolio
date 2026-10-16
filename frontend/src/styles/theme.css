@@ -1,6 +1,6 @@
 @theme {
-	--font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-	--font-serif: "Lora", Georgia, "Times New Roman", Times, serif;
+	--font-sans: var(--font-portfolio-source-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	--font-serif: var(--font-portfolio-lora), Georgia, "Times New Roman", Times, serif;
 	--font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
 	--spacing: 0.25rem;
 

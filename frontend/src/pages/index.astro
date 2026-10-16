@@ -14,7 +14,6 @@ import StandoutStory from '../components/StandoutStory.astro';
 import PartnerLogoCarousel from '../components/PartnerLogoCarousel.astro';
 import TechStack from '../components/TechStack.astro';
 import ContactOptions from '../components/ContactOptions.astro';
-import Footer from '../components/Footer.astro';
 import ActionLink from '../components/ActionLink.astro';
 import { Icon } from 'astro-icon/components';
 import { getAllTags, getSortedProjects } from '../data/projects';
@@ -52,13 +51,13 @@ const projectTags = getAllTags();
                 <div class="flex text-canvas text-lg">{localizedCopy.organisations.introduction}</div>
                 <PartnerLogoCarousel
                     partners={[
-                        { src: '/assets/companies/netcom.svg', alt: 'NetCom Sicherheitstechnik' },
-                        { src: '/assets/companies/kpmg.svg', alt: 'KPMG' },
-                        { src: '/assets/companies/uds.svg.webp', alt: 'Saarland University' },
-                        { src: '/assets/companies/gip_logo_neg.png', alt: 'GIP Exyr', className: 'brightness-0 invert' },
-                        { src: '/assets/companies/IGS_NiederOlm_farbig.jpg', alt: 'IGS Nieder Olm' },
-                        { src: '/assets/companies/kclogo.svg', alt: 'KuppingerCole Analysts' },
-                        { src: '/assets/companies/UNIPD_Marchio_STD_RED.png', alt: 'University of Padua' },
+                        { name: 'NetCom Sicherheitstechnik' },
+                        { name: 'KPMG' },
+                        { name: 'Saarland University' },
+                        { name: 'GIP Exyr' },
+                        { name: 'IGS Nieder Olm' },
+                        { name: 'KuppingerCole Analysts' },
+                        { name: 'University of Padua' },
 
                     ]}
                 />
@@ -124,6 +123,5 @@ const projectTags = getAllTags();
             <ContactOptions copy={localizedCopy} />
         </PortfolioSection>
 
-        <Footer copy={localizedCopy} locale={locale} />
     </div>
 </BaseLayout>
