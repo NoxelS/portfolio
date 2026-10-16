@@ -119,17 +119,17 @@ export const copy: Record<Locale, Copy> = {
                 {
                     title: 'AI infrastructure',
                     body: 'I design and build the foundations for running AI: model serving, inference gateways, data storage and deployment infrastructure. This includes cloud and on-premises setups, with monitoring, access controls and operational tooling. I can review an existing platform, plan an architecture, or implement the stack.',
-                    cta: 'See selected projects'
+                    cta: 'Explore infrastructure I deployed'
                 },
                 {
                     title: 'Internal AI systems',
                     body: 'I build internal applications that connect company knowledge, people and workflows. Examples include RAG-based search, assistants, agents and process automation. I work across user interfaces, backend services and integrations, so the result fits the way teams work and the systems they already use.',
-                    cta: 'See selected projects'
+                    cta: 'See production systems I built'
                 },
                 {
                     title: 'ML workflows',
                     body: 'I build data and machine-learning workflows for processing, training, evaluation and inference. This includes research pipelines, batch jobs and model integrations. I can help turn an experimental workflow into a reproducible pipeline, connect it to an application, or improve how it runs in production.',
-                    cta: 'See selected projects'
+                    cta: 'Explore my ML workflows'
                 }
             ]
         },
@@ -246,17 +246,17 @@ export const copy: Record<Locale, Copy> = {
                 {
                     title: 'KI-Infrastruktur',
                     body: 'Ich konzipiere und entwickle die technische Grundlage für den KI-Betrieb: Model Serving, Inferenz-Gateways, Datenspeicherung und Bereitstellung. Dazu gehören Cloud- und On-Premises-Umgebungen mit Monitoring, Zugriffskontrollen und Betriebswerkzeugen. Ich prüfe bestehende Plattformen, plane Architekturen und setze die Infrastruktur um.',
-                    cta: 'Ausgewählte Projekte ansehen'
+                    cta: 'Meine KI-Infrastruktur entdecken'
                 },
                 {
                     title: 'Interne KI-Systeme',
                     body: 'Ich entwickle interne Anwendungen, die Unternehmenswissen, Menschen und Arbeitsabläufe verbinden. Dazu zählen RAG-basierte Suche, Assistenten, Agenten und Prozessautomatisierung. Ich verbinde Benutzeroberflächen, Backend-Dienste und Schnittstellen zu Anwendungen, die zu den bestehenden Prozessen und Systemen passen.',
-                    cta: 'Ausgewählte Projekte ansehen'
+                    cta: 'Produktive KI-Systeme ansehen'
                 },
                 {
                     title: 'ML-Workflows',
                     body: 'Ich entwickle Daten- und Machine-Learning-Workflows für Verarbeitung, Training, Evaluation und Inferenz. Dazu gehören Forschungspipelines, Batch-Verarbeitung und Modellintegrationen. Ich überführe experimentelle Abläufe in reproduzierbare Pipelines, binde sie in Anwendungen ein und verbessere ihren Betrieb.',
-                    cta: 'Ausgewählte Projekte ansehen'
+                    cta: 'Meine ML-Workflows entdecken'
                 }
             ]
         },
