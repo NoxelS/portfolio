@@ -152,7 +152,7 @@ export const copy: Record<Locale, Copy> = {
                 },
                 {
                     title: 'Software Development',
-                    body: 'With more than six years of experience building and maintaining software for real users, I know that an application is only as strong as its foundations. I bring cloud infrastructure experience, sound engineering principles, and software architecture to create robust, maintainable systems. Coding agents can accelerate delivery, but they need clear architecture and informed direction.',
+                    body: 'With more than six years of experience building and maintaining software for real users, I know that an application is only as strong as its foundations. I bring cloud infrastructure experience and software architecture principles to create robust, maintainable systems. Coding agents can accelerate delivery, but they need clear architecture and informed direction.',
                 },
                 {
                     title: 'AI Systems',
