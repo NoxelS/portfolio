@@ -4,7 +4,9 @@ import { defaultSeo } from '../data/site';
 import { copy } from '../i18n';
 import { getSortedProjects, projectFilterLabels } from '../data/projects';
 import { setPublicDocumentCache } from '../lib/cache';
+import { buildInfo } from '../lib/build-info';
 import { getPublicEnv } from '../lib/public-env';
+import { legalCopy, operator } from '../data/legal';
 
 // This endpoint is also the target of the root route's content negotiation.
 // Keep it on-demand so Astro can rewrite / to /index.md in server output.
@@ -12,6 +14,8 @@ export const prerender = false;
 
 export function getIndexMarkdownBody(): string {
 	const services = copy.en.services;
+	const footerLabels = legalCopy.en;
+	const currentYear = new Date().getFullYear();
 	const contactEmail = getPublicEnv('PUBLIC_CONTACT_EMAIL');
 	const contactPhone = getPublicEnv('PUBLIC_CONTACT_PHONE');
 	const contactPhoneSecondary = getPublicEnv('PUBLIC_CONTACT_PHONE_SECONDARY');
@@ -31,17 +35,33 @@ export function getIndexMarkdownBody(): string {
 		.join('\n\n---\n\n');
 
 	const contact = [
-		contactEmail ? `- Email: [${contactEmail}](mailto:${contactEmail})` : '',
-		contactPhone ? `- Germany: ${contactPhone}` : '',
-		contactPhoneSecondary ? `- Italy: ${contactPhoneSecondary}` : '',
-		`- Schedule: [book a call](${scheduleUrl})`,
+		contactEmail ? `- Email: [${contactEmail}](mailto:${contactEmail})` : `- ${copy.en.contact.missingEmail}`,
+		contactPhone ? `- 🇩🇪 ${contactPhone}` : '',
+		contactPhoneSecondary ? `- 🇮🇹 ${contactPhoneSecondary}` : '',
+		`- [${copy.en.contact.schedule}](${scheduleUrl})`,
 	].filter(Boolean).join('\n');
 
 	const body = `# ${defaultSeo.authorName}
 
+**Page title:** ${copy.en.seo.title}
+
+**Page description:** ${copy.en.seo.description}
+
 > ${copy.en.hero.summary}
 
-I am currently available for 20 hours per week.
+## ${copy.en.hero.principle.replace(/<br\s*\/?\s*>/gi, ' ')}
+
+[${copy.en.hero.exploreWork}](${defaultSeo.site}/en/#work) · [${copy.en.hero.contact}](${defaultSeo.site}/en/#contact)
+
+${copy.en.hero.socials}: [GitHub](https://github.com/NoxelS) · [LinkedIn](https://www.linkedin.com/in/noel-schwabenland/) · [Malt](https://www.malt.de/profile/noelschwabenland)
+
+${copy.en.hero.performanceTooltip.replace('{fcp}', 'measured at runtime')}
+
+Languages: [English](${defaultSeo.site}/en/) · [German](${defaultSeo.site}/de/)
+
+> ${copy.en.work.quote}
+>
+> ${copy.en.work.subquote}
 
 ## ${services.title}
 
@@ -49,20 +69,27 @@ ${services.description}
 
 ${services.areas.map((area) => `### ${area.title}\n\n${area.body}\n\n[${area.cta}](${defaultSeo.site}/en/#projects)`).join('\n\n')}
 
-- Website: ${defaultSeo.site}/
-- GitHub: https://github.com/NoxelS
-- LinkedIn: https://www.linkedin.com/in/noel-schwabenland/
+> ${copy.en.organisations.quote}
 
-## Machine-readable resources
+${copy.en.organisations.introduction}
 
-- Markdown portfolio: ${defaultSeo.site}/index.md
-- LLM-friendly overview: ${defaultSeo.site}/llms.txt
+### Organisations
 
-## Selected work
+- NetCom Sicherheitstechnik
+- KPMG
+- Saarland University
+- GIP Exyr
+- IGS Nieder-Olm
+- KuppingerCole Analysts
+- University of Padua
 
-From private AI platforms and voice agents to high-performance research pipelines, these projects solve real operational constraints with systems teams can use, govern, and scale.
+## ${copy.en.projects.title}
+
+${copy.en.projects.description}
 
 ${projects}
+
+${copy.en.projects.selected}
 
 [${copy.en.projects.exploreBackground}](${defaultSeo.site}/en/#background) · [${copy.en.projects.contact}](${defaultSeo.site}/en/#contact)
 
@@ -78,19 +105,15 @@ ${copy.en.work.chapters.map((chapter) => `### ${chapter.title}\n\n${chapter.body
 
 [${copy.en.work.exploreStack}](${defaultSeo.site}/en/#tech-stack) · [${copy.en.work.contact}](${defaultSeo.site}/en/#contact)
 
-## Organisations I have worked alongside
+> ${copy.en.stack.quote}
+>
+> ${copy.en.stack.subquote}
 
-- NetCom Sicherheitstechnik
-- KPMG
-- Saarland University
-- GIP Exyr
-- IGS Nieder-Olm
-- KuppingerCole Analysts
-- University of Padua
+## ${copy.en.stack.title}
 
-## Tech stack
+${copy.en.stack.description}
 
-Technologies marked **production** have been used in real production environments. Technologies marked **research** have been used in research and personal projects. This is a selection of the libraries and tools I use regularly.
+${copy.en.stack.production} (**production**). ${copy.en.stack.research} (**research**).
 
 ### Frontend
 
@@ -169,13 +192,65 @@ ${['Angular', 'Vue.js', 'HTML', 'CSS', 'SCSS', 'JavaScript', 'TypeScript', 'Tail
 
 [${copy.en.stack.contact}](${defaultSeo.site}/en/#contact)
 
-## Start a conversation
+${copy.en.stack.selectionNote}
 
-The first conversation is free and comes with no obligation. We can talk through your goals, see whether we are a good fit, and explore how to create something valuable together. I am available during European business hours, 08:00–18:00 CET.
+${copy.en.stack.questions}
+
+> ${copy.en.contact.quote}
+>
+> ${copy.en.contact.subquote}
+
+## ${copy.en.contact.title}
+
+${copy.en.contact.description}
+
+### ${copy.en.contact.directCallTitle}
+
+${copy.en.contact.directCallBody}
+
+### ${copy.en.contact.emailTitle}
+
+${copy.en.contact.emailBody}
+
+### ${copy.en.contact.scheduleTitle}
+
+${copy.en.contact.scheduleBody}
 
 ${contact}
 
-Nothing beats a real conversation. Even though I work with AI agents, I believe personal connections are irreplaceable, so I always make time for face-to-face meetings and conversations.
+## ${footerLabels.title}
+
+${operator.name}
+
+${footerLabels.activity}
+
+${operator.street}
+
+${operator.city}, ${footerLabels.country}
+
+P. IVA ${operator.vat}
+
+### ${footerLabels.contact}
+
+- [${operator.email}](mailto:${operator.email})
+- [${operator.phone}](tel:${operator.phoneHref})
+
+### ${footerLabels.title}
+
+- [${footerLabels.notice}](${defaultSeo.site}/en/legal-notice/)
+- [${footerLabels.privacy}](${defaultSeo.site}/en/privacy/)
+- [${footerLabels.cookies}](${defaultSeo.site}/en/cookies/)
+- [${footerLabels.settings}](${defaultSeo.site}/en/cookies/#cookie-settings)
+
+© ${currentYear} ${operator.name}. ${copy.en.contact.rights}
+
+- [${copy.en.contact.agents}](${defaultSeo.site}/index.md)
+- v${buildInfo.version}
+
+## Machine-readable resources
+
+- Markdown portfolio: ${defaultSeo.site}/index.md
+- LLM-friendly overview: ${defaultSeo.site}/llms.txt
 `;
 
 	return body;
