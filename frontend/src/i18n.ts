@@ -146,7 +146,7 @@ export const copy: Record<Locale, Copy> = {
             subquote:
                 'I help teams find where AI can improve a process, then design and build a system that fits their people, data, and infrastructure.',
             banner: {
-                quote: 'Good engineering starts with good questions',
+                quote: 'Good engineering starts with good questions.',
                 subquote: 'I combine scientific curiosity with practical experience to understand problems, question assumptions, and choose a useful approach.'
             },
             exploreStack: 'Explore my tech stack',
@@ -169,7 +169,7 @@ export const copy: Record<Locale, Copy> = {
             ]
         },
         organisations: {
-            quote: 'Not only theory, but proven practice',
+            quote: 'Not only theory, but proven practice.',
             introduction: 'I already got the chance to have contributed alongside some awesome organisations:'
         },
         projects: {
@@ -196,7 +196,7 @@ export const copy: Record<Locale, Copy> = {
             shown: count => `${count} ${count === 1 ? 'project' : 'projects'} shown`
         },
         stack: {
-            quote: 'From ideas and requirements to reality',
+            quote: 'From ideas and requirements to reality.',
             subquote: 'With a broad skill set and a passion for learning, I help bring ideas to life.',
             title: 'My Tech Stack',
             description:
@@ -213,7 +213,7 @@ export const copy: Record<Locale, Copy> = {
             groups: ['Frontend', 'Backend', 'Databases', 'Cloud & Infra', 'MLOps', 'Libraries*']
         },
         contact: {
-            quote: 'Nothing beats a real conversation',
+            quote: 'Nothing beats a real conversation.',
             subquote:
                 'Even though I work with AI agents, I believe that personal connections are irreplaceable. So I always make time for face-to-face meetings and conversations.',
             title: "Let's build awesome things together",
@@ -281,7 +281,7 @@ export const copy: Record<Locale, Copy> = {
             subquote:
                 'Ich helfe Teams, sinnvolle Einsatzmöglichkeiten zu finden und passende KI-Systeme zu entwickeln, die sich in ihre Prozesse und Infrastruktur einfügen.',
             banner: {
-                quote: 'Gute technische Lösungen beginnen mit guten Fragen',
+                quote: 'Gute technische Lösungen beginnen mit guten Fragen.',
                 subquote: 'Ich verbinde wissenschaftliche Neugier mit praktischer Erfahrung, um Probleme zu verstehen, Annahmen zu hinterfragen und einen sinnvollen Lösungsweg zu wählen.'
             },
             exploreStack: 'Meinen Tech-Stack entdecken',
@@ -304,7 +304,7 @@ export const copy: Record<Locale, Copy> = {
             ]
         },
         organisations: {
-            quote: 'Nicht nur Theorie, sondern erprobte Praxis',
+            quote: 'Nicht nur Theorie, sondern erprobte Praxis.',
             introduction: 'Ich hatte bereits die Gelegenheit, mit großartigen Organisationen zusammenzuarbeiten:'
         },
         projects: {
@@ -331,7 +331,7 @@ export const copy: Record<Locale, Copy> = {
             shown: count => `${count} ${count === 1 ? 'Projekt' : 'Projekte'} angezeigt`
         },
         stack: {
-            quote: 'Von Ideen und Anforderungen zur Realität',
+            quote: 'Von Ideen und Anforderungen zur Realität.',
             subquote: 'Mit einem breiten Skill-Set und Freude am Lernen helfe ich dabei, Ideen in die Praxis zu bringen.',
             title: 'Mein Tech-Stack',
             description:
@@ -348,7 +348,7 @@ export const copy: Record<Locale, Copy> = {
             groups: ['Frontend', 'Backend', 'Datenbanken', 'Cloud & Infrastruktur', 'MLOps', 'Bibliotheken*']
         },
         contact: {
-            quote: 'Nichts ersetzt ein echtes Gespräch',
+            quote: 'Nichts ersetzt ein echtes Gespräch.',
             subquote:
                 'Auch wenn ich mit KI-Agenten arbeite, sind persönliche Beziehungen für mich unersetzlich. Deshalb nehme ich mir immer Zeit für persönliche Treffen und Gespräche.',
             title: 'Gemeinsam Ideen in die Praxis bringen',
