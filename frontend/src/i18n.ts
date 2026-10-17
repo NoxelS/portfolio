@@ -130,7 +130,7 @@ export const copy: Record<Locale, Copy> = {
                     cta: 'Explore infrastructure I deployed'
                 },
                 {
-                    title: 'Internal AI systems',
+                    title: 'AI systems',
                     body: 'I build internal applications that connect company knowledge, people and workflows. Examples include RAG-based search, assistants, agents and process automation. I work across user interfaces, backend services and integrations, so the result fits the way teams work and the systems they already use.',
                     cta: 'See production systems I built'
                 },
@@ -142,9 +142,9 @@ export const copy: Record<Locale, Copy> = {
             ]
         },
         work: {
-            quote: "Complex problems don't always require complex solutions",
+            quote: 'From business challenge to AI that works in practice.',
             subquote:
-                'Sometimes the simplest approach is the best. My background in both technical and business domains allows me to bridge the gap between these worlds.',
+                'I help teams find where AI can improve a process, then design and build a system that fits their people, data, and infrastructure.',
             banner: {
                 quote: 'Good engineering starts with good questions',
                 subquote: 'I combine scientific curiosity with practical experience to understand problems, question assumptions, and choose a useful approach.'
@@ -277,9 +277,9 @@ export const copy: Record<Locale, Copy> = {
             ]
         },
         work: {
-            quote: 'Komplexe Probleme brauchen nicht immer komplexe Lösungen',
+            quote: 'Von der geschäftlichen Herausforderung zur KI, die im Alltag funktioniert.',
             subquote:
-                'Manchmal ist der einfachste Ansatz der beste. Mein Hintergrund in technischen und wirtschaftlichen Bereichen hilft mir, beide Welten zu verbinden.',
+                'Ich helfe Teams, sinnvolle Einsatzmöglichkeiten zu finden und passende KI-Systeme zu entwickeln, die sich in ihre Prozesse und Infrastruktur einfügen.',
             banner: {
                 quote: 'Gute technische Lösungen beginnen mit guten Fragen',
                 subquote: 'Ich verbinde wissenschaftliche Neugier mit praktischer Erfahrung, um Probleme zu verstehen, Annahmen zu hinterfragen und einen sinnvollen Lösungsweg zu wählen.'
