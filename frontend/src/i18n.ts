@@ -249,7 +249,7 @@ export const copy: Record<Locale, Copy> = {
             exploreWork: 'Meine Leistungen entdecken',
             contact: 'Kontakt aufnehmen',
             portraitAlt: 'Porträt von Noel Pascal Schwabenland',
-            principle: 'Ich entwickle mit Blick auf Skalierbarkeit, Wartbarkeit und Performance',
+            principle: 'Ich entwickle Lösungen, <br/> die skalierbar, wartbar und performant bleiben.',
             performanceLabel: 'Details zur Website-Performance anzeigen',
             performanceTooltip: /* 'Server-Auslieferung: {server} ms. ' + */ 'FCP: {fcp} ms. Ja, ich habe sogar meine Portfolio-Website überoptimiert.',
             socials: 'Meine Profile'
