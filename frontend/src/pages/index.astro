@@ -24,8 +24,8 @@ export const prerender = false;
 
 const { locale = 'en' } = Astro.props as { locale?: Locale };
 const localizedCopy = copy[locale];
-const projects = getSortedProjects();
-const projectTags = getAllTags();
+const projects = getSortedProjects(locale);
+const projectFilters = getAllTags(locale);
 ---
 
 <BaseLayout locale={locale} title={localizedCopy.seo.title} description={localizedCopy.seo.description} canonicalPath={`/${locale}/`} imageAlt={localizedCopy.seo.imageAlt}>
@@ -72,7 +72,7 @@ const projectTags = getAllTags();
             noPadding
         >
             <div class="grid gap-8">
-                <ProjectCarousel projects={projects} tags={projectTags} copy={localizedCopy} />
+                <ProjectCarousel projects={projects} tags={projectFilters} copy={localizedCopy} />
                 <div class="grid gap-5 flex flex-col">
                     <p class="text-lg leading-relaxed text-muted-strong lg:max-w-2/3">
                         {localizedCopy.projects.selected}

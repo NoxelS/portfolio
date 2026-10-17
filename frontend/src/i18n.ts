@@ -50,9 +50,17 @@ export type Copy = {
         filterBy: string;
         filterLabel: string;
         carouselLabel: string;
+        stepsLabel: string;
+        tagsLabel: string;
+        logoLabel: string;
+        openCompanyWebsite: string;
         noMatches: string;
         previous: string;
         next: string;
+        previousAriaLabel: string;
+        nextAriaLabel: string;
+        shownSingular: string;
+        shownPlural: string;
         shown: (count: number) => string;
     };
     stack: {
@@ -172,11 +180,19 @@ export const copy: Record<Locale, Copy> = {
             exploreBackground: 'About my background',
             contact: 'Get in touch',
             filterBy: 'Filter by',
-            filterLabel: 'Filter projects by tag',
+            filterLabel: 'Filter projects by category',
             carouselLabel: 'Projects carousel',
-            noMatches: 'No projects match the selected tags. Select one or more tags to see projects.',
+            stepsLabel: 'case-study steps',
+            tagsLabel: 'project tags',
+            logoLabel: 'Company logo',
+            openCompanyWebsite: 'Open company website in a new tab',
+            noMatches: 'No projects match the selected categories. Select one or more categories to see projects.',
             previous: 'Previous',
             next: 'Next',
+            previousAriaLabel: 'Show previous project',
+            nextAriaLabel: 'Show next project',
+            shownSingular: '{count} project shown',
+            shownPlural: '{count} projects shown',
             shown: count => `${count} ${count === 1 ? 'project' : 'projects'} shown`
         },
         stack: {
@@ -299,11 +315,19 @@ export const copy: Record<Locale, Copy> = {
             exploreBackground: 'Über meinen Hintergrund',
             contact: 'Kontakt aufnehmen',
             filterBy: 'Filtern nach',
-            filterLabel: 'Projekte nach Tags filtern',
+            filterLabel: 'Projekte nach Kategorie filtern',
             carouselLabel: 'Projektkarussell',
-            noMatches: 'Keine Projekte entsprechen den ausgewählten Tags. Über die Filter lassen sich passende Projekte auswählen.',
+            stepsLabel: 'Schritte der Fallstudie',
+            tagsLabel: 'Projekt-Tags',
+            logoLabel: 'Unternehmenslogo',
+            openCompanyWebsite: 'Unternehmenswebsite in neuem Tab öffnen',
+            noMatches: 'Keine Projekte entsprechen den ausgewählten Kategorien. Über die Filter lassen sich passende Projekte auswählen.',
             previous: 'Zurück',
             next: 'Weiter',
+            previousAriaLabel: 'Vorheriges Projekt anzeigen',
+            nextAriaLabel: 'Nächstes Projekt anzeigen',
+            shownSingular: '{count} Projekt angezeigt',
+            shownPlural: '{count} Projekte angezeigt',
             shown: count => `${count} ${count === 1 ? 'Projekt' : 'Projekte'} angezeigt`
         },
         stack: {

@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 
 import { defaultSeo } from '../data/site';
 import { copy } from '../i18n';
-import { getSortedProjects } from '../data/projects';
+import { getSortedProjects, projectFilterLabels } from '../data/projects';
 import { setPublicDocumentCache } from '../lib/cache';
 import { getPublicEnv } from '../lib/public-env';
 
@@ -17,12 +17,12 @@ export function getIndexMarkdownBody(): string {
 	const contactPhoneSecondary = getPublicEnv('PUBLIC_CONTACT_PHONE_SECONDARY');
 	const scheduleUrl = getPublicEnv('PUBLIC_KOALENDAR_URL', 'https://koalendar.com/e/noel-pascal-schwabenland');
 
-	const projects = getSortedProjects()
+	const projects = getSortedProjects('en')
 		.map((project) => {
 			const company = project.companyUrl ? ` — [organisation](${project.companyUrl})` : '';
 			const metadata = [
 				project.tags.length ? `Tags: ${project.tags.join(', ')}` : '',
-				project.filters.length ? `Categories: ${project.filters.join(', ')}` : '',
+				project.filters.length ? `Categories: ${project.filters.map(filter => projectFilterLabels.en[filter]).join(', ')}` : '',
 			].filter(Boolean);
 			const steps = project.steps.map((step) => `### ${step.label}\n\n${step.content}`).join('\n\n');
 
