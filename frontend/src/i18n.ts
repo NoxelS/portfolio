@@ -196,8 +196,8 @@ export const copy: Record<Locale, Copy> = {
             shown: count => `${count} ${count === 1 ? 'project' : 'projects'} shown`
         },
         stack: {
-            quote: 'From ideas and requirements to reality.',
-            subquote: 'With a broad skill set and a passion for learning, I help bring ideas to life.',
+            quote: 'I choose the technologies that best fit the challenge.',
+            subquote: 'I assess each technology for reliability, maintainability, and how well it holds up under real production demands.',
             title: 'My Tech Stack',
             description:
                 "Quickly check whether our tech stacks already align. If a technology is missing, that's no issue. I only list technologies I'm comfortable with. I'm always ready to learn and can quickly find my way around a new stack.",
@@ -331,8 +331,8 @@ export const copy: Record<Locale, Copy> = {
             shown: count => `${count} ${count === 1 ? 'Projekt' : 'Projekte'} angezeigt`
         },
         stack: {
-            quote: 'Von Ideen und Anforderungen zur Realität.',
-            subquote: 'Mit einem breiten Skill-Set und Freude am Lernen helfe ich dabei, Ideen in die Praxis zu bringen.',
+            quote: 'Ich wähle die Technologien, die am besten zur jeweiligen Herausforderung passen.',
+            subquote: 'Ich beurteile jede Technologie danach, wie zuverlässig und wartbar sie ist und ob sie den Anforderungen im Produktivbetrieb standhält.',
             title: 'Mein Tech-Stack',
             description:
                 'Die Übersicht zeigt eine Auswahl der Technologien, mit denen ich sicher arbeite. Fehlt eine Technologie, ist das kein Hindernis: Ich lerne gern und finde mich schnell in neuen Stacks zurecht.',
