@@ -1,28 +1,51 @@
 ---
+import agentsIllustration from '../assets/illustrations/agents.svg?raw';
+import infrastructureIllustration from '../assets/illustrations/infrastructure.svg?raw';
+import pipelinesIllustration from '../assets/illustrations/pipelines.svg?raw';
+import transformationIllustration from '../assets/illustrations/transformation.svg?raw';
 import ActionLink from './ActionLink.astro';
 import type { Copy } from '../i18n';
 
 const { copy } = Astro.props as { copy: Copy['services'] };
+
+const illustrations = {
+    agents: agentsIllustration,
+    infrastructure: infrastructureIllustration,
+    pipelines: pipelinesIllustration,
+    transformation: transformationIllustration,
+};
 ---
 
-<div class="grid w-full gap-6 md:gap-8">
-    <div class="grid w-full min-w-0 grid-cols-1 gap-8 md:gap-10 lg:grid-cols-[repeat(3,minmax(0,1fr))] lg:grid-rows-[auto_1fr_auto] lg:gap-x-24 lg:gap-y-4">
-        {copy.areas.map((area, index) => (
+<div class="grid w-full min-w-0 gap-8">
+    <div class="grid min-w-0 grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-x-16 lg:gap-y-20 xl:gap-x-20">
+        {copy.areas.map((area) => (
             <article
-                class:list={[
-                    'motion-reveal group row-span-3 grid h-full min-w-0 w-full grid-cols-1 gap-4 pl-0 lg:grid-rows-subgrid',
-                    index === 0 && 'lg:delay-0',
-                    index === 1 && 'lg:delay-150',
-                    index === 2 && 'lg:delay-300',
-                ]}
+                class="motion-reveal grid min-w-0 grid-cols-1 items-start gap-6 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-6 xl:grid-cols-[8rem_minmax(0,1fr)]"
                 data-motion-reveal
             >
-                <h3 class="lora min-w-0 break-words hyphens-auto text-2xl leading-none uppercase text-foreground sm:text-3xl">{area.title}</h3>
-                <p class="min-w-0 text-base leading-relaxed text-muted-strong">{area.body}</p>
-                <ActionLink href="#projects" variant="secondary" class="w-full min-w-0 justify-between text-left" icon="iconoir:arrow-down">
-                    {area.cta}
-                </ActionLink>
+                <div class="pointer-events-none flex min-h-28 w-28 items-start self-stretch bg-primary p-2 text-white motion-safe:[&_[data-service-static]]:hidden motion-reduce:[&_[data-service-motion]]:hidden xl:min-h-32 xl:w-32 xl:p-3" aria-hidden="true">
+                    <Fragment set:html={illustrations[area.illustration]} />
+                </div>
+                <div class="grid min-w-0 gap-5">
+                    <header class="grid min-w-0 gap-3">
+                        <h3 class="lora min-w-0 break-words hyphens-auto text-2xl leading-tight uppercase text-foreground sm:text-3xl">{area.title}</h3>
+                        <p class="max-w-3xl text-base leading-relaxed text-muted-strong">{area.body}</p>
+                    </header>
+                    <ul class="grid min-w-0 list-disc content-start gap-y-2 pl-5 text-sm leading-relaxed text-muted-strong marker:text-foreground/50 sm:grid-cols-2 sm:gap-x-6">
+                        {area.examples.map((example) => (
+                            <li class="min-w-0 break-words hyphens-auto">{example}</li>
+                        ))}
+                    </ul>
+                </div>
             </article>
         ))}
+    </div>
+    <div class="mt-8 flex flex-wrap gap-3">
+        <ActionLink href="#projects" variant="primary" class="max-w-full text-left" icon="iconoir:arrow-down">
+            {copy.cta}
+        </ActionLink>
+        <ActionLink href="#contact" variant="secondary" class="max-w-full text-left" icon="iconoir:arrow-down">
+            {copy.contact}
+        </ActionLink>
     </div>
 </div>

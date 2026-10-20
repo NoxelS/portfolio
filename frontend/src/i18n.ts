@@ -28,7 +28,9 @@ export type Copy = {
     services: {
         title: string;
         description: string;
-        areas: { title: string; body: string; cta: string }[];
+        areas: { illustration: 'agents' | 'infrastructure' | 'pipelines' | 'transformation'; title: string; body: string; examples: string[] }[];
+        cta: string;
+        contact: string;
     };
     work: {
         quote: string;
@@ -111,7 +113,7 @@ export const copy: Record<Locale, Copy> = {
                 `I’m an EU-based freelance Applied AI Engineer building and deploying production AI systems, from inference infrastructure to autonomous agents and enterprise applications, with a focus on reliability, open technologies, and data sovereignty.`,
             summary:
                 `I’m an EU-based freelance Applied AI Engineer specialising in building and deploying production AI systems. I work across the AI stack, from model serving and inference infrastructure to autonomous agents and enterprise applications, with a focus on reliability, open technologies, and data sovereignty.`,
-            exploreWork: 'Explore what I build',
+            exploreWork: 'Explore how I can help',
             contact: 'Get in touch',
             portraitAlt: 'Portrait of Noel Pascal Schwabenland',
             principle: 'I build with scalability, <br/> maintainability and performance in mind',
@@ -120,26 +122,65 @@ export const copy: Record<Locale, Copy> = {
             socials: 'My socials'
         },
         services: {
-            title: 'What I build',
+            title: 'How I can help',
             description:
-                'I help business and engineering teams design, build and improve AI systems, with consulting and full-stack delivery across infrastructure, data, models, backends and user interfaces.',
+                'I help companies identify useful applications for AI, build reliable systems around them, and prepare their teams and technology for adoption.',
             areas: [
                 {
-                    title: 'AI infrastructure',
-                    body: 'I design and build the foundations for running AI: model serving, inference gateways, data storage and deployment infrastructure. This includes cloud and on-premises setups, with monitoring, access controls and operational tooling. I can review an existing platform, plan an architecture, or implement the stack.',
-                    cta: 'Explore infrastructure I deployed'
+                    illustration: 'agents',
+                    title: 'AI agents & applications',
+                    body: 'I build AI applications that help teams access knowledge, automate work and improve everyday operations. This includes agents and multi-agent systems that fit existing processes, with visibility into how tasks are carried out.',
+                    examples: [
+                        'AI agents & multi-agent systems',
+                        'Voice agents & conversational applications',
+                        'Workflow & process automation',
+                        'Knowledge assistants & search',
+                        'Agent Observability',
+                        'Integration with existing systems'
+                    ]
                 },
                 {
-                    title: 'AI systems',
-                    body: 'I build AI applications that connect company knowledge, people and workflows. Examples include RAG-based search, assistants and agent systems, speech recognition and synthesis pipelines, and process automation. I work across user interfaces, backend services and integrations, so the result fits the way teams work and the systems they already use.',
-                    cta: 'See production systems I built'
+                    illustration: 'infrastructure',
+                    title: 'AI platforms & infrastructure',
+                    body: 'I build the foundations companies need to run AI reliably, expand its use and retain control of their data. The platform fits the organisation’s existing systems, operating requirements and preferred deployment model.',
+                    examples: [
+                        'Private AI platforms',
+                        'Cloud & on-premises deployment',
+                        'Shared access to AI models',
+                        'Data control & access management',
+                        'Monitoring & reliable operations',
+                        'Scalability & cost management'
+                    ]
                 },
                 {
-                    title: 'ML workflows',
-                    body: 'I build data and machine-learning workflows for processing, training, evaluation and inference. This includes time-series analysis and forecasting, research pipelines, batch jobs and model integrations. I can help turn an experimental workflow into a reproducible pipeline, connect it to an application, or improve how it runs in production.',
-                    cta: 'Explore my ML workflows'
+                    illustration: 'pipelines',
+                    title: 'Data & machine learning',
+                    body: 'I help teams turn data and experimental models into dependable tools for analysis, forecasting and operational use. The work covers preparing data, evaluating results and connecting models to existing applications.',
+                    examples: [
+                        'Data preparation & processing',
+                        'Model development & evaluation',
+                        'Forecasting & data analysis',
+                        'Automated data workflows',
+                        'Research & scientific computing',
+                        'Integration into business applications'
+                    ]
+                },
+                {
+                    illustration: 'transformation',
+                    title: 'AI Transformation',
+                    body: 'I help companies understand where AI can improve their business and what they need to adopt it. Together, we assess readiness, prioritise opportunities and define a practical path from initial projects to wider use.',
+                    examples: [
+                        'AI readiness assessments',
+                        'Use-case discovery & prioritisation',
+                        'Business process improvement',
+                        'Data & technology readiness',
+                        'Adoption roadmaps & pilot planning',
+                        'Team enablement & knowledge transfer'
+                    ]
                 }
-            ]
+            ],
+            cta: 'View selected projects',
+            contact: 'Let’s talk about your challenges'
         },
         work: {
             quote: 'From business challenge to AI that works in practice.',
@@ -255,26 +296,65 @@ export const copy: Record<Locale, Copy> = {
             socials: 'Meine Profile'
         },
         services: {
-            title: 'Was ich entwickle',
+            title: 'Meine Leistungen',
             description:
-                'Ich unterstütze Fachbereiche und Entwicklungsteams bei der Konzeption, Entwicklung und Verbesserung von KI-Systemen. Meine Arbeit umfasst Beratung und Full-Stack-Umsetzung: Infrastruktur, Daten, Modelle, Backend und Benutzeroberflächen.',
+                'Ich unterstütze Unternehmen dabei, sinnvolle KI-Anwendungen zu identifizieren, zuverlässige Systeme dafür zu entwickeln und Teams sowie Technologie auf die Einführung vorzubereiten.',
             areas: [
                 {
-                    title: 'KI-Infrastruktur',
-                    body: 'Ich konzipiere und entwickle die technische Grundlage für den KI-Betrieb: Model Serving, Inferenz-Gateways, Datenspeicherung und Bereitstellung. Dazu gehören Cloud- und On-Premises-Umgebungen mit Monitoring, Zugriffskontrollen und Betriebswerkzeugen. Ich prüfe bestehende Plattformen, plane Architekturen und setze die Infrastruktur um.',
-                    cta: 'Meine KI-Infrastruktur entdecken'
+                    illustration: 'agents',
+                    title: 'KI-Agenten & Anwendungen',
+                    body: 'Ich entwickle KI-Anwendungen, die Teams den Zugang zu Wissen erleichtern, Aufgaben automatisieren und Abläufe im Alltag verbessern. Dazu gehören Agenten und Multi-Agenten-Systeme, die sich in bestehende Prozesse einfügen und deren Arbeitsschritte nachvollziehbar bleiben.',
+                    examples: [
+                        'KI-Agenten & Multi-Agenten-Systeme',
+                        'Sprachagenten & Dialoganwendungen',
+                        'Workflow- & Prozessautomatisierung',
+                        'Wissensassistenten & Suche',
+                        'Agent Observability',
+                        'Integration in bestehende Systeme'
+                    ]
                 },
                 {
-                    title: 'KI-Anwendungen',
-                    body: 'Ich entwickle KI-Anwendungen, die Unternehmenswissen, Menschen und Arbeitsabläufe verbinden. Dazu zählen RAG-basierte Suche, Assistenten und Agentensysteme, Pipelines für Spracherkennung und Sprachsynthese sowie Prozessautomatisierung. Ich verbinde Benutzeroberflächen, Backend-Dienste und Schnittstellen zu Anwendungen, die zu den bestehenden Prozessen und Systemen passen.',
-                    cta: 'Produktive KI-Systeme ansehen'
+                    illustration: 'infrastructure',
+                    title: 'KI-Plattformen & Infrastruktur',
+                    body: 'Ich schaffe die technischen Grundlagen, damit Unternehmen KI zuverlässig betreiben, ihren Einsatz ausweiten und die Kontrolle über ihre Daten behalten können. Die Plattform passt zu bestehenden Systemen, betrieblichen Anforderungen und dem gewünschten Bereitstellungsmodell.',
+                    examples: [
+                        'Private KI-Plattformen',
+                        'Cloud- & On-Premises-Bereitstellung',
+                        'Gemeinsamer Zugriff auf KI-Modelle',
+                        'Datenkontrolle & Zugriffsverwaltung',
+                        'Monitoring & zuverlässiger Betrieb',
+                        'Skalierbarkeit & Kostenmanagement'
+                    ]
                 },
                 {
-                    title: 'ML-Workflows',
-                    body: 'Ich entwickle Daten- und Machine-Learning-Workflows für Verarbeitung, Training, Evaluation und Inferenz. Dazu gehören Zeitreihenanalyse und -prognosen, Forschungspipelines, Batch-Verarbeitung und Modellintegrationen. Ich überführe experimentelle Abläufe in reproduzierbare Pipelines, binde sie in Anwendungen ein und verbessere ihren Betrieb.',
-                    cta: 'Meine ML-Workflows entdecken'
+                    illustration: 'pipelines',
+                    title: 'Daten & maschinelles Lernen',
+                    body: 'Ich unterstütze Teams dabei, Daten und experimentelle Modelle in verlässliche Werkzeuge für Analyse, Prognosen und den operativen Einsatz zu überführen. Dazu gehören die Datenaufbereitung, die Bewertung von Ergebnissen und die Einbindung von Modellen in bestehende Anwendungen.',
+                    examples: [
+                        'Datenaufbereitung & Verarbeitung',
+                        'Modellentwicklung & Evaluation',
+                        'Prognosen & Datenanalyse',
+                        'Automatisierte Datenabläufe',
+                        'Forschung & wissenschaftliches Rechnen',
+                        'Integration in Unternehmensanwendungen'
+                    ]
+                },
+                {
+                    illustration: 'transformation',
+                    title: 'KI-Transformation',
+                    body: 'Ich unterstütze Unternehmen dabei, sinnvolle Einsatzmöglichkeiten für KI zu erkennen und die Voraussetzungen für ihre Einführung zu schaffen. Gemeinsam bewerten wir die Ausgangslage, priorisieren Vorhaben und planen den Weg von ersten Projekten zum breiteren Einsatz.',
+                    examples: [
+                        'Bewertung der KI-Bereitschaft',
+                        'Anwendungsfälle finden & priorisieren',
+                        'Geschäftsprozesse verbessern',
+                        'Daten & Technologie vorbereiten',
+                        'Einführungspläne & Pilotprojekte',
+                        'Teams befähigen & Wissen übertragen'
+                    ]
                 }
-            ]
+            ],
+            cta: 'Ausgewählte Projekte ansehen',
+            contact: 'Herausforderungen gemeinsam besprechen'
         },
         work: {
             quote: 'Von der geschäftlichen Herausforderung zur KI, die im Alltag funktioniert.',

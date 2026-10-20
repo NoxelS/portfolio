@@ -67,7 +67,9 @@ Languages: [English](${defaultSeo.site}/en/) · [German](${defaultSeo.site}/de/)
 
 ${services.description}
 
-${services.areas.map((area) => `### ${area.title}\n\n${area.body}\n\n[${area.cta}](${defaultSeo.site}/en/#projects)`).join('\n\n')}
+${services.areas.map((area) => `### ${area.title}\n\n${area.body}\n\n${area.examples.map((example) => `- ${example}`).join('\n')}`).join('\n\n')}
+
+[${services.cta}](${defaultSeo.site}/en/#projects-details) · [${services.contact}](${defaultSeo.site}/en/#contact)
 
 > ${copy.en.organisations.quote}
 

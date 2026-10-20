@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" class="h-auto w-full" aria-hidden="true" focusable="false">
+  <title>Data flowing through processing stages into evaluated results</title>
+  <g opacity="0.22">
+    <path d="M20 91v47a15 15 0 0 0 15 15h41" stroke-dasharray="2 6"/>
+    <path d="M81 25h64a15 15 0 0 1 15 15v39" stroke-dasharray="2 6"/>
+  </g>
+  <ellipse cx="38" cy="31" rx="19" ry="8"/>
+  <path d="M19 31v30c0 4.4 8.5 8 19 8s19-3.6 19-8V31"/>
+  <path d="M19 46c0 4.4 8.5 8 19 8s19-3.6 19-8" opacity="0.5"/>
+  <path d="M57 54h22a11 11 0 0 1 11 11v8M86 68l4 5 4-5"/>
+  <rect x="72" y="73" width="36" height="36" rx="6"/>
+  <path d="M81 84h18m-18 7h11m-11 7h18" opacity="0.6"/>
+  <path d="M108 91h19a11 11 0 0 1 11 11v13m-4-5 4 5 4-5"/>
+  <path d="M90 109v16a11 11 0 0 1-11 11H59" opacity="0.5"/>
+  <circle cx="52" cy="136" r="7"/>
+  <circle cx="52" cy="136" r="2" fill="currentColor" stroke="none"/>
+  <path d="M108 84h18a10 10 0 0 0 10-10V58" opacity="0.5"/>
+  <rect x="126" y="38" width="20" height="20" rx="4"/>
+  <path d="m131 48 4 4 7-8" opacity="0.6"/>
+  <rect x="112" y="115" width="52" height="43" rx="4"/>
+  <path d="M121 123v26h34" opacity="0.35"/>
+  <path d="m126 140 8-9 8 4 13-13"/>
+  <g fill="currentColor" stroke="none">
+    <circle cx="126" cy="140" r="1.5"/>
+    <circle cx="134" cy="131" r="1.5"/>
+    <circle cx="142" cy="135" r="1.5"/>
+    <circle cx="155" cy="122" r="1.5"/>
+  </g>
+  <g data-service-motion="" fill="currentColor" stroke="none">
+    <path d="M19 31c0-4.4 8.5-8 19-8s19 3.6 19 8v30c0 4.4-8.5 8-19 8s-19-3.6-19-8Z" opacity="0">
+      <animate attributeName="opacity" values="0;0;0.16;0;0" keyTimes="0;0.04;0.065;0.16;1" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+    </path>
+    <circle r="2.2" opacity="0">
+      <animateMotion path="M57 54h22a11 11 0 0 1 11 11v8" keyPoints="0;0;1;1" keyTimes="0;0.08;0.28;1" calcMode="linear" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0.95;0.95;0;0" keyTimes="0;0.08;0.092;0.28;0.292;1" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+    </circle>
+    <rect x="72" y="73" width="36" height="36" rx="6" opacity="0">
+      <animate attributeName="opacity" values="0;0;0.16;0;0" keyTimes="0;0.28;0.305;0.4;1" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+    </rect>
+    <circle r="2" opacity="0">
+      <animateMotion path="M108 84h18a10 10 0 0 0 10-10V58" keyPoints="0;0;1;1" keyTimes="0;0.36;0.56;1" calcMode="linear" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0.95;0.95;0;0" keyTimes="0;0.36;0.372;0.56;0.572;1" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+    </circle>
+    <rect x="126" y="38" width="20" height="20" rx="4" opacity="0">
+      <animate attributeName="opacity" values="0;0;0.16;0;0" keyTimes="0;0.56;0.585;0.68;1" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+    </rect>
+    <circle r="2" opacity="0">
+      <animateMotion path="M90 109v16a11 11 0 0 1-11 11H59" keyPoints="0;0;1;1" keyTimes="0;0.4;0.62;1" calcMode="linear" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0.95;0.95;0;0" keyTimes="0;0.4;0.412;0.62;0.632;1" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="52" cy="136" r="7" opacity="0">
+      <animate attributeName="opacity" values="0;0;0.3;0;0" keyTimes="0;0.62;0.645;0.74;1" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="2.2" opacity="0">
+      <animateMotion path="M108 91h19a11 11 0 0 1 11 11v13" keyPoints="0;0;1;1" keyTimes="0;0.4;0.7;1" calcMode="linear" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0.95;0.95;0;0" keyTimes="0;0.4;0.412;0.7;0.712;1" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+    </circle>
+    <rect x="112" y="115" width="52" height="43" rx="4" opacity="0">
+      <animate attributeName="opacity" values="0;0;0.16;0;0" keyTimes="0;0.7;0.725;0.82;1" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+    </rect>
+    <circle r="2" opacity="0">
+      <animateMotion path="M126 140l8-9 8 4 13-13" keyPoints="0;0;1;1" keyTimes="0;0.75;0.94;1" calcMode="linear" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0.95;0.95;0;0" keyTimes="0;0.75;0.762;0.94;0.952;1" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="155" cy="122" r="3" opacity="0">
+      <animate attributeName="opacity" values="0;0;0.4;0;0" keyTimes="0;0.94;0.965;0.995;1" dur="3.2s" begin="0s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>
