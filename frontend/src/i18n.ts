@@ -131,12 +131,12 @@ export const copy: Record<Locale, Copy> = {
                 },
                 {
                     title: 'AI systems',
-                    body: 'I build internal applications that connect company knowledge, people and workflows. Examples include RAG-based search, assistants, agents and process automation. I work across user interfaces, backend services and integrations, so the result fits the way teams work and the systems they already use.',
+                    body: 'I build AI applications that connect company knowledge, people and workflows. Examples include RAG-based search, assistants and agent systems, speech recognition and synthesis pipelines, and process automation. I work across user interfaces, backend services and integrations, so the result fits the way teams work and the systems they already use.',
                     cta: 'See production systems I built'
                 },
                 {
                     title: 'ML workflows',
-                    body: 'I build data and machine-learning workflows for processing, training, evaluation and inference. This includes research pipelines, batch jobs and model integrations. I can help turn an experimental workflow into a reproducible pipeline, connect it to an application, or improve how it runs in production.',
+                    body: 'I build data and machine-learning workflows for processing, training, evaluation and inference. This includes time-series analysis and forecasting, research pipelines, batch jobs and model integrations. I can help turn an experimental workflow into a reproducible pipeline, connect it to an application, or improve how it runs in production.',
                     cta: 'Explore my ML workflows'
                 }
             ]
@@ -152,7 +152,7 @@ export const copy: Record<Locale, Copy> = {
             exploreStack: 'Explore my tech stack',
             contact: 'Learn more about my background',
             title: 'My background',
-            description: 'I combine scientific curiosity with practical software engineering to build AI systems that hold up in real operations.',
+            description: 'Physics taught me to question assumptions. Software development taught me to build for real users and maintain what I ship. I bring both to AI projects, turning promising ideas into reliable systems that teams can understand, operate, and improve.',
             chapters: [
                 {
                     title: 'Theoretical Physics',
@@ -160,11 +160,11 @@ export const copy: Record<Locale, Copy> = {
                 },
                 {
                     title: 'Software Development',
-                    body: 'With more than six years of experience building and maintaining software for real users, I know that an application is only as strong as its foundations. I bring cloud infrastructure experience and software architecture principles to create robust, maintainable systems. Coding agents can accelerate delivery, but they need clear architecture and informed direction.',
+                    body: 'For more than six years, I’ve built and maintained software used by real people. I work across the stack, from application code and architecture to deployment and operations, with a focus on systems that remain reliable and maintainable over time. Coding agents help me move faster, but I set the direction, review the work, and take responsibility for the result.',
                 },
                 {
                     title: 'AI Systems',
-                    body: 'I build production AI systems for real users, with a focus on on-premises, open-source solutions for European companies. My work includes agent systems, time-series analysis and forecasting, speech pipelines, and the infrastructure behind them. The goal is useful insight and tangible outcomes while keeping models, data, and operations under the company’s control.',
+                    body: 'I build AI systems that teams can run and improve themselves. For European companies, I often favour open-source and on-premises solutions that keep models, data and operations under their control. I judge the work by whether these systems deliver useful results in practice.',
                 }
             ]
         },
@@ -265,13 +265,13 @@ export const copy: Record<Locale, Copy> = {
                     cta: 'Meine KI-Infrastruktur entdecken'
                 },
                 {
-                    title: 'Interne KI-Systeme',
-                    body: 'Ich entwickle interne Anwendungen, die Unternehmenswissen, Menschen und Arbeitsabläufe verbinden. Dazu zählen RAG-basierte Suche, Assistenten, Agenten und Prozessautomatisierung. Ich verbinde Benutzeroberflächen, Backend-Dienste und Schnittstellen zu Anwendungen, die zu den bestehenden Prozessen und Systemen passen.',
+                    title: 'KI-Anwendungen',
+                    body: 'Ich entwickle KI-Anwendungen, die Unternehmenswissen, Menschen und Arbeitsabläufe verbinden. Dazu zählen RAG-basierte Suche, Assistenten und Agentensysteme, Pipelines für Spracherkennung und Sprachsynthese sowie Prozessautomatisierung. Ich verbinde Benutzeroberflächen, Backend-Dienste und Schnittstellen zu Anwendungen, die zu den bestehenden Prozessen und Systemen passen.',
                     cta: 'Produktive KI-Systeme ansehen'
                 },
                 {
                     title: 'ML-Workflows',
-                    body: 'Ich entwickle Daten- und Machine-Learning-Workflows für Verarbeitung, Training, Evaluation und Inferenz. Dazu gehören Forschungspipelines, Batch-Verarbeitung und Modellintegrationen. Ich überführe experimentelle Abläufe in reproduzierbare Pipelines, binde sie in Anwendungen ein und verbessere ihren Betrieb.',
+                    body: 'Ich entwickle Daten- und Machine-Learning-Workflows für Verarbeitung, Training, Evaluation und Inferenz. Dazu gehören Zeitreihenanalyse und -prognosen, Forschungspipelines, Batch-Verarbeitung und Modellintegrationen. Ich überführe experimentelle Abläufe in reproduzierbare Pipelines, binde sie in Anwendungen ein und verbessere ihren Betrieb.',
                     cta: 'Meine ML-Workflows entdecken'
                 }
             ]
@@ -287,7 +287,7 @@ export const copy: Record<Locale, Copy> = {
             exploreStack: 'Meinen Tech-Stack entdecken',
             contact: 'Mehr über meinen Hintergrund erfahren',
             title: 'Mein Hintergrund',
-            description: 'Ich verbinde wissenschaftliche Neugier mit praxisnaher Softwareentwicklung, um KI-Systeme zu bauen, die im Betrieb bestehen.',
+            description: 'Die Physik hat mich gelehrt, Annahmen zu hinterfragen. In der Softwareentwicklung habe ich gelernt, für reale Nutzer zu bauen und meine Arbeit langfristig zu betreuen. Beides bringe ich in KI-Projekte ein: So werden aus guten Ideen zuverlässige Systeme, die Teams verstehen, betreiben und weiterentwickeln können.',
             chapters: [
                 {
                     title: 'Theoretische Physik',
@@ -295,11 +295,11 @@ export const copy: Record<Locale, Copy> = {
                 },
                 {
                     title: 'Softwareentwicklung',
-                    body: 'Mit mehr als sechs Jahren Erfahrung in der Entwicklung und Pflege von Software für reale Nutzer weiß ich: Eine Anwendung ist nur so stark wie ihre Grundlagen. Ich verbinde Erfahrung mit Cloud-Infrastruktur, solide Engineering-Prinzipien und Softwarearchitektur zu robusten, wartbaren Systemen. Coding Agents können die Umsetzung beschleunigen, brauchen aber eine klare Architektur und fundierte Führung.',
+                    body: 'Seit mehr als sechs Jahren entwickle und pflege ich Software, die Menschen tatsächlich nutzen. Meine Arbeit reicht von Anwendungscode und Architektur bis zu Bereitstellung und Betrieb. Dabei achte ich darauf, dass Systeme langfristig zuverlässig und wartbar bleiben. Coding Agents helfen mir, schneller voranzukommen. Die technische Richtung gebe ich vor, prüfe die Ergebnisse und übernehme die Verantwortung dafür.',
                 },
                 {
                     title: 'KI-Systeme',
-                    body: 'Ich entwickle produktive KI-Systeme für reale Nutzer, mit Fokus auf On-Premises- und Open-Source-Lösungen für europäische Unternehmen. Meine Arbeit umfasst Agentensysteme, Zeitreihenanalyse und -prognosen, Sprachpipelines und die zugrunde liegende Infrastruktur. Das Ziel sind nutzbare Erkenntnisse und greifbare Ergebnisse bei voller Kontrolle über Modelle, Daten und Betrieb.',
+                    body: 'Ich entwickle KI-Systeme, die Teams selbst betreiben und weiterentwickeln können. Für europäische Unternehmen setze ich dabei häufig auf Open-Source- und On-Premises-Lösungen, damit Modelle, Daten und Betrieb unter ihrer Kontrolle bleiben. Entscheidend ist für mich, ob die Systeme im Alltag nützliche Ergebnisse liefern.',
                 }
             ]
         },
