@@ -1,0 +1,29 @@
+---
+import type { Copy } from '../i18n';
+import { cvDownloads } from '../data/cv';
+
+type Props = {
+    copy: Copy;
+    variant?: 'default' | 'footer';
+    class?: string;
+};
+
+const { copy, variant = 'default', class: className } = Astro.props;
+const labels = copy.contact.cvDownloads;
+const parts = labels.text.split(/(\{english\}|\{german\})/);
+const linkClass = variant === 'footer'
+    ? 'text-canvas/85 underline decoration-canvas/40 underline-offset-4 hover:text-canvas hover:decoration-canvas focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-canvas'
+    : 'text-foreground underline decoration-foreground/40 underline-offset-4 hover:decoration-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground';
+---
+
+<p class:list={['text-sm leading-relaxed', variant === 'footer' ? 'text-canvas/75' : 'text-muted-strong', className]}>
+    {parts.map((part) => {
+        if (part === '{english}') {
+            return <a href={cvDownloads.english} download hreflang="en" type="application/pdf" class={linkClass}>{labels.english}</a>;
+        }
+        if (part === '{german}') {
+            return <a href={cvDownloads.german} download hreflang="de" type="application/pdf" class={linkClass}>{labels.german}</a>;
+        }
+        return part;
+    })}
+</p>

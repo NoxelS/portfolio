@@ -95,6 +95,7 @@ export type Copy = {
         scheduleTitle: string;
         scheduleBody: string;
         schedule: string;
+        cvDownloads: { text: string; english: string; german: string };
         language: string;
         rights: string;
         agents: string;
@@ -272,6 +273,11 @@ export const copy: Record<Locale, Copy> = {
             scheduleBody:
                 'Choose a convenient time for a quick chat directly in my calendar. I will either call you by phone or we can meet by video conference.',
             schedule: 'Schedule a call',
+            cvDownloads: {
+                text: 'If needed, download my CV in {english} or {german}.',
+                english: 'English (PDF)',
+                german: 'German (PDF)'
+            },
             language: 'Language',
             rights: 'All rights reserved.',
             agents: 'For agents'
@@ -446,6 +452,11 @@ export const copy: Record<Locale, Copy> = {
             scheduleBody:
                 'Ein passender Termin lässt sich direkt im Kalender auswählen. Das Gespräch kann telefonisch oder per Videokonferenz stattfinden.',
             schedule: 'Gespräch planen',
+            cvDownloads: {
+                text: 'Bei Bedarf steht mein Lebenslauf auf {english} oder {german} zum Download bereit.',
+                english: 'Englisch (PDF)',
+                german: 'Deutsch (PDF)'
+            },
             language: 'Sprache',
             rights: 'Alle Rechte vorbehalten.',
             agents: 'Für Agenten'

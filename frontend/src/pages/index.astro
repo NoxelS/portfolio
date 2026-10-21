@@ -15,6 +15,7 @@ import ConsultingServices from '../components/ConsultingServices.astro';
 import PartnerLogoCarousel from '../components/PartnerLogoCarousel.astro';
 import TechStack from '../components/TechStack.astro';
 import ContactOptions from '../components/ContactOptions.astro';
+import CvDownloads from '../components/CvDownloads.astro';
 import ActionLink from '../components/ActionLink.astro';
 import { Icon } from 'astro-icon/components';
 import { getAllTags, getSortedProjects } from '../data/projects';
@@ -141,6 +142,7 @@ const projectFilters = getAllTags(locale);
             description={localizedCopy.contact.description}
         >
             <ContactOptions copy={localizedCopy} />
+            <CvDownloads copy={localizedCopy} class="mt-8 md:mt-10" />
         </PortfolioSection>
 
     </div>

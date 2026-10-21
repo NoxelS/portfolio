@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { cvDownloads } from '../data/cv';
 
 import { defaultSeo } from '../data/site';
 import { copy } from '../i18n';
@@ -33,6 +34,10 @@ export function getIndexMarkdownBody(): string {
 			return `## ${project.title}${company}\n\n${project.summary}\n\n${metadata.join('  \n')}\n\n${steps}`;
 		})
 		.join('\n\n---\n\n');
+
+	const cvDownloadText = copy.en.contact.cvDownloads.text
+		.replace('{english}', `[${copy.en.contact.cvDownloads.english}](${defaultSeo.site}${cvDownloads.english})`)
+		.replace('{german}', `[${copy.en.contact.cvDownloads.german}](${defaultSeo.site}${cvDownloads.german})`);
 
 	const contact = [
 		contactEmail ? `- Email: [${contactEmail}](mailto:${contactEmail})` : `- ${copy.en.contact.missingEmail}`,
@@ -222,6 +227,8 @@ ${copy.en.contact.scheduleBody}
 
 ${contact}
 
+${cvDownloadText}
+
 ## ${footerLabels.title}
 
 ${operator.name}
@@ -238,6 +245,8 @@ P. IVA ${operator.vat}
 
 - [${operator.email}](mailto:${operator.email})
 - [${operator.phone}](tel:${operator.phoneHref})
+
+${cvDownloadText}
 
 ### ${footerLabels.title}
 
