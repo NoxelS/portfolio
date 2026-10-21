@@ -70,34 +70,6 @@ export const projectFilterLabels: Record<Locale, Record<ProjectFilterId, string>
 
 const englishProjectSources: EnglishProjectSource[] = [
     {
-        id: 'netcom-inference-platform',
-        title: 'On-Premise AI Inference Platform @ NetCom',
-        summary:
-            'Built the governed AI platform that lets NetCom deploy language and agent systems on sensitive data without relying on external model providers.',
-        steps: [
-            {
-                label: 'Problem',
-                content:
-                    'European data-protection and client requirements made external AI providers unsuitable for sensitive workloads, leaving teams without a secure, scalable way to bring language AI into daily operations.',
-            },
-            {
-                label: 'How I solved it',
-                content:
-                    'I planned and implemented the on-premise inference stack, including model routing, load balancing, and operational foundations for reliable internal LLM and agent use.',
-            },
-            {
-                label: 'Impact',
-                content:
-                    'NetCom gained private, enterprise-ready AI capacity that keeps sensitive workloads under its control, supports regulated use cases, and reduces token costs by 20–30 % compared with hosted models.',
-            },
-        ],
-        tags: ['Private AI', 'LLM Platform'],
-        filters: ['highlighted', 'llm-systems'],
-        logoSrc: '/assets/companies/netcom.svg',
-        logoAlt: 'NetCom logo',
-        companyUrl: 'https://www.netcom.eu/',
-    },
-    {
         id: 'elevator-dispatch-agent',
         title: 'Elevator Emergency Dispatch Agent @ NetCom',
         summary:
@@ -121,6 +93,34 @@ const englishProjectSources: EnglishProjectSource[] = [
         ],
         tags: ['Voice Agent', 'Critical Operations'],
         filters: ['highlighted', 'agent-systems', 'speech-voice'],
+        logoSrc: '/assets/companies/netcom.svg',
+        logoAlt: 'NetCom logo',
+        companyUrl: 'https://www.netcom.eu/',
+    },
+    {
+        id: 'netcom-inference-platform',
+        title: 'On-Premise AI Inference Platform @ NetCom',
+        summary:
+            'Built the governed AI platform that lets NetCom deploy language and agent systems on sensitive data without relying on external model providers.',
+        steps: [
+            {
+                label: 'Problem',
+                content:
+                    'European data-protection and client requirements made external AI providers unsuitable for sensitive workloads, leaving teams without a secure, scalable way to bring language AI into daily operations.',
+            },
+            {
+                label: 'How I solved it',
+                content:
+                    'I planned and implemented the on-premise inference stack, including model routing, load balancing, and operational foundations for reliable internal LLM and agent use.',
+            },
+            {
+                label: 'Impact',
+                content:
+                    'NetCom gained private, enterprise-ready AI capacity that keeps sensitive workloads under its control, supports regulated use cases, and reduces token costs by 20–30 % compared with hosted models.',
+            },
+        ],
+        tags: ['Private AI', 'LLM Platform'],
+        filters: ['highlighted', 'llm-systems'],
         logoSrc: '/assets/companies/netcom.svg',
         logoAlt: 'NetCom logo',
         companyUrl: 'https://www.netcom.eu/',
