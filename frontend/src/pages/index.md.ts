@@ -69,6 +69,8 @@ ${services.description}
 
 ${services.areas.map((area) => `### ${area.title}\n\n${area.body}\n\n${area.examples.map((example) => `- ${example}`).join('\n')}`).join('\n\n')}
 
+${services.selectionNote}
+
 [${services.cta}](${defaultSeo.site}/en/#projects-details) · [${services.contact}](${defaultSeo.site}/en/#contact)
 
 > ${copy.en.organisations.quote}

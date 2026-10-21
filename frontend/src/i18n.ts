@@ -29,6 +29,7 @@ export type Copy = {
         title: string;
         description: string;
         areas: { illustration: 'agents' | 'infrastructure' | 'pipelines' | 'transformation'; title: string; body: string; examples: string[] }[];
+        selectionNote: string;
         cta: string;
         contact: string;
     };
@@ -179,7 +180,8 @@ export const copy: Record<Locale, Copy> = {
                     ]
                 }
             ],
-            cta: 'View selected projects',
+            selectionNote: 'This is only a selection of what I offer. If you have a different challenge in mind, let’s talk.',
+            cta: 'See what I’ve delivered',
             contact: 'Let’s talk about your challenges'
         },
         work: {
@@ -214,7 +216,7 @@ export const copy: Record<Locale, Copy> = {
             introduction: 'I already got the chance to have contributed alongside some awesome organisations:'
         },
         projects: {
-            title: 'My Projects',
+            title: 'Case studies',
             description:
                 'From private AI platforms and voice agents to high-performance research pipelines, these projects solve real operational constraints with systems teams can use, govern, and scale.',
             selected: 'These are selected projects only. If you are looking for experience in a specific area, feel free to get in touch with me.',
@@ -353,7 +355,8 @@ export const copy: Record<Locale, Copy> = {
                     ]
                 }
             ],
-            cta: 'Ausgewählte Projekte ansehen',
+            selectionNote: 'Dies ist nur eine Auswahl meiner Leistungen. Gerne bespreche ich auch andere Herausforderungen.',
+            cta: 'Meine umgesetzten Projekte ansehen',
             contact: 'Herausforderungen gemeinsam besprechen'
         },
         work: {
@@ -388,7 +391,7 @@ export const copy: Record<Locale, Copy> = {
             introduction: 'Ich hatte bereits die Gelegenheit, mit großartigen Organisationen zusammenzuarbeiten:'
         },
         projects: {
-            title: 'Meine Projekte',
+            title: 'Fallstudien',
             description:
                 'Von privaten KI-Plattformen und Sprachagenten bis zu leistungsfähigen Forschungspipelines: Diese Projekte lösen reale betriebliche Anforderungen mit Systemen, die Teams nutzen, steuern und skalieren können.',
             selected: 'Dies ist eine Auswahl meiner Projekte. Weitere Beispiele und Erfahrungen in bestimmten Bereichen erläutere ich gerne im Gespräch.',

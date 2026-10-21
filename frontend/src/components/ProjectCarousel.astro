@@ -125,8 +125,8 @@ const { projects, tags, copy } = Astro.props;
                 }
                 </ul>
             </div>
-            <div class="pointer-events-none absolute inset-y-0 left-0 z-20 hidden w-[10%] bg-linear-to-r from-canvas/95 via-canvas/55 to-canvas/0 min-[1025px]:block" aria-hidden="true" />
-            <div class="pointer-events-none absolute inset-y-0 right-0 z-20 hidden w-[10%] bg-linear-to-l from-canvas/95 via-canvas/55 to-canvas/0 min-[1025px]:block" aria-hidden="true" />
+            <div class="pointer-events-none absolute inset-y-0 left-0 z-20 hidden w-[10%] bg-linear-to-r from-canvas/95 via-canvas/55 to-canvas/0 min-[1025px]:block" data-project-fade aria-hidden="true" />
+            <div class="pointer-events-none absolute inset-y-0 right-0 z-20 hidden w-[10%] bg-linear-to-l from-canvas/95 via-canvas/55 to-canvas/0 min-[1025px]:block" data-project-fade aria-hidden="true" />
         </div>
 		<p class="hidden py-3 pl-4 text-copy-md text-primary-text-color" data-project-empty role="status">
             {copy.projects.noMatches}
@@ -177,6 +177,7 @@ const { projects, tags, copy } = Astro.props;
         const slides = carousel.querySelector<HTMLUListElement>('[data-project-slides]');
         const filters = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-project-filter]'));
         const controls = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-project-control]'));
+        const fades = Array.from(carousel.querySelectorAll<HTMLElement>('[data-project-fade]'));
         const count = carousel.querySelector<HTMLElement>('[data-project-count]');
         const emptyState = carousel.querySelector<HTMLElement>('[data-project-empty]');
         if (!glideRoot || !slides || !count || !emptyState) return;
@@ -219,15 +220,22 @@ const { projects, tags, copy } = Astro.props;
         };
 
         const mountGlide = (projectCount: number) => {
-            if (projectCount > 1) {
+            fades.forEach(fade => {
+                fade.classList.toggle('min-[1025px]:block', projectCount > 1);
+            });
+
+            if (projectCount > 0) {
+                // Slider mode preserves the normal card sizing for a single project.
                 glide = new Glide(glideRoot, {
-                    type: 'carousel',
+                    type: projectCount === 1 ? 'slider' : 'carousel',
                     perView: 1.25,
                     focusAt: 'center',
                     gap: 28,
                     breakpoints: { 1024: { perView: 1 }, 640: { perView: 1 } }
                 }).mount();
+                if (projectCount === 1) glide.disable();
                 glide.on('run.after', syncCardHeight);
+                glide.on('resize', syncCardHeight);
             }
             controls.forEach(control => {
                 control.disabled = projectCount < 2;

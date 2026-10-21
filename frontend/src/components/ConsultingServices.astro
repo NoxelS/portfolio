@@ -4,6 +4,7 @@ import infrastructureIllustration from '../assets/illustrations/infrastructure.s
 import pipelinesIllustration from '../assets/illustrations/pipelines.svg?raw';
 import transformationIllustration from '../assets/illustrations/transformation.svg?raw';
 import ActionLink from './ActionLink.astro';
+import { Icon } from 'astro-icon/components';
 import type { Copy } from '../i18n';
 
 const { copy } = Astro.props as { copy: Copy['services'] };
@@ -16,15 +17,23 @@ const illustrations = {
 };
 ---
 
-<div class="grid w-full min-w-0 gap-8">
+<div class="grid w-full min-w-0 gap-4">
     <div class="grid min-w-0 grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-x-16 lg:gap-y-20 xl:gap-x-20">
-        {copy.areas.map((area) => (
+        {copy.areas.map((area, index) => (
             <article
-                class="motion-reveal grid min-w-0 grid-cols-1 items-start gap-6 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-6 xl:grid-cols-[8rem_minmax(0,1fr)]"
+                class:list={[
+                    'motion-reveal grid min-w-0 grid-cols-1 items-start gap-6 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-6 xl:grid-cols-[8rem_minmax(0,1fr)]',
+                    index === 0 && 'motion-safe:delay-0',
+                    index === 1 && 'motion-safe:delay-100',
+                    index === 2 && 'motion-safe:delay-200',
+                    index === 3 && 'motion-safe:delay-300',
+                ]}
                 data-motion-reveal
             >
-                <div class="pointer-events-none flex min-h-28 w-28 items-start self-stretch bg-primary p-2 text-white motion-safe:[&_[data-service-static]]:hidden motion-reduce:[&_[data-service-motion]]:hidden xl:min-h-32 xl:w-32 xl:p-3" aria-hidden="true">
-                    <Fragment set:html={illustrations[area.illustration]} />
+                <div class="pointer-events-none flex min-h-28 w-full items-start justify-start self-stretch bg-primary p-2 text-white motion-safe:[&_[data-service-static]]:hidden motion-reduce:[&_[data-service-motion]]:hidden sm:w-28 xl:min-h-32 xl:w-32 xl:p-3" aria-hidden="true">
+                    <div class="w-24 shrink-0 sm:w-full">
+                        <Fragment set:html={illustrations[area.illustration]} />
+                    </div>
                 </div>
                 <div class="grid min-w-0 gap-5">
                     <header class="grid min-w-0 gap-3">
@@ -40,6 +49,7 @@ const illustrations = {
             </article>
         ))}
     </div>
+    <p class="text-lg leading-relaxed text-muted-strong opacity-50"><Icon name="iconoir:asterisk" class="mr-1 inline-block h-4 w-4 align-[-0.15em]" aria-hidden="true" />{copy.selectionNote}</p>
     <div class="mt-8 flex flex-wrap gap-3">
         <ActionLink href="#projects" variant="primary" class="max-w-full text-left" icon="iconoir:arrow-down">
             {copy.cta}
