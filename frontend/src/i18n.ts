@@ -104,7 +104,7 @@ export type Copy = {
         scheduleTitle: string;
         scheduleBody: string;
         schedule: string;
-        cvDownloads: { text: string; english: string; german: string };
+        cvDownloads: { text: string; footerText: string; english: string; german: string };
         language: string;
         rights: string;
         agents: string;
@@ -292,9 +292,10 @@ export const copy: Record<Locale, Copy> = {
                 'Choose a convenient time for a quick chat directly in my calendar. I will either call you by phone or we can meet by video conference.',
             schedule: 'Schedule a call',
             cvDownloads: {
-                text: 'If needed, download my CV in {english} or {german}.',
-                english: 'English (PDF)',
-                german: 'German (PDF)'
+                text: 'For a concise overview of my professional experience and technical expertise, my CV is available as a PDF in {english} and {german}.',
+                footerText: 'CV ({english} / {german})',
+                english: 'English',
+                german: 'German'
             },
             language: 'Language',
             rights: 'All rights reserved.',
@@ -480,9 +481,10 @@ export const copy: Record<Locale, Copy> = {
                 'Ein passender Termin lässt sich direkt im Kalender auswählen. Das Gespräch kann telefonisch oder per Videokonferenz stattfinden.',
             schedule: 'Gespräch planen',
             cvDownloads: {
-                text: 'Bei Bedarf steht mein Lebenslauf auf {english} oder {german} zum Download bereit.',
-                english: 'Englisch (PDF)',
-                german: 'Deutsch (PDF)'
+                text: 'Mein Lebenslauf bietet eine kompakte Übersicht über meine Berufserfahrung und technischen Schwerpunkte. Er ist als PDF auf {english} und {german} verfügbar.',
+                footerText: 'Lebenslauf ({english} / {german})',
+                english: 'Englisch',
+                german: 'Deutsch'
             },
             language: 'Sprache',
             rights: 'Alle Rechte vorbehalten.',

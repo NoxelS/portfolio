@@ -10,19 +10,19 @@ type Props = {
 
 const { copy, variant = 'default', class: className } = Astro.props;
 const labels = copy.contact.cvDownloads;
-const parts = labels.text.split(/(\{english\}|\{german\})/);
+const parts = (variant === 'footer' ? labels.footerText : labels.text).split(/(\{english\}|\{german\})/);
 const linkClass = variant === 'footer'
     ? 'text-canvas/85 underline decoration-canvas/40 underline-offset-4 hover:text-canvas hover:decoration-canvas focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-canvas'
     : 'text-foreground underline decoration-foreground/40 underline-offset-4 hover:decoration-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground';
 ---
 
-<p class:list={['text-sm leading-relaxed', variant === 'footer' ? 'text-canvas/75' : 'text-muted-strong', className]}>
+<p class:list={['leading-relaxed', variant === 'footer' ? 'text-sm text-canvas/75' : 'text-base text-muted-strong', className]}>
     {parts.map((part) => {
         if (part === '{english}') {
-            return <a href={cvDownloads.english} download hreflang="en" type="application/pdf" class={linkClass}>{labels.english}</a>;
+            return <a href={cvDownloads.english} target="_blank" rel="noopener noreferrer" hreflang="en" type="application/pdf" class={linkClass}>{labels.english}</a>;
         }
         if (part === '{german}') {
-            return <a href={cvDownloads.german} download hreflang="de" type="application/pdf" class={linkClass}>{labels.german}</a>;
+            return <a href={cvDownloads.german} target="_blank" rel="noopener noreferrer" hreflang="de" type="application/pdf" class={linkClass}>{labels.german}</a>;
         }
         return part;
     })}

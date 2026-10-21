@@ -26,8 +26,8 @@ const linkClass = 'text-canvas/85 decoration-canvas/40 hover:text-canvas hover:d
 			<ul class="mt-5 grid gap-3 text-sm">
 				<li><a class={linkClass} href={`mailto:${operator.email}`}>{operator.email}</a></li>
 				<li><a class={linkClass} href={`tel:${operator.phoneHref}`}>{operator.phone}</a></li>
+				<li><CvDownloads copy={copy} variant="footer" /></li>
 			</ul>
-			<CvDownloads copy={copy} variant="footer" class="mt-5" />
 		</div>
 		<nav aria-label={labels.title}>
 			<h2 class="text-sm font-semibold">{labels.title}</h2>

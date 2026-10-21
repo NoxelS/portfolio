@@ -35,9 +35,11 @@ export function getIndexMarkdownBody(): string {
 		})
 		.join('\n\n---\n\n');
 
-	const cvDownloadText = copy.en.contact.cvDownloads.text
+	const formatCvDownloadText = (template: string) => template
 		.replace('{english}', `[${copy.en.contact.cvDownloads.english}](${defaultSeo.site}${cvDownloads.english})`)
 		.replace('{german}', `[${copy.en.contact.cvDownloads.german}](${defaultSeo.site}${cvDownloads.german})`);
+	const cvDownloadText = formatCvDownloadText(copy.en.contact.cvDownloads.text);
+	const footerCvDownloadText = formatCvDownloadText(copy.en.contact.cvDownloads.footerText);
 
 	const contact = [
 		contactEmail ? `- Email: [${contactEmail}](mailto:${contactEmail})` : `- ${copy.en.contact.missingEmail}`,
@@ -246,7 +248,7 @@ P. IVA ${operator.vat}
 - [${operator.email}](mailto:${operator.email})
 - [${operator.phone}](tel:${operator.phoneHref})
 
-${cvDownloadText}
+${footerCvDownloadText}
 
 ### ${footerLabels.title}
 
