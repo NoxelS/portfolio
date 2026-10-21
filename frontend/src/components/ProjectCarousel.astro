@@ -88,9 +88,9 @@ const { projects, tags, copy } = Astro.props;
 
 								<p class="m-0 p-0 text-lg leading-relaxed text-primary-text-color">{project.summary}</p>
 
-                                <ol class="grid gap-6 md:grid-cols-3 md:gap-0" aria-label={`${project.title}: ${copy.projects.stepsLabel}`}>
+                                <ol class="grid items-start gap-6 md:grid-cols-3 md:gap-0" aria-label={`${project.title}: ${copy.projects.stepsLabel}`}>
                                     {project.steps.map((step, index) => (
-                                        <li class="relative grid grid-cols-[1.75rem_minmax(0,1fr)] gap-3 md:grid-cols-1 md:gap-4 md:pr-6">
+                                        <li class="relative grid grid-cols-[1.75rem_minmax(0,1fr)] content-start gap-3 md:grid-cols-1 md:gap-4 md:pr-6">
                                             {index < project.steps.length - 1 && (
                                                 <>
                                                     <div
@@ -106,7 +106,7 @@ const { projects, tags, copy } = Astro.props;
 							<span class="relative z-10 flex h-7 w-7 items-center justify-center border border-primary-text-color bg-canvas text-sm font-semibold text-primary-text-color">
                                                 {index + 1}
                                             </span>
-                                            <div class="grid gap-2">
+                                            <div class="grid content-start gap-2">
 												<h4 class="lora text-lg leading-tight text-primary-text-color">{step.label}</h4>
 												<p class="text-[0.9375rem] leading-relaxed text-primary-text-color sm:text-base">{step.content}</p>
                                             </div>
