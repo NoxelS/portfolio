@@ -17,6 +17,7 @@ const { id, quote, subquote } = Astro.props as {
     subquote: string;
 };
 
+const hasSubquote = subquote.trim().length > 0;
 const meshKey = quote.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 const meshFrameId = `banner-mesh-frame-${meshKey}`;
 const meshCanvasId = `banner-mesh-canvas-${meshKey}`;
@@ -28,13 +29,21 @@ const meshCanvasId = `banner-mesh-canvas-${meshKey}`;
     <div id={meshFrameId} class="absolute inset-0 overflow-hidden opacity-75" aria-hidden="true">
         <MeshRenderer canvasId={meshCanvasId} frameId={meshFrameId} client:load />
     </div>
-	<div class="relative z-10 grid min-w-0 gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(14rem,1fr)] lg:gap-12">
+    <div class:list={[
+        'relative z-10 grid min-w-0 gap-8',
+        hasSubquote && 'lg:grid-cols-[minmax(0,3fr)_minmax(14rem,1fr)] lg:gap-12'
+    ]}>
         <blockquote>
-            <p class="lora max-w-4xl text-3xl leading-[1.08] text-canvas sm:text-4xl lg:text-5xl">{quote}</p>
+            <p class:list={[
+                'lora text-3xl leading-[1.08] text-canvas sm:text-4xl lg:text-5xl',
+                hasSubquote && 'max-w-4xl'
+            ]}>{quote}</p>
         </blockquote>
-        <div class="lg:max-w-sm lg:justify-self-end lg:self-end">
-            <p class="text-base leading-relaxed text-canvas">{subquote}</p>
-        </div>
+        {hasSubquote && (
+            <div class="lg:max-w-sm lg:justify-self-end lg:self-end">
+                <p class="text-base leading-relaxed text-canvas">{subquote}</p>
+            </div>
+        )}
     </div>
 	<div class="relative z-10">
 	    <slot />

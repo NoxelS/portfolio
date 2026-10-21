@@ -193,7 +193,7 @@ export const copy: Record<Locale, Copy> = {
                 subquote: 'I combine scientific curiosity with practical experience to understand problems, question assumptions, and choose a useful approach.'
             },
             exploreStack: 'Explore my tech stack',
-            contact: 'Learn more about my background',
+            contact: 'Get in touch',
             title: 'My background',
             description: 'Physics taught me to question assumptions. Software development taught me to build for real users and maintain what I ship. I bring both to AI projects, turning promising ideas into reliable systems that teams can understand, operate, and improve.',
             chapters: [
@@ -295,12 +295,12 @@ export const copy: Record<Locale, Copy> = {
             principle: 'Ich entwickle Lösungen, <br/> die skalierbar, wartbar und performant bleiben.',
             performanceLabel: 'Details zur Website-Performance anzeigen',
             performanceTooltip: /* 'Server-Auslieferung: {server} ms. ' + */ 'FCP: {fcp} ms. Ja, ich habe sogar meine Portfolio-Website überoptimiert.',
-            socials: 'Meine Profile'
+            socials: 'Meine Socials'
         },
         services: {
             title: 'Meine Leistungen',
             description:
-                'Ich unterstütze Unternehmen dabei, sinnvolle KI-Anwendungen zu identifizieren, zuverlässige Systeme dafür zu entwickeln und Teams sowie Technologie auf die Einführung vorzubereiten.',
+                'Ich unterstütze Unternehmen dabei, sinnvolle KI-Anwendungen zu identifizieren, zuverlässige Systeme dafür zu entwickeln sowie Teams und technische Infrastruktur auf die Einführung vorzubereiten.',
             areas: [
                 {
                     illustration: 'agents',
@@ -311,7 +311,7 @@ export const copy: Record<Locale, Copy> = {
                         'Sprachagenten & Dialoganwendungen',
                         'Workflow- & Prozessautomatisierung',
                         'Wissensassistenten & Suche',
-                        'Agent Observability',
+                        'Monitoring & Analyse von Agentenabläufen',
                         'Integration in bestehende Systeme'
                     ]
                 },
@@ -322,7 +322,7 @@ export const copy: Record<Locale, Copy> = {
                     examples: [
                         'Private KI-Plattformen',
                         'Cloud- & On-Premises-Bereitstellung',
-                        'Gemeinsamer Zugriff auf KI-Modelle',
+                        'Zentraler Zugriff auf KI-Modelle',
                         'Datenkontrolle & Zugriffsverwaltung',
                         'Monitoring & zuverlässiger Betrieb',
                         'Skalierbarkeit & Kostenmanagement'
@@ -344,41 +344,41 @@ export const copy: Record<Locale, Copy> = {
                 {
                     illustration: 'transformation',
                     title: 'KI-Transformation',
-                    body: 'Ich unterstütze Unternehmen dabei, sinnvolle Einsatzmöglichkeiten für KI zu erkennen und die Voraussetzungen für ihre Einführung zu schaffen. Gemeinsam bewerten wir die Ausgangslage, priorisieren Vorhaben und planen den Weg von ersten Projekten zum breiteren Einsatz.',
+                    body: 'Ich unterstütze Unternehmen dabei, KI-Vorhaben nach ihrem geschäftlichen Nutzen zu priorisieren und die organisatorischen und technischen Voraussetzungen für ihre Umsetzung zu schaffen. Gemeinsam planen wir den Weg von ersten Pilotprojekten zum breiteren Einsatz im Unternehmen.',
                     examples: [
-                        'Bewertung der KI-Bereitschaft',
+                        'Analyse der Voraussetzungen für den KI-Einsatz',
                         'Anwendungsfälle finden & priorisieren',
                         'Geschäftsprozesse verbessern',
-                        'Daten & Technologie vorbereiten',
-                        'Einführungspläne & Pilotprojekte',
-                        'Teams befähigen & Wissen übertragen'
+                        'Datenbasis & technische Voraussetzungen bewerten',
+                        'Einführungsstrategie & Pilotplanung',
+                        'Qualifizierung von Teams & Wissenstransfer'
                     ]
                 }
             ],
             selectionNote: 'Dies ist nur eine Auswahl meiner Leistungen. Gerne bespreche ich auch andere Herausforderungen.',
-            cta: 'Meine umgesetzten Projekte ansehen',
-            contact: 'Herausforderungen gemeinsam besprechen'
+            cta: 'Projektbeispiele ansehen',
+            contact: 'KI-Vorhaben besprechen'
         },
         work: {
             quote: 'Von der geschäftlichen Herausforderung zur KI, die im Alltag funktioniert.',
             subquote:
-                'Ich helfe Teams, sinnvolle Einsatzmöglichkeiten zu finden und passende KI-Systeme zu entwickeln, die sich in ihre Prozesse und Infrastruktur einfügen.',
+                'Ich unterstütze Teams dabei, Prozesse mit KI zu verbessern, und entwickle Systeme, die zu ihren Arbeitsweisen, Daten und ihrer Infrastruktur passen.',
             banner: {
                 quote: 'Gute technische Lösungen beginnen mit guten Fragen.',
                 subquote: 'Ich verbinde wissenschaftliche Neugier mit praktischer Erfahrung, um Probleme zu verstehen, Annahmen zu hinterfragen und einen sinnvollen Lösungsweg zu wählen.'
             },
             exploreStack: 'Meinen Tech-Stack entdecken',
-            contact: 'Mehr über meinen Hintergrund erfahren',
+            contact: 'Kontakt aufnehmen',
             title: 'Mein Hintergrund',
-            description: 'Die Physik hat mich gelehrt, Annahmen zu hinterfragen. In der Softwareentwicklung habe ich gelernt, für reale Nutzer zu bauen und meine Arbeit langfristig zu betreuen. Beides bringe ich in KI-Projekte ein: So werden aus guten Ideen zuverlässige Systeme, die Teams verstehen, betreiben und weiterentwickeln können.',
+            description: 'Die Physik hat mich gelehrt, Annahmen zu hinterfragen. In der Softwareentwicklung habe ich gelernt, Software für den praktischen Einsatz zu entwickeln und langfristig zu betreuen. Beides bringe ich in KI-Projekte ein: So werden aus guten Ideen zuverlässige Systeme, die Teams verstehen, betreiben und weiterentwickeln können.',
             chapters: [
                 {
                     title: 'Theoretische Physik',
-                    body: 'Die Physik hat mich gelehrt, mehrdeutige Probleme in strukturierte Entwicklungs- und Validierungsschritte zu übersetzen. Sie hat mir auch geholfen, bei sich ändernden Anforderungen oder hoher technischer Tiefe ruhig zu bleiben. Ich arbeite mich in schwierige Themen ein, bis ich verstehe, was gebaut und wie es validiert werden muss.',
+                    body: 'Die Physik hat mich gelehrt, unklare Problemstellungen zu strukturieren und daraus Entwicklungs- und Validierungsschritte abzuleiten. Auch bei wechselnden Anforderungen oder technisch anspruchsvollen Aufgaben bleibe ich ruhig. Ich arbeite mich in schwierige Themen ein, bis klar ist, welche Lösung gebraucht wird und wie sie sich überprüfen lässt.',
                 },
                 {
                     title: 'Softwareentwicklung',
-                    body: 'Seit mehr als sechs Jahren entwickle und pflege ich Software, die Menschen tatsächlich nutzen. Meine Arbeit reicht von Anwendungscode und Architektur bis zu Bereitstellung und Betrieb. Dabei achte ich darauf, dass Systeme langfristig zuverlässig und wartbar bleiben. Coding Agents helfen mir, schneller voranzukommen. Die technische Richtung gebe ich vor, prüfe die Ergebnisse und übernehme die Verantwortung dafür.',
+                    body: 'Seit mehr als sechs Jahren entwickle und pflege ich Software, die Menschen tatsächlich nutzen. Meine Arbeit reicht von Anwendungscode und Architektur bis zu Bereitstellung und Betrieb. Dabei achte ich darauf, dass Systeme langfristig zuverlässig und wartbar bleiben. Coding Agents helfen mir, schneller voranzukommen. Ich gebe die technische Richtung vor, prüfe die Ergebnisse und übernehme die Verantwortung dafür.',
                 },
                 {
                     title: 'KI-Systeme',
@@ -388,12 +388,12 @@ export const copy: Record<Locale, Copy> = {
         },
         organisations: {
             quote: 'Nicht nur Theorie, sondern erprobte Praxis.',
-            introduction: 'Ich hatte bereits die Gelegenheit, mit großartigen Organisationen zusammenzuarbeiten:'
+            introduction: 'Mit diesen Unternehmen und Institutionen habe ich zusammengearbeitet:'
         },
         projects: {
             title: 'Fallstudien',
             description:
-                'Von privaten KI-Plattformen und Sprachagenten bis zu leistungsfähigen Forschungspipelines: Diese Projekte lösen reale betriebliche Anforderungen mit Systemen, die Teams nutzen, steuern und skalieren können.',
+                'Von privaten KI-Plattformen und Sprachagenten bis zu leistungsfähigen Forschungspipelines: Diese Projekte zeigen, wie sich konkrete betriebliche Herausforderungen mit Systemen bewältigen lassen, die Teams nutzen, steuern und skalieren können.',
             selected: 'Dies ist eine Auswahl meiner Projekte. Weitere Beispiele und Erfahrungen in bestimmten Bereichen erläutere ich gerne im Gespräch.',
             exploreBackground: 'Über meinen Hintergrund',
             contact: 'Kontakt aufnehmen',

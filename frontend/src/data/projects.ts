@@ -243,7 +243,7 @@ const germanProjectTranslations: Record<ProjectId, ProjectContent> = {
     'netcom-inference-platform': {
         title: 'On-Premises-KI-Inferenzplattform bei NetCom',
         summary:
-            'Entwicklung einer kontrollierten KI-Plattform, mit der NetCom Sprachmodelle und Agentensysteme auf sensiblen Daten ohne externe Modellanbieter betreiben kann.',
+            'Ich entwickelte eine On-Premises-KI-Plattform, auf der NetCom Sprachmodelle und Agentensysteme mit sensiblen Daten ohne externe Modellanbieter betreiben kann. Modelle, Daten und Betrieb bleiben dabei unter eigener Kontrolle.',
         steps: [
             {
                 label: 'Herausforderung',
@@ -266,7 +266,7 @@ const germanProjectTranslations: Record<ProjectId, ProjectContent> = {
     'elevator-dispatch-agent': {
         title: 'Notruf-Agent für Aufzugsstörungen bei NetCom',
         summary:
-            'Entwicklung eines On-Premises-Sprachagenten, der außerhalb der Geschäftszeiten wichtige Angaben zu einem Vorfall erfasst und der Notrufzentrale eine fundierte Reaktion ermöglicht.',
+            'Ich entwickelte einen On-Premises-Sprachagenten, der außerhalb der Geschäftszeiten wichtige Angaben zu Aufzugsnotrufen erfasst und der Leitstelle die Informationen zur Einschätzung des Vorfalls liefert.',
         steps: [
             {
                 label: 'Herausforderung',
@@ -289,7 +289,7 @@ const germanProjectTranslations: Record<ProjectId, ProjectContent> = {
     'hpc-molecular-embedding': {
         title: 'HPC-Pipeline für Molekül-Embeddings an der Universität des Saarlandes',
         summary:
-            'Entwicklung einer modularen HPC-Pipeline, die virtuell erzeugte Moleküle in zentral verfügbare chemische Embeddings für das Hochdurchsatz-Screening überführt.',
+            'Ich entwickelte eine modulare HPC-Pipeline, die virtuell erzeugte Moleküle in zentral verfügbare chemische Embeddings für das Hochdurchsatz-Screening überführt.',
         steps: [
             {
                 label: 'Herausforderung',
@@ -312,7 +312,7 @@ const germanProjectTranslations: Record<ProjectId, ProjectContent> = {
     'voting-theory-platform': {
         title: 'Forschungsplattform zur Wahltheorie bei KPMG',
         summary:
-            'Verantwortung für die Softwareebene, mit der ein interdisziplinäres Forschungsteam Simulationen zur Wahltheorie einfacher untersuchen, interpretieren und teilen konnte.',
+            'Ich konzipierte und entwickelte eigenständig eine modulare Analyseplattform, mit der ein interdisziplinäres Forschungsteam Simulationsergebnisse zur Wahltheorie untersuchen, interpretieren und teilen konnte.',
         steps: [
             {
                 label: 'Herausforderung',
@@ -335,7 +335,7 @@ const germanProjectTranslations: Record<ProjectId, ProjectContent> = {
     'school-grading-cms': {
         title: 'Notenverwaltungssystem für die IGS Nieder-Olm',
         summary:
-            'Entwicklung und Wartung eines On-Premises-Systems, das die papierbasierte Notenerfassung durch sichere, automatische Übersichten für jede Schülerin und jeden Schüler ersetzte.',
+            'Ich entwickelte und betreute ein On-Premises-Notenverwaltungssystem, das die papierbasierte Notenerfassung durch sichere, automatische Notenübersichten pro Schülerin und Schüler ersetzte.',
         steps: [
             {
                 label: 'Herausforderung',
@@ -358,7 +358,7 @@ const germanProjectTranslations: Record<ProjectId, ProjectContent> = {
     'molecular-backmapping-cnn': {
         title: 'CNN-basiertes Molecular Backmapping an der Universität des Saarlandes',
         summary:
-            'Entwicklung eines CNN-Ansatzes zur Rekonstruktion atomistischer DOPC-Lipidstrukturen aus grobkörnigen Simulationen mit einer Geschwindigkeit von rund 23 Molekülen pro Sekunde.',
+            'Ich entwickelte einen CNN-Ansatz zur Rekonstruktion atomistischer DOPC-Lipidstrukturen aus grobkörnigen Simulationen. Er erreicht eine Geschwindigkeit von rund 23 Molekülen pro Sekunde.',
         steps: [
             {
                 label: 'Herausforderung',
