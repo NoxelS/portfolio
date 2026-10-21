@@ -38,7 +38,7 @@ jobs:
         env:
           PUBLIC_BUILD_VERSION: ${{ github.sha }}
           PUBLIC_COMMIT_SHA: ${{ github.sha }}
-          PUBLIC_DEPLOYMENT_ENV: staging
+          PUBLIC_DEPLOYMENT_ENV: ${{ (github.ref == 'refs/heads/production' || github.base_ref == 'production') && 'production' || 'staging' }}
         run: npm run build
       - name: Report bundle size
         working-directory: frontend

@@ -1,65 +1,92 @@
 # CI/CD and image promotion
 
-The application is built with GitHub Actions and deployed by Flux from the
-separate Kubernetes infrastructure repository.
+GitHub Actions verifies the frontend and publishes images. Production deployment
+is a separate infrastructure step; this repository does not change Kubernetes,
+Flux, DNS, or Cloudflare routing.
 
 ## Images
 
-The image is published to:
+The image repository is:
 
-```text
+~~~text
 ghcr.io/noxels/portfolio-frontend
-```
+~~~
 
-Pushes to `main` publish:
+Pushes to main publish:
 
-- `<base-version>-staging.<run-number>`: immutable staging build version
-- `sha-<commit>`: immutable commit reference
-- `frontend-staging`: moving staging convenience tag
+- <base-version>-staging.<run-number>: staging build version.
+- sha-<short-commit>: staging commit reference.
+- frontend-staging: moving staging convenience tag.
 
-Pushes to `production` publish:
+Pushes to production publish:
 
-- `<version>` and `v<version>`: immutable production release tags
-- `sha-<commit>`: immutable commit reference
+- <version> and v<version>: production release tags.
+- sha-<full-commit>: production commit reference.
 
-Kubernetes manifests should use a digest-pinned immutable reference. Flux may
-use an image policy to discover a candidate, but should write the selected
-digest into the infrastructure repository. The mutable `frontend-staging` tag
-must not be used as the final production reference.
+Production images are built with PUBLIC_DEPLOYMENT_ENV=production. This enables
+indexing and the production robots.txt; changing a staging container's runtime
+environment does not convert it into a production build.
 
-## Promotion flow
+Every production push must have a new stable SemVer in frontend/package.json
+and frontend/package-lock.json. Existing v<version> tags are rejected to avoid
+overwriting a released version. Use the image digest recorded in the workflow
+summary and GitHub release for deployment.
 
-1. Pull requests to `main` or `production` run frontend installation, audit,
-   Astro build, and bundle-size validation.
-2. Pushes to `main` run the same verification job, then build and publish the
-   staging image only after verification succeeds.
-3. The **Promote to production** workflow is started manually from GitHub.
-4. It creates a versioned release branch and a pull request into `production`.
-5. Merging that pull request runs verification, then builds the production
-   image and creates a GitHub release only after verification succeeds.
-6. Flux detects the new image and updates the appropriate deployment through
-   the infrastructure repository.
+## Verification and publication
 
-The **CI** workflow coordinates verification and publishing. The image workflows
-are reusable workflows called by CI for the matching push branch; pull requests
-only run verification. An audit or build failure prevents image publication.
-Staging versions use the CI workflow's run number. New staging pushes cancel
-older runs, while production runs are allowed to finish.
+Pull requests to main or production install dependencies, audit them, build
+Astro, and report bundle sizes. Production-targeted PRs and production pushes
+verify with the production build environment. The bundle report is informational.
 
-The promotion workflow uses the highest existing `vX.Y.Z` tag and increments
-the patch version. The initial repository version is currently `0.0.1`; the
-first promotion therefore produces `0.0.2`. Major/minor release policy can be
-introduced later by changing that workflow or by adopting a conventional
-commit release tool.
+CI calls the staging or production image workflow only after verification
+succeeds. Pull requests never publish images. Staging pushes can cancel older
+runs; production publishing runs are serialized.
 
-## Required Flux-side setup
+Production additionally loads the image into Docker and tests it as a non-root
+user with a read-only filesystem before publishing. Checks cover:
 
-The infrastructure repository must provide separate staging and production
-`ImageRepository`/`ImagePolicy` resources and, if desired,
-`ImageUpdateAutomation` resources. Staging policies should select only
-`*-staging.*` tags. Production policies should select only stable SemVer tags
-and exclude staging and prerelease tags. GHCR pull credentials must also be
-available to the cluster when the package is private.
+- /health, including the expected release version and exact commit.
+- English and German homepages, with production indexing enabled.
+- robots.txt and sitemap-index.xml.
 
-The `production` branch should be protected so that production images can only
-be created through the reviewed promotion PR.
+Only the tested local image is pushed. After publication, GitHub Actions creates
+a GitHub release targeting the exact built commit, with its image digest.
+
+## Bootstrap
+
+Create production from the release-ready main commit. The initial branch push
+runs CI and publishes the current package version, initially 0.0.1. Creating
+the branch is therefore also the first image publication; it does not deploy
+the website.
+
+Protect production with required pull requests and the Verify frontend status
+check. Disable force pushes and deletion.
+
+## Subsequent promotion
+
+1. Verify the current staging website.
+2. Run Promote to production from the main branch in GitHub Actions.
+3. The workflow snapshots main, computes the next patch version above the
+   current package version and all stable vX.Y.Z tags, and creates release/X.Y.Z.
+4. The release branch preserves main's complete source tree and joins previous
+   production history, then commits the new package and lockfile versions.
+   Prerelease and unrelated tags are ignored.
+5. The workflow opens a pull request into production. If GitHub displays
+   Approve workflows to run, approve the PR checks and wait for Verify frontend.
+6. Review and merge the PR. CI verifies, tests, publishes the production image,
+   and creates the release.
+
+The workflow uses GITHUB_TOKEN with contents and pull-requests write permissions.
+In Settings > Actions > General, enable Allow GitHub Actions to create and
+approve pull requests. Default workflow token permissions can remain read-only.
+
+Only one release candidate should be open at a time. Existing release branches
+are never force-pushed. Make website fixes on main and promote them; production
+is the release destination rather than a separate source of website changes.
+
+## Future infrastructure setup
+
+Deployment automation must select stable production versions, exclude staging
+and prerelease tags, and pin the selected digest. It must not use the mutable
+frontend-staging tag as a production reference. No production deployment
+resources are managed or created by these workflows.

@@ -28,12 +28,12 @@ jobs:
           set -euo pipefail
           git fetch --tags --force
           version="$(node -p "require('./package.json').version")"
-          if [[ "$version" == *-* || ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [[ ! "$version" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
             echo "Invalid stable production version: $version" >&2
             exit 1
           fi
           if git tag --list "v${version}" | grep -q .; then
-            echo "Production version v${version} already exists" >&2
+            echo "Production version v${version} already exists; promote a new version." >&2
             exit 1
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
@@ -54,16 +54,16 @@ jobs:
           tags: |
             type=raw,value=${{ steps.version.outputs.version }}
             type=raw,value=v${{ steps.version.outputs.version }}
-            type=sha,prefix=sha-
+            type=sha,prefix=sha-,format=long
           labels: |
             org.opencontainers.image.environment=production
             org.opencontainers.image.version=${{ steps.version.outputs.version }}
-      - name: Build and push production image
+      - name: Build production image for verification
         uses: docker/build-push-action@v6
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
-          push: true
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
@@ -73,8 +73,32 @@ jobs:
             PUBLIC_BUILT_AT=${{ steps.version.outputs.built_at }}
           cache-from: type=gha,scope=frontend-production
           cache-to: type=gha,mode=max,scope=frontend-production
+      - name: Smoke test production image
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: bash .github/scripts/smoke-production-image.sh "$IMAGE_NAME:$RELEASE_VERSION" "$RELEASE_VERSION" "$GITHUB_SHA"
+      - name: Push verified production image
+        id: push
+        env:
+          IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          while IFS= read -r image; do
+            docker push "$image"
+          done <<< "$IMAGE_TAGS"
+          image_ref="$(docker image inspect --format '{{index .RepoDigests 0}}' "$IMAGE_NAME:$RELEASE_VERSION")"
+          echo "image_ref=$image_ref" >> "$GITHUB_OUTPUT"
+          printf '## Production image\n\nVersion: %s\n\nCommit: %s\n\nImage: %s\n' \
+            "$RELEASE_VERSION" "$GITHUB_SHA" "$image_ref" >> "$GITHUB_STEP_SUMMARY"
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_VERSION: ${{ steps.version.outputs.version }}
-        run: gh release create "v${RELEASE_VERSION}" --target production --generate-notes
+          IMAGE_REF: ${{ steps.push.outputs.image_ref }}
+        run: |
+          printf 'Production image: %s\n\nSource commit: %s\n' \
+            "$IMAGE_REF" "$GITHUB_SHA" > "$RUNNER_TEMP/production-release.md"
+          gh release create "v${RELEASE_VERSION}" --target "$GITHUB_SHA" \
+            --title "v${RELEASE_VERSION}" --generate-notes \
+            --notes-file "$RUNNER_TEMP/production-release.md"

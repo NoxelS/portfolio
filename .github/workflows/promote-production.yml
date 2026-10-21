@@ -3,6 +3,10 @@ name: Promote to production
 on:
   workflow_dispatch:
 
+concurrency:
+  group: production-promotion
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: write
@@ -10,6 +14,7 @@ permissions:
 jobs:
   promote:
     name: Create production promotion PR
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
@@ -17,36 +22,37 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-      - name: Calculate next production version
-        id: version
-        working-directory: frontend
-        shell: bash
-        run: |
-          set -euo pipefail
-          git fetch --tags --force
-          latest_tag="$(git tag --list 'v*' --sort=-version:refname | head -n 1)"
-          current_version="$(node -p "require('./package.json').version")"
-          if [[ -n "$latest_tag" ]]; then
-            npm version "${latest_tag#v}" --no-git-tag-version
-          else
-            npm version "$current_version" --no-git-tag-version
-          fi
-          release_version="$(npm version patch --no-git-tag-version)"
-          release_version="${release_version#v}"
-          echo "version=$release_version" >> "$GITHUB_OUTPUT"
-      - name: Create promotion pull request
-        uses: peter-evans/create-pull-request@v7
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          base: production
-          branch: release/${{ steps.version.outputs.version }}
-          delete-branch: true
-          commit-message: "chore(release): promote ${{ steps.version.outputs.version }}"
-          title: "chore(release): promote ${{ steps.version.outputs.version }}"
-          body: |
-            This PR promotes the current `main` commit to `production`.
+          node-version: 22
+      - name: Configure release author
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Prepare release branch from main
+        id: release
+        run: bash .github/scripts/prepare-production-release.sh
+      - name: Push release branch
+        env:
+          RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
+        run: git push origin "HEAD:refs/heads/$RELEASE_BRANCH"
+      - name: Create promotion pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+          SOURCE_SHA: ${{ steps.release.outputs.source_sha }}
+        run: |
+          cat > "$RUNNER_TEMP/production-promotion.md" <<EOF
+          Promotes the complete website source from main at ${SOURCE_SHA}.
 
-            - Version: `${{ steps.version.outputs.version }}`
-            - Source commit: `${{ github.sha }}`
-            - The production image will be built after merge.
+          Version: ${RELEASE_VERSION}
 
-            Merge this PR only after staging verification is complete.
+          Review the staging site, approve the PR workflows if GitHub requests it,
+          and wait for Verify frontend before merging. Merging publishes the
+          production image and a GitHub release; deployment is managed separately.
+          EOF
+          gh pr create --base production --head "$RELEASE_BRANCH" \
+            --title "chore(release): promote $RELEASE_VERSION" \
+            --body-file "$RUNNER_TEMP/production-promotion.md"
