@@ -71,14 +71,15 @@ check. Disable force pushes and deletion.
 4. The release branch preserves main's complete source tree and joins previous
    production history, then commits the new package and lockfile versions.
    Prerelease and unrelated tags are ignored.
-5. The workflow opens a pull request into production. If GitHub displays
-   Approve workflows to run, approve the PR checks and wait for Verify frontend.
+5. Open the workflow summary and follow Open promotion pull request. The form
+   has production as its base and a prefilled title and description. Create
+   the PR yourself so normal PR verification runs automatically.
 6. Review and merge the PR. CI verifies, tests, publishes the production image,
    and creates the release.
 
-The workflow uses GITHUB_TOKEN with contents and pull-requests write permissions.
-In Settings > Actions > General, enable Allow GitHub Actions to create and
-approve pull requests. Default workflow token permissions can remain read-only.
+The workflow uses GITHUB_TOKEN with contents write permission to push the
+release branch. Pull requests are created manually. Keep default workflow token
+permissions read-only and leave Actions-created/approved pull requests disabled.
 
 Only one release candidate should be open at a time. Existing release branches
 are never force-pushed. Make website fixes on main and promote them; production

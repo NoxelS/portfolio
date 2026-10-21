@@ -9,11 +9,10 @@ concurrency:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   promote:
-    name: Create production promotion PR
+    name: Prepare production promotion
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -37,22 +36,20 @@ jobs:
         env:
           RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
         run: git push origin "HEAD:refs/heads/$RELEASE_BRANCH"
-      - name: Create promotion pull request
+      - name: Report promotion pull request link
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_BRANCH: ${{ steps.release.outputs.branch }}
           RELEASE_VERSION: ${{ steps.release.outputs.version }}
           SOURCE_SHA: ${{ steps.release.outputs.source_sha }}
         run: |
-          cat > "$RUNNER_TEMP/production-promotion.md" <<EOF
-          Promotes the complete website source from main at ${SOURCE_SHA}.
+          node --input-type=module <<'NODE'
+          import { appendFileSync } from 'node:fs';
 
-          Version: ${RELEASE_VERSION}
-
-          Review the staging site, approve the PR workflows if GitHub requests it,
-          and wait for Verify frontend before merging. Merging publishes the
-          production image and a GitHub release; deployment is managed separately.
-          EOF
-          gh pr create --base production --head "$RELEASE_BRANCH" \
-            --title "chore(release): promote $RELEASE_VERSION" \
-            --body-file "$RUNNER_TEMP/production-promotion.md"
+          const { GITHUB_REPOSITORY, GITHUB_STEP_SUMMARY, RELEASE_BRANCH, RELEASE_VERSION, SOURCE_SHA } = process.env;
+          const url = new URL(`https://github.com/${GITHUB_REPOSITORY}/compare/production...${RELEASE_BRANCH}`);
+          url.searchParams.set('expand', '1');
+          url.searchParams.set('title', `chore(release): promote ${RELEASE_VERSION}`);
+          url.searchParams.set('body', `Promotes the complete website source from main at ${SOURCE_SHA}.\n\nVersion: ${RELEASE_VERSION}\n\nReview staging and wait for Verify frontend before merging. Merging publishes the production image and a GitHub release; deployment is managed separately.`);
+          appendFileSync(GITHUB_STEP_SUMMARY, `## Production promotion ${RELEASE_VERSION}\n\n[Open promotion pull request](${url})\n\nCreate the PR, review staging, and wait for Verify frontend before merging.\n`);
+          console.log(`Open production promotion PR: ${url}`);
+          NODE
