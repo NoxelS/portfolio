@@ -26,21 +26,21 @@ const phoneHref = contactPhone.replace(/[^+\d]/g, '');
 const phoneSecondaryHref = contactPhoneSecondary.replace(/[^+\d]/g, '');
 ---
 
-<div class="grid w-full min-w-0 grid-cols-1 gap-10 md:grid-cols-3 md:gap-8 lg:gap-12">
+<div class="grid w-full min-w-0 grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-12">
     <article class="motion-reveal grid min-w-0 grid-rows-[1fr_auto] gap-5 lg:delay-0" data-motion-reveal>
-        <div class="grid gap-3">
+        <div class="grid content-start gap-3">
             <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{copy.contact.directCallTitle}</h3>
             <p class="text-base leading-relaxed text-muted-strong">{copy.contact.directCallBody}</p>
         </div>
 
-        <div class="grid grid-cols-1 gap-3 self-end md:grid-cols-2">
+        <div class="grid grid-cols-1 gap-3 self-end sm:grid-cols-2 lg:grid-cols-1">
             {contactPhone && (
-                <ActionLink href={`tel:${phoneHref}`} variant="secondary" icon="iconoir:phone" class="h-14 w-full min-w-0 justify-between text-left">
+                <ActionLink href={`tel:${phoneHref}`} variant="secondary" icon="iconoir:phone" class="h-14 w-full min-w-0 justify-between whitespace-nowrap text-left">
                     🇩🇪 {contactPhone}
                 </ActionLink>
             )}
             {contactPhoneSecondary && (
-                <ActionLink href={`tel:${phoneSecondaryHref}`} variant="secondary" icon="iconoir:phone" class="h-14 w-full min-w-0 justify-between text-left">
+                <ActionLink href={`tel:${phoneSecondaryHref}`} variant="secondary" icon="iconoir:phone" class="h-14 w-full min-w-0 justify-between whitespace-nowrap text-left">
                     🇮🇹 {contactPhoneSecondary}
                 </ActionLink>
             )}
@@ -49,7 +49,7 @@ const phoneSecondaryHref = contactPhoneSecondary.replace(/[^+\d]/g, '');
     </article>
 
     <article class="motion-reveal grid min-w-0 grid-rows-[1fr_auto] gap-5 lg:delay-150" data-motion-reveal>
-        <div class="grid gap-3">
+        <div class="grid content-start gap-3">
             <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{copy.contact.emailTitle}</h3>
             <p class="text-base leading-relaxed text-muted-strong">{copy.contact.emailBody}</p>
         </div>
@@ -64,7 +64,7 @@ const phoneSecondaryHref = contactPhoneSecondary.replace(/[^+\d]/g, '');
     </article>
 
     <article class="motion-reveal grid min-w-0 grid-rows-[1fr_auto] gap-5 lg:delay-300" data-motion-reveal>
-        <div class="grid gap-3">
+        <div class="grid content-start gap-3">
             <h3 class="lora text-2xl leading-none uppercase text-foreground sm:text-3xl">{copy.contact.scheduleTitle}</h3>
             <p class="text-base leading-relaxed text-muted-strong">{copy.contact.scheduleBody}</p>
         </div>

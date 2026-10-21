@@ -34,6 +34,7 @@ const projectFilters = getAllTags(locale);
     <div class="grid w-full min-w-0 grid-cols-1 gap-8 px-4 md:px-8">
         <BannerQuote
             id="work"
+            label={localizedCopy.ui.principle}
             quote={localizedCopy.work.quote}
             subquote={localizedCopy.work.subquote}
         />
@@ -46,10 +47,11 @@ const projectFilters = getAllTags(locale);
             <ConsultingServices copy={localizedCopy.services} />
         </PortfolioSection>
 
-        <BannerQuote id="projects" quote={localizedCopy.organisations.quote} subquote="">
+        <BannerQuote id="projects" label={localizedCopy.ui.principle} quote={localizedCopy.organisations.quote} subquote="">
             <div class="flex flex-col gap-4 pt-4">
                 <div class="flex text-canvas text-lg">{localizedCopy.organisations.introduction}</div>
                 <PartnerLogoCarousel
+                    label={localizedCopy.ui.organisations}
                     partners={[
                         { src: '/assets/companies/netcom.svg', alt: 'NetCom Sicherheitstechnik' },
                         { src: '/assets/companies/kpmg.svg', alt: 'KPMG' },
@@ -87,6 +89,7 @@ const projectFilters = getAllTags(locale);
 
         <BannerQuote
             id="background"
+            label={localizedCopy.ui.principle}
             quote={localizedCopy.work.banner.quote}
             subquote={localizedCopy.work.banner.subquote}
         />
@@ -107,6 +110,7 @@ const projectFilters = getAllTags(locale);
 
         <BannerQuote
             id="tech-stack"
+            label={localizedCopy.ui.principle}
             quote={localizedCopy.stack.quote}
             subquote={localizedCopy.stack.subquote}
         />
@@ -130,6 +134,7 @@ const projectFilters = getAllTags(locale);
 
         <BannerQuote
             id="contact"
+            label={localizedCopy.ui.principle}
             quote={localizedCopy.contact.quote}
             subquote={localizedCopy.contact.subquote}
         />

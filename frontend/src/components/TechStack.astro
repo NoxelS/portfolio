@@ -115,7 +115,7 @@ const stackGroups: StackGroup[] = [
 			{ name: 'LangGraph', href: 'https://langchain-ai.github.io/langgraph/', productionUse: true },
 			{ name: 'LangChain', href: 'https://www.langchain.com/', productionUse: true },
 			{ name: 'NOOA', href: 'https://github.com/NVIDIA-NeMo/labs-OO-Agents', productionUse: false },
-			{ name: 'AgentOS', href: 'https://docs.agno.com/agent-os', productionUse: false },
+			{ name: 'AgentOS', href: 'https://docs.agno.com/agent-os/introduction', productionUse: false },
 			{ name: 'TensorFlow', href: 'https://www.tensorflow.org/', productionUse: true },
 			{ name: 'PyTorch', href: 'https://pytorch.org/', productionUse: false },
 			{ name: 'SciPy', href: 'https://scipy.org/', productionUse: true },
@@ -130,7 +130,7 @@ const stackGroups: StackGroup[] = [
 
 <div class="grid gap-4 mt-8 md:gap-8" data-tech-stack>
 	<div class="motion-reveal flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between self-end" data-motion-reveal>
-		<div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-base leading-tight text-muted-strong self-end" aria-label="Technology experience legend">
+		<div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-base leading-tight text-muted-strong self-end" aria-label={copy.ui.technologyLegend}>
 			<span class="flex items-center gap-3"><span class="h-5 w-5 shrink-0 border border-foreground bg-canvas"></span>{copy.stack.production}</span>
 			<span class="flex items-center gap-3"><span class="h-5 w-5 shrink-0 border border-foreground bg-[repeating-linear-gradient(135deg,transparent_0,transparent_3px,rgba(0,0,0,0.25)_3px,rgba(0,0,0,0.25)_4px)]"></span>{copy.stack.research}</span>
 		</div>
@@ -163,7 +163,7 @@ const stackGroups: StackGroup[] = [
 				</div>
 				<div class="grid min-w-0 grid-cols-[repeat(auto-fit,minmax(6rem,1fr))] gap-2 bg-black/5 p-2 sm:gap-3 sm:p-3">
 					{group.technologies.map((technology) => (
-						<a data-tech-stack-item data-technology-name={technology.name.toLowerCase()} data-production-use={technology.productionUse} href={technology.href} target="_blank" rel="noreferrer" class:list={['relative flex h-12 min-w-0 items-center justify-center border p-2 transition-colors duration-200 hover:bg-none hover:bg-foreground hover:text-canvas focus-visible:bg-none focus-visible:bg-foreground focus-visible:text-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent', technology.productionUse ? productionUseClass : exploratoryUseClass]} aria-label={`Open ${technology.name} website in a new tab`} title={`${technology.name} — ${technology.productionUse ? 'production use' : 'research and side projects'}`}>
+						<a data-tech-stack-item data-technology-name={technology.name.toLowerCase()} data-production-use={technology.productionUse} href={technology.href} target="_blank" rel="noreferrer" class:list={['relative flex h-12 min-w-0 items-center justify-center border p-2 transition-colors duration-200 hover:bg-none hover:bg-foreground hover:text-canvas focus-visible:bg-none focus-visible:bg-foreground focus-visible:text-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent', technology.productionUse ? productionUseClass : exploratoryUseClass]} aria-label={copy.ui.technologyWebsite.replace('{technology}', technology.name)} title={`${technology.name} — ${technology.productionUse ? copy.stack.useProduction : copy.stack.useResearch}`}>
 							<span class="max-w-full break-words text-center text-xs font-semibold leading-tight" aria-hidden="true">{technology.name}</span>
 						</a>
 					))}

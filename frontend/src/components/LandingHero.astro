@@ -17,18 +17,18 @@ import { Icon } from 'astro-icon/components';
 import MeshRenderer from './MeshRenderer.astro';
 import type { Copy, Locale } from '../i18n';
 
-const { copy, locale } = Astro.props as { copy: Copy['hero']; locale: Locale };
+const { copy, labels, locale } = Astro.props as { copy: Copy['hero']; labels: Copy['ui']; locale: Locale };
 ---
 
 <div
     id="mesh-frame"
-    class="relative min-h-0 w-full flex-1 overflow-hidden bg-mesh-background"
-    aria-label="Abstract liquid halftone mesh"
+    class="relative flex w-full flex-1 flex-col justify-between gap-12 overflow-hidden bg-mesh-background"
+    aria-label={labels.mesh}
     role="img"
 >
-    <div class="absolute top-0 left-0 z-10 flex w-full justify-between px-6 py-8 sm:p-8">
+    <div class="relative z-10 flex w-full shrink-0 justify-between px-6 py-8 sm:p-8">
         <div class="text-canvas">
-			<nav class="flex items-center gap-2 text-base sm:text-lg" aria-label="Language">
+			<nav class="flex items-center gap-2 text-base sm:text-lg" aria-label={labels.language}>
 				{(['en', 'de'] as const).map((language) => (
 					<>
 						{language === 'de' && <span aria-hidden="true">/</span>}
@@ -52,7 +52,7 @@ const { copy, locale } = Astro.props as { copy: Copy['hero']; locale: Locale };
     <div class="mesh-shadow mesh-shadow-a"></div>
     <div class="mesh-shadow mesh-shadow-b"></div>
     <div class="mesh-grain"></div>
-    <div class="motion-reveal absolute bottom-0 left-0 z-30 flex w-full translate-y-10 items-end justify-between px-6 py-8 opacity-0 sm:p-8" data-motion-reveal data-motion-immediate data-motion-distance="large">
+    <div class="motion-reveal relative z-30 flex w-full shrink-0 translate-y-10 items-end justify-between px-6 py-8 opacity-0 sm:p-8" data-motion-reveal data-motion-immediate data-motion-distance="large">
         <div class="flex flex-col items-start gap-4">
             <div class="lora text-display-sm text-canvas opacity-85 md:leading-none">
                 <span set:html={copy.principle}></span>
@@ -81,7 +81,7 @@ const { copy, locale } = Astro.props as { copy: Copy['hero']; locale: Locale };
             <div class="flex flex-row gap-4">
                 <a
                     href="https://github.com/NoxelS"
-                    aria-label="GitHub profile"
+                    aria-label={labels.profile.replace('{platform}', 'GitHub')}
                     target="_blank"
                     rel="noreferrer"
                     class="flex h-10 w-10 items-center justify-center bg-canvas text-primary transition hover:bg-canvas/85"
@@ -90,7 +90,7 @@ const { copy, locale } = Astro.props as { copy: Copy['hero']; locale: Locale };
                 </a>
                 <a
                     href="https://www.linkedin.com/in/noel-schwabenland/"
-                    aria-label="LinkedIn profile"
+                    aria-label={labels.profile.replace('{platform}', 'LinkedIn')}
                     target="_blank"
                     rel="noreferrer"
                     class="flex h-10 w-10 items-center justify-center bg-canvas text-primary transition hover:bg-canvas/85"
@@ -99,7 +99,7 @@ const { copy, locale } = Astro.props as { copy: Copy['hero']; locale: Locale };
                 </a>
                 <a
                     href="https://www.malt.de/profile/noelschwabenland"
-                    aria-label="Malt profile"
+                    aria-label={labels.profile.replace('{platform}', 'Malt')}
                     target="_blank"
                     rel="noreferrer"
                     class="flex h-10 w-10 items-center justify-center bg-canvas text-primary transition hover:bg-canvas/85"

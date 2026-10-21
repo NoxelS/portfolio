@@ -11,10 +11,11 @@
  */
 import MeshRenderer from './MeshRenderer.astro';
 
-const { id, quote, subquote } = Astro.props as {
+const { id, quote, subquote, label } = Astro.props as {
     id?: string;
     quote: string;
     subquote: string;
+    label: string;
 };
 
 const hasSubquote = subquote.trim().length > 0;
@@ -25,7 +26,7 @@ const meshCanvasId = `banner-mesh-canvas-${meshKey}`;
 ---
 
 <!-- Personal principle between page sections -->
-<aside id={id} class="relative -mx-4 w-[calc(100%+2rem)] min-w-0 overflow-hidden bg-mesh-background px-4 py-10 md:-mx-8 md:w-[calc(100%+4rem)] md:px-8 md:py-14" aria-label="Portfolio principle">
+<aside id={id} class="relative -mx-4 w-[calc(100%+2rem)] min-w-0 overflow-hidden bg-mesh-background px-4 py-10 md:-mx-8 md:w-[calc(100%+4rem)] md:px-8 md:py-14" aria-label={label}>
     <div id={meshFrameId} class="absolute inset-0 overflow-hidden opacity-75" aria-hidden="true">
         <MeshRenderer canvasId={meshCanvasId} frameId={meshFrameId} client:load />
     </div>

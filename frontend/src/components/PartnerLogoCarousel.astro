@@ -10,11 +10,11 @@ type Partner = {
 
 import { cloudflareImageUrl } from '../utils/cloudflare-image';
 
-const { partners } = Astro.props as { partners: Partner[] };
+const { partners, label } = Astro.props as { partners: Partner[]; label: string };
 const carouselPartners = [...partners, ...partners, ...partners];
 ---
 
-<div class="overflow-hidden pl-5 sm:pl-7" data-partner-logo-carousel aria-label="Companies I have worked with">
+<div class="overflow-hidden pl-5 sm:pl-7" data-partner-logo-carousel aria-label={label}>
     <div class="flex gap-10 will-change-transform" data-partner-logo-track>
         {carouselPartners.map((partner, index) => (
             <div class="group flex h-12 w-36 shrink-0 items-center justify-center" data-partner-logo-item aria-hidden={index >= partners.length ? 'true' : undefined}>

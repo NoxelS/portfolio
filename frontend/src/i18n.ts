@@ -14,6 +14,15 @@ export function localePath(locale: Locale, path = ''): string {
 
 export type Copy = {
     seo: { title: string; description: string; imageAlt: string };
+    ui: {
+        language: string;
+        mesh: string;
+        profile: string;
+        principle: string;
+        organisations: string;
+        technologyLegend: string;
+        technologyWebsite: string;
+    };
     hero: {
         summaryCompact: string;
         summary: string;
@@ -109,6 +118,15 @@ export const copy: Record<Locale, Copy> = {
                 defaultSeo.description,
             imageAlt: 'Portrait of Noel Pascal Schwabenland'
         },
+        ui: {
+            language: 'Language',
+            mesh: 'Abstract liquid halftone mesh',
+            profile: '{platform} profile',
+            principle: 'Portfolio principle',
+            organisations: 'Companies and institutions I’ve worked with',
+            technologyLegend: 'Technology experience legend',
+            technologyWebsite: 'Open {technology} website in a new tab'
+        },
         hero: {
             summaryCompact:
                 `I’m an EU-based freelance Applied AI Engineer building and deploying production AI systems, from inference infrastructure to autonomous agents and enterprise applications, with a focus on reliability, open technologies, and data sovereignty.`,
@@ -199,7 +217,7 @@ export const copy: Record<Locale, Copy> = {
             chapters: [
                 {
                     title: 'Theoretical Physics',
-                    body: 'Physics taught me to turn ambiguous problems into structured development and validation steps. It also taught me to stay calm when requirements change or technical depth becomes demanding. I work my way into difficult problems until I understand what needs to be built and how to validate it.',
+                    body: 'Physics taught me to turn ambiguous problems into structured development and validation steps. It also taught me to stay calm when requirements change or problems become technically demanding. I work my way into difficult problems until I understand what needs to be built and how to validate it.',
                 },
                 {
                     title: 'Software Development',
@@ -213,12 +231,12 @@ export const copy: Record<Locale, Copy> = {
         },
         organisations: {
             quote: 'Not only theory, but proven practice.',
-            introduction: 'I already got the chance to have contributed alongside some awesome organisations:'
+            introduction: 'I’ve worked with these companies and institutions:'
         },
         projects: {
             title: 'Case studies',
             description:
-                'From private AI platforms and voice agents to high-performance research pipelines, these projects solve real operational constraints with systems teams can use, govern, and scale.',
+                'From private AI platforms and voice agents to high-performance research pipelines, these projects address real operational constraints with systems teams can use, govern, and scale.',
             selected: 'These are selected projects only. If you are looking for experience in a specific area, feel free to get in touch with me.',
             exploreBackground: 'About my background',
             contact: 'Get in touch',
@@ -259,7 +277,7 @@ export const copy: Record<Locale, Copy> = {
             quote: 'Nothing beats a real conversation.',
             subquote:
                 'Even though I work with AI agents, I believe that personal connections are irreplaceable. So I always make time for face-to-face meetings and conversations.',
-            title: "Let's build awesome things together",
+            title: 'Let’s put ideas into practice',
             description:
                 "Have a project, idea, or opportunity in mind? Let's talk and see whether we're a good fit, and explore how we can create something valuable together.",
             directCallTitle: 'Give me a direct call',
@@ -283,6 +301,15 @@ export const copy: Record<Locale, Copy> = {
             description:
                 `Noel Schwabenland ist freiberuflicher Applied AI Engineer mit Sitz in der EU. Er entwickelt produktive KI-Systeme, von Inferenzinfrastruktur bis zu autonomen Agenten, mit Fokus auf Zuverlässigkeit und Datensouveränität.`,
             imageAlt: 'Porträt von Noel Pascal Schwabenland'
+        },
+        ui: {
+            language: 'Sprache',
+            mesh: 'Abstraktes Punktmuster',
+            profile: '{platform}-Profil',
+            principle: 'Leitsatz',
+            organisations: 'Unternehmen und Institutionen, mit denen ich zusammengearbeitet habe',
+            technologyLegend: 'Legende zur Technologieerfahrung',
+            technologyWebsite: 'Website von {technology} in einem neuen Tab öffnen'
         },
         hero: {
             summaryCompact:

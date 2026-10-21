@@ -186,6 +186,24 @@ const { projects, tags, copy } = Astro.props;
         const selectedTags = new Set(['highlighted']);
         let glide: Glide | undefined;
 
+        const syncSlideAccessibility = () => {
+            const activeSlide = slides.querySelector<HTMLElement>('.glide__slide--active:not(.glide__slide--clone)')
+                ?? slides.querySelector<HTMLElement>('.glide__slide:not(.glide__slide--clone)');
+            const focusedSlide = document.activeElement?.closest('.glide__slide');
+
+            // Clones and inactive cards must not expose offscreen links or duplicate content.
+            slides.querySelectorAll<HTMLElement>('.glide__slide').forEach(slide => {
+                const isActive = slide === activeSlide;
+                slide.inert = !isActive;
+                if (isActive) slide.removeAttribute('aria-hidden');
+                else slide.setAttribute('aria-hidden', 'true');
+            });
+
+            if (focusedSlide && focusedSlide !== activeSlide && slides.contains(focusedSlide)) {
+                activeSlide?.querySelector<HTMLElement>('a[href]')?.focus({ preventScroll: true });
+            }
+        };
+
         const syncCardHeight = () => {
             const cards = Array.from(slides.querySelectorAll<HTMLElement>('[data-project-card]'));
             slides.style.removeProperty('height');
@@ -234,8 +252,10 @@ const { projects, tags, copy } = Astro.props;
                     breakpoints: { 1024: { perView: 1 }, 640: { perView: 1 } }
                 }).mount();
                 if (projectCount === 1) glide.disable();
+                glide.on(['move.after', 'build.after'], syncSlideAccessibility);
                 glide.on('run.after', syncCardHeight);
                 glide.on('resize', syncCardHeight);
+                syncSlideAccessibility();
             }
             controls.forEach(control => {
                 control.disabled = projectCount < 2;
