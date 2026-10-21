@@ -1,5 +1,6 @@
 ---
 import type { Copy, Locale } from '../i18n';
+import CvDownloads from './CvDownloads.astro';
 import { buildInfo } from '../lib/build-info';
 import { legalCopy, operator } from '../data/legal';
 
@@ -26,6 +27,7 @@ const linkClass = 'text-canvas/85 decoration-canvas/40 hover:text-canvas hover:d
 				<li><a class={linkClass} href={`mailto:${operator.email}`}>{operator.email}</a></li>
 				<li><a class={linkClass} href={`tel:${operator.phoneHref}`}>{operator.phone}</a></li>
 			</ul>
+			<CvDownloads copy={copy} variant="footer" class="mt-5" />
 		</div>
 		<nav aria-label={labels.title}>
 			<h2 class="text-sm font-semibold">{labels.title}</h2>
