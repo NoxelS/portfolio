@@ -8,7 +8,7 @@ on:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/production' }}
 
 jobs:
   verify:
@@ -31,14 +31,33 @@ jobs:
       - name: Audit dependencies
         working-directory: frontend
         run: npm audit --audit-level=high
+      - name: Record build timestamp
+        run: echo "PUBLIC_BUILT_AT=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
       - name: Build Astro app
         working-directory: frontend
         env:
           PUBLIC_BUILD_VERSION: ${{ github.sha }}
           PUBLIC_COMMIT_SHA: ${{ github.sha }}
-          PUBLIC_BUILT_AT: ${{ github.run_started_at }}
           PUBLIC_DEPLOYMENT_ENV: staging
         run: npm run build
       - name: Report bundle size
         working-directory: frontend
         run: npm run report:bundle
+
+  staging:
+    name: Build staging image
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/build-staging.yml
+
+  production:
+    name: Build production image
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/production'
+    permissions:
+      contents: write
+      packages: write
+    uses: ./.github/workflows/build-production.yml
