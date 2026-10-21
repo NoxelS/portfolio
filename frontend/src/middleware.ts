@@ -22,7 +22,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	if (context.url.pathname === '/') {
 		const locale = preferredLocale(context.request.headers.get('cookie'), context.request.headers.get('accept-language'));
-		return Response.redirect(new URL(`/${locale}/`, context.url), 302);
+		return new Response(null, {
+			status: 302,
+			headers: {
+				Location: `/${locale}/`,
+				'Cache-Control': 'private, no-store',
+				Vary: 'Cookie, Accept-Language',
+			},
+		});
 	}
 
 	const localeSwitch = context.url.pathname.match(/^\/_locale\/(en|de)$/);
@@ -33,7 +40,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		return new Response(null, {
 			status: 302,
 			headers: {
-				Location: new URL(target, context.url).toString(),
+				Location: target,
 				'Set-Cookie': `portfolio_locale=${locale}; Path=/; Max-Age=31536000; SameSite=Lax; Secure; HttpOnly`,
 				'Cache-Control': 'private, no-store',
 			},

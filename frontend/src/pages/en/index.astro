@@ -1,5 +1,8 @@
 ---
 import Home from '../index.astro';
+import { setPublicPageCache } from '../../lib/cache';
+
+setPublicPageCache(Astro.response.headers);
 ---
 
 <Home locale="en" />

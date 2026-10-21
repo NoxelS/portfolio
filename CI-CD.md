@@ -47,6 +47,9 @@ user with a read-only filesystem before publishing. Checks cover:
 
 - /health, including the expected release version and exact commit.
 - English and German homepages, with production indexing enabled.
+- Relative locale redirects behind an HTTPS proxy, private redirect responses,
+  and secure language-preference cookies.
+- Public cache headers on both localized homepages.
 - robots.txt and sitemap-index.xml.
 
 Only the tested local image is pushed. After publication, GitHub Actions creates
@@ -84,6 +87,30 @@ permissions read-only and leave Actions-created/approved pull requests disabled.
 Only one release candidate should be open at a time. Existing release branches
 are never force-pushed. Make website fixes on main and promote them; production
 is the release destination rather than a separate source of website changes.
+
+## Cloudflare delivery
+
+Cloudflare DNS, tunnel routes, and cache rules are managed in the dashboard.
+The root domain points to the Sisyphus tunnel; the obsolete wildcard A record
+pointing to the server IP has been removed. Configure each public hostname
+explicitly instead of depending on that wildcard.
+
+The portfolio cache rules cover noel.fyi and portfolio-staging.noel.fyi:
+
+- /en/* and /de/* are eligible for caching and respect origin cache headers.
+  The rendered homepages send a 60-second browser TTL and a 600-second shared-cache
+  TTL. Without an origin header, Cloudflare's default status-code TTL applies.
+- /assets/*, including the public CV PDFs, has an explicit two-hour edge TTL
+  to avoid revalidating the static server's default max-age=0 on every request.
+  Two hours is the minimum edge-TTL override on the current Free plan.
+- / and /_locale/* must remain uncached because they select or persist a visitor's
+  preferred language. Their redirects use relative Location headers so the
+  tunnel's internal HTTP connection cannot downgrade the visitor's HTTPS URL.
+
+After publishing changed content at an existing URL, use Cloudflare's Custom
+Purge for the affected URLs if it needs to become visible before its TTL expires.
+Include both locale homepages when deploying changes to them. Purging the edge
+cache does not clear copies already cached in visitors' browsers.
 
 ## Future infrastructure setup
 
