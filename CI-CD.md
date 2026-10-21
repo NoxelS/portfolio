@@ -31,13 +31,20 @@ must not be used as the final production reference.
 
 1. Pull requests to `main` or `production` run frontend installation, audit,
    Astro build, and bundle-size validation.
-2. Every push to `main` builds and publishes the staging image.
+2. Pushes to `main` run the same verification job, then build and publish the
+   staging image only after verification succeeds.
 3. The **Promote to production** workflow is started manually from GitHub.
 4. It creates a versioned release branch and a pull request into `production`.
-5. Merging that pull request builds the production image and creates a GitHub
-   release.
+5. Merging that pull request runs verification, then builds the production
+   image and creates a GitHub release only after verification succeeds.
 6. Flux detects the new image and updates the appropriate deployment through
    the infrastructure repository.
+
+The **CI** workflow coordinates verification and publishing. The image workflows
+are reusable workflows called by CI for the matching push branch; pull requests
+only run verification. An audit or build failure prevents image publication.
+Staging versions use the CI workflow's run number. New staging pushes cancel
+older runs, while production runs are allowed to finish.
 
 The promotion workflow uses the highest existing `vX.Y.Z` tag and increments
 the patch version. The initial repository version is currently `0.0.1`; the

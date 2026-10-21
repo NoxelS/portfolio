@@ -1,8 +1,7 @@
 name: Build staging image
 
 on:
-  push:
-    branches: [main]
+  workflow_call:
 
 concurrency:
   group: staging-image
@@ -29,6 +28,7 @@ jobs:
           set -euo pipefail
           version="$(node -p "require('./package.json').version")"
           echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "built_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to GHCR
@@ -61,6 +61,6 @@ jobs:
             PUBLIC_DEPLOYMENT_ENV=staging
             PUBLIC_BUILD_VERSION=${{ steps.version.outputs.version }}-staging.${{ github.run_number }}
             PUBLIC_COMMIT_SHA=${{ github.sha }}
-            PUBLIC_BUILT_AT=${{ github.run_started_at }}
+            PUBLIC_BUILT_AT=${{ steps.version.outputs.built_at }}
           cache-from: type=gha,scope=frontend-staging
           cache-to: type=gha,mode=max,scope=frontend-staging
