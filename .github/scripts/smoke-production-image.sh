@@ -70,9 +70,9 @@ for locale in en de; do
     'cache-control: public, max-age=60, s-maxage=600, stale-while-revalidate=60'
   grep --quiet "<html lang=\"$locale\"" "$smoke_dir/$locale.html"
   # Resizing is a build-time setting: validate the HTML emitted by the actual image.
-  grep --quiet '/cdn-cgi/image/width=192,quality=80,format=auto/profile1.png 192w' "$smoke_dir/$locale.html"
-  grep --quiet '/cdn-cgi/image/width=500,quality=80,format=auto/profile1.png 500w' "$smoke_dir/$locale.html"
-  grep --quiet '/cdn-cgi/image/width=144,height=40,quality=80,format=auto/assets/companies/UNIPD_Marchio_STD_RED.png 1x' "$smoke_dir/$locale.html"
+  grep --extended-regexp --quiet '/cdn-cgi/image/width=192,quality=80,format=auto/_astro/profile1\.[A-Za-z0-9_-]+\.png 192w' "$smoke_dir/$locale.html"
+  grep --extended-regexp --quiet '/cdn-cgi/image/width=500,quality=80,format=auto/_astro/profile1\.[A-Za-z0-9_-]+\.png 500w' "$smoke_dir/$locale.html"
+  grep --extended-regexp --quiet '/cdn-cgi/image/width=144,height=40,quality=80,format=auto/_astro/UNIPD_Marchio_STD_RED\.[A-Za-z0-9_-]+\.png 1x' "$smoke_dir/$locale.html"
   if grep --extended-regexp --quiet '/cdn-cgi/image/[^" ]*\.svg([?" ]|$)' "$smoke_dir/$locale.html"; then
     echo "SVG logos must bypass image transformations." >&2
     exit 1
@@ -82,6 +82,14 @@ for locale in en de; do
     exit 1
   fi
 done
+
+# Fingerprinted source images must use the active Node adapter's immutable
+# asset cache policy. Cloudflare transformations inherit their source policy.
+portrait_path="$(grep --only-matching --extended-regexp '/_astro/profile1\.[A-Za-z0-9_-]+\.png' "$smoke_dir/en.html" | sort -u)"
+curl --fail --silent --show-error --dump-header "$smoke_dir/portrait.headers" \
+  "$base_url$portrait_path" --output /dev/null
+tr -d '\r' < "$smoke_dir/portrait.headers" | grep --ignore-case --line-regexp \
+  'cache-control: public, max-age=31536000, immutable'
 
 curl --fail --silent --show-error "$base_url/sitemap-index.xml" --output "$smoke_dir/sitemap.xml"
 grep --quiet 'https://noel.fyi/sitemap-' "$smoke_dir/sitemap.xml"
