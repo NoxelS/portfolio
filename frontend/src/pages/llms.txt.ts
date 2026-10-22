@@ -16,11 +16,11 @@ This is a concise machine-readable overview of the portfolio. Use the full Markd
 
 ## Resources
 
-- Full portfolio: ${defaultSeo.site}/index.md
-- Authentication and agent registration status: ${defaultSeo.site}/auth.md
-- Website: ${defaultSeo.site}/
-- GitHub: https://github.com/NoxelS
-- LinkedIn: https://www.linkedin.com/in/noel-schwabenland/
+- [Full portfolio](${defaultSeo.site}/index.md)
+- [Authentication and agent registration status](${defaultSeo.site}/auth.md)
+- [Website](${defaultSeo.site}/)
+- [GitHub](https://github.com/NoxelS)
+- [LinkedIn](https://www.linkedin.com/in/noel-schwabenland/)
 
 ## Topics
 
