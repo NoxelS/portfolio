@@ -1,0 +1,38 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Portfolio health API",
+    "version": "1.0.0",
+    "description": "Public, read-only health and build metadata for noel.fyi. No authentication is required."
+  },
+  "servers": [{ "url": "https://noel.fyi" }],
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Get portfolio server health and build metadata",
+        "description": "Reports that the portfolio server is responding. This does not check external services.",
+        "responses": {
+          "200": {
+            "description": "The portfolio server is responding.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "service", "version", "commit", "builtAt"],
+                  "properties": {
+                    "status": { "type": "string", "const": "ok" },
+                    "service": { "type": "string", "const": "portfolio" },
+                    "version": { "type": "string", "description": "Build version, commit SHA, or development fallback." },
+                    "commit": { "type": "string", "description": "Commit SHA or development fallback." },
+                    "builtAt": { "type": "string", "description": "Configured build timestamp, or server initialization timestamp as a fallback." }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

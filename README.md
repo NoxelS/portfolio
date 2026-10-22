@@ -24,24 +24,21 @@ npm run dev
 
 Use `npm run build` to create a production build and `npm run preview` to preview it locally.
 
+## API discovery
 
-## Markdown content negotiation
+`GET /.well-known/api-catalog` returns an RFC 9727 Linkset with media type
+`application/linkset+json`. `HEAD` returns the same headers, including an
+`api-catalog` Link relation. The catalog currently lists the public `/health`
+API, with its `/openapi.json` specification and `/api-docs/` documentation.
+Add an `item` link and a corresponding API entry when publishing another API.
 
-Request a page with `Accept: text/markdown` to receive Markdown at the same URL.
-Browsers and wildcard requests keep the default HTML (and `/` keeps its locale
-redirect). `/` retains the existing English `/index.md` representation; `/en/`,
-`/de/`, and localized legal pages convert their rendered main content, keeping
-links absolute and removing scripts, styles, navigation and decorative elements.
-Both HTML and negotiated Markdown responses vary on `Accept`.
+After deploying, validate discovery with:
 
 ```sh
-curl -H 'Accept: text/markdown' http://localhost:4321/de/
-cd frontend
-node --test test/markdown.test.mjs
+curl -sS https://isitagentready.com/api/scan \
+  -H 'Content-Type: application/json' \
+  -d '{"url":"https://noel.fyi"}'
 ```
 
-These pages render on demand so negotiation runs in the production Node server.
-Browser cache policies remain in place; `CDN-Cache-Control: no-store` bypasses
-shared edge caching for negotiated URLs to prevent cross-format cache entries.
-Verify both formats on the public URL after deployment.
-Token counts are omitted because no tokenizer is configured.
+Check `checks.discovery.apiCatalog.status` for `"pass"`. This scanner checks
+the live deployment, so a PR build alone cannot change its result.
