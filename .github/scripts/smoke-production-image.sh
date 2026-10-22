@@ -67,7 +67,7 @@ for locale in en de; do
   curl --fail --silent --show-error --dump-header "$smoke_dir/$locale.headers" \
     "$base_url/$locale/" --output "$smoke_dir/$locale.html"
   tr -d '\r' < "$smoke_dir/$locale.headers" | grep --ignore-case --line-regexp \
-    'cache-control: public, max-age=60, s-maxage=600, stale-while-revalidate=60'
+    'cache-control: public, max-age=60, s-maxage=600, stale-while-revalidate=60, no-transform'
   grep --quiet "<html lang=\"$locale\"" "$smoke_dir/$locale.html"
   # Resizing is a build-time setting: validate the HTML emitted by the actual image.
   grep --extended-regexp --quiet '/cdn-cgi/image/width=192,quality=80,format=auto/_astro/profile1\.[A-Za-z0-9_-]+\.png 192w' "$smoke_dir/$locale.html"
