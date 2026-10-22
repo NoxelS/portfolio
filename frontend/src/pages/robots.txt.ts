@@ -9,6 +9,9 @@ export const GET: APIRoute = () => {
 	const isStaging = import.meta.env.PUBLIC_DEPLOYMENT_ENV === 'staging';
 	const body = [
 		'User-agent: *',
+		isStaging
+			? 'Content-Signal: ai-train=no, search=no, ai-input=no'
+			: 'Content-Signal: ai-train=no, search=yes, ai-input=no',
 		isStaging ? 'Disallow: /' : 'Allow: /',
 		'',
 		...(isStaging ? [] : [`Sitemap: ${defaultSeo.site}/sitemap-index.xml`]),
