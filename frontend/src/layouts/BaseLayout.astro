@@ -48,8 +48,9 @@ const runtimeConfig = {
 			noindex={noindex}
 			locale={locale}
 		/>
-		<Font cssVariable="--font-portfolio-lora" preload={false} />
-		<Font cssVariable="--font-portfolio-source-sans" preload={false} />
+		<!-- Preload above-the-fold fonts; optional display keeps late arrivals from moving content. -->
+		<Font cssVariable="--font-portfolio-lora" preload={[{ style: 'normal' }]} />
+		<Font cssVariable="--font-portfolio-source-sans" preload={[{ style: 'normal' }]} />
 		<link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon_io/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon_io/favicon-16x16.png">

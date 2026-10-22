@@ -50,9 +50,10 @@ const { copy, labels, locale } = Astro.props as { copy: Copy['hero']; labels: Co
         </div>
     </div>
     <MeshRenderer canvasId="hero-mesh-canvas" frameId="mesh-frame" interactionId="landing-page" />
-    <div class="mesh-shadow mesh-shadow-a"></div>
-    <div class="mesh-shadow mesh-shadow-b"></div>
-    <div class="mesh-grain"></div>
+    <!-- Enlarge the painted backgrounds without moving their layout boxes when the hero resizes. -->
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_36%_56%,rgb(3_7_19_/_0.86)_0%,transparent_46%)] bg-size-[136%_136%] bg-center bg-no-repeat opacity-62" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_72%_54%,rgb(5_8_23_/_0.82)_0%,transparent_42%)] bg-size-[136%_136%] bg-center bg-no-repeat opacity-62" aria-hidden="true"></div>
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgb(255_255_255_/_0.18)_0_0.0625rem,transparent_0.075rem)] bg-size-[0.45rem_0.45rem] opacity-22 mix-blend-soft-light" aria-hidden="true"></div>
     <div class="relative z-30 flex w-full shrink-0 items-end justify-between px-6 py-8 sm:p-8">
         <div class="flex flex-col items-start gap-4">
             <div class="lora text-display-sm text-canvas opacity-85 md:leading-none">
@@ -105,7 +106,7 @@ const { copy, labels, locale } = Astro.props as { copy: Copy['hero']; labels: Co
                     rel="noreferrer"
                     class="flex h-10 w-10 items-center justify-center bg-canvas text-primary transition hover:bg-canvas/85"
                 >
-                    <img src={imageAssets.malt} alt="" class="h-auto w-7" aria-hidden="true" />
+                    <img src={imageAssets.malt} alt="" class="h-auto w-7" width="127" height="36" aria-hidden="true" />
                 </a>
             </div>
         </div>
@@ -195,33 +196,3 @@ const { copy, labels, locale } = Astro.props as { copy: Copy['hero']; labels: Co
         window.addEventListener('load', updateSiteLoadTime, { once: true });
     }
 </script>
-
-
-<style>
-    .mesh-shadow,
-    .mesh-grain {
-        pointer-events: none;
-        position: absolute;
-    }
-
-    .mesh-shadow {
-        inset: -18%;
-        opacity: 0.62;
-    }
-
-    .mesh-shadow-a {
-        background: radial-gradient(ellipse at 36% 56%, rgb(3 7 19 / 0.86) 0%, transparent 46%);
-    }
-
-    .mesh-shadow-b {
-        background: radial-gradient(ellipse at 72% 54%, rgb(5 8 23 / 0.82) 0%, transparent 42%);
-    }
-
-    .mesh-grain {
-        background-image: radial-gradient(circle at center, rgb(255 255 255 / 0.18) 0 0.0625rem, transparent 0.075rem);
-        background-size: 0.45rem 0.45rem;
-        inset: 0;
-        mix-blend-mode: soft-light;
-        opacity: 0.22;
-    }
-</style>
