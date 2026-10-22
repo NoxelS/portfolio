@@ -22,13 +22,18 @@
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^7.2.8",
     "astro-icon": "^1.1.5",
+    "linkedom": "^0.18.14",
     "marked": "^18.0.3",
     "ogl": "^1.0.11",
-    "tailwindcss": "^4.3.0"
+    "tailwindcss": "^4.3.0",
+    "turndown": "^7.2.4"
   },
   "overrides": {
     "@tailwindcss/typography": {
       "postcss-selector-parser": "7.1.6"
     }
+  },
+  "devDependencies": {
+    "@types/turndown": "^5.0.6"
   }
 }

@@ -1,28 +1,28 @@
 ---
+import { setPublicPageCache } from '../../lib/cache';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { legalCopy, legalRevisionDate, operator } from '../../data/legal';
 import { locales, type Locale } from '../../i18n';
 import { legalPages, renderLegalContent, type LegalPage } from '../../lib/legal-content';
 
-export const prerender = true;
+export const prerender = false;
 
-export function getStaticPaths() {
-	return locales.flatMap(locale => legalPages.map(legalPage => ({
-		params: { locale, legalPage },
-		props: { locale, legalPage },
-	})));
+const { locale, legalPage } = Astro.params;
+if (!locales.includes(locale as Locale) || !legalPages.includes(legalPage as LegalPage)) {
+	return new Response('Not found', { status: 404 });
 }
-
-const { locale, legalPage } = Astro.props as { locale: Locale; legalPage: LegalPage };
-const labels = legalCopy[locale];
+const pageLocale = locale as Locale;
+const page = legalPage as LegalPage;
+setPublicPageCache(Astro.response.headers);
+const labels = legalCopy[pageLocale];
 const title = legalPage === 'legal-notice' ? labels.notice : legalPage === 'privacy' ? labels.privacy : labels.cookies;
-const { html } = renderLegalContent(legalPage, locale);
+const { html } = renderLegalContent(page, pageLocale);
 const revisionLabel = new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', {
 	day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
 }).format(new Date(legalRevisionDate));
 ---
 
-<BaseLayout locale={locale} title={`${title} | ${operator.name}`} description={labels.title} canonicalPath={`/${locale}/${legalPage}/`}>
+<BaseLayout locale={pageLocale} title={`${title} | ${operator.name}`} description={labels.title} canonicalPath={`/${locale}/${legalPage}/`}>
 	<div class="w-full min-w-0 px-4 py-8 text-black md:px-8 md:py-12">
 		<header class="pb-8 md:pb-12">
 			<div class="flex flex-wrap items-center justify-between gap-4 text-sm">
