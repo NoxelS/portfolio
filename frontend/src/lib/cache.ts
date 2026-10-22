@@ -1,5 +1,7 @@
 export const cacheControl = {
-	publicPage: 'public, max-age=60, s-maxage=600, stale-while-revalidate=60',
+	// Cloudflare honors no-transform by skipping JavaScript Detections injection.
+	// Keep the public HTML free of edge scripts that probe deprecated browser APIs.
+	publicPage: 'public, max-age=60, s-maxage=600, stale-while-revalidate=60, no-transform',
 	publicDocument: 'public, max-age=300, s-maxage=3600, stale-while-revalidate=600',
 	publicData: 'public, max-age=30, s-maxage=300, stale-while-revalidate=60',
 	private: 'private, no-store',
