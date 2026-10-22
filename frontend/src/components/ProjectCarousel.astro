@@ -2,7 +2,7 @@
 import '@glidejs/glide/dist/css/glide.core.min.css';
 import type { LocalizedProject, ProjectFilter } from '../data/projects';
 import ActionLink from './ActionLink.astro';
-import { cloudflareImageUrl } from '../utils/cloudflare-image';
+import { cloudflareImageDensitySrcSet, cloudflareImageUrl } from '../utils/cloudflare-image';
 import type { Copy } from '../i18n';
 
 type Props = {
@@ -68,7 +68,7 @@ const { projects, tags, copy } = Astro.props;
                                                     rel="noreferrer"
                                                     aria-label={copy.projects.openCompanyWebsite}
                                                 >
-                                                    <img class="max-h-full max-w-full object-contain grayscale" src={cloudflareImageUrl(project.logoSrc, { width: 256 })} alt="" loading="lazy" decoding="async" />
+                                                    <img class="h-full w-full object-contain object-left grayscale" src={cloudflareImageUrl(project.logoSrc, { width: 112, height: 56 })} srcset={cloudflareImageDensitySrcSet(project.logoSrc, { width: 112, height: 56 })} alt="" width="112" height="56" loading="lazy" decoding="async" />
                                                 </a>
                                             ) : (
                                                 <div
@@ -76,7 +76,7 @@ const { projects, tags, copy } = Astro.props;
                                                     role="img"
                                                     aria-label={copy.projects.logoLabel}
                                                 >
-                                                    <img class="max-h-full max-w-full object-contain grayscale" src={cloudflareImageUrl(project.logoSrc, { width: 256 })} alt="" loading="lazy" decoding="async" />
+                                                    <img class="h-full w-full object-contain object-left grayscale" src={cloudflareImageUrl(project.logoSrc, { width: 112, height: 56 })} srcset={cloudflareImageDensitySrcSet(project.logoSrc, { width: 112, height: 56 })} alt="" width="112" height="56" loading="lazy" decoding="async" />
                                                 </div>
                                             )
                                         )}
