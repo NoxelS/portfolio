@@ -3,7 +3,7 @@ import { professionalTitle } from './site';
 
 export const operator = {
 	name: 'Noel Pascal Schwabenland',
-	vat: '05812690286',
+	vat: 'IT05812690286',
 	street: 'Via Felice Mendelssohn 1',
 	city: '35132 Padova (PD)',
 	email: 'contact@noel.fyi',

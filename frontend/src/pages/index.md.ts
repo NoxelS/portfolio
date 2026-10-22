@@ -241,7 +241,7 @@ ${operator.street}
 
 ${operator.city}, ${footerLabels.country}
 
-P. IVA ${operator.vat}
+VAT / Partita IVA: ${operator.vat}
 
 ### ${footerLabels.contact}
 
