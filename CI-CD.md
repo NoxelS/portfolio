@@ -118,3 +118,41 @@ Deployment automation must select stable production versions, exclude staging
 and prerelease tags, and pin the selected digest. It must not use the mutable
 frontend-staging tag as a production reference. No production deployment
 resources are managed or created by these workflows.
+
+## Lighthouse deprecated API warnings
+
+Cloudflare can inject `/cdn-cgi/challenge-platform/.../main.js` into HTML
+responses. Its browser probes can trigger the `StorageType.persistent` and
+Protected Audience deprecation warnings even though the application does not
+call either API. On 2026-10-22, Chrome DevTools Protocol reported both `PersistentQuotaType`
+and `Fledge` deprecations at line 1 of the Precursor variant
+(`/cdn-cgi/challenge-platform/scripts/precursor/main.js`).
+
+Public HTML responses send `Cache-Control: no-transform` in both the Astro
+runtime and the legacy Nginx configuration. Cloudflare documents this directive
+as preventing JavaScript Detections injection:
+https://developers.cloudflare.com/cloudflare-challenges/challenge-types/javascript-detections/
+
+The existing cache lifetimes remain in place. This opts these responses out of
+edge transformations; Cloudflare may also skip compression, so check transfer
+sizes after rollout. Assets retain their existing cache and transformation policy.
+
+After deploying, verify **both** `/en/` and `/de/`:
+
+1. Confirm `Cache-Control` includes `no-transform`.
+2. Inspect the delivered HTML and browser network requests for
+   `/cdn-cgi/challenge-platform/` scripts.
+3. Run Lighthouse in a fresh browser session and confirm that the deprecated
+   APIs audit has no warnings. A local build cannot validate edge injection.
+
+The confirmed source is Precursor, a separate Cloudflare zone setting. Its
+documentation does not explicitly guarantee that it honors `no-transform`.
+The rollout therefore also requires setting **Security > Settings > Precursor >
+Status: Off** for `noel.fyi`, then repeating the checks. The header change alone
+is not a verified fix for Precursor. Monitor mode still runs the script. Review rules using
+JavaScript Fingerprinting or `cf.bot_management.js_detection.passed` before
+disabling client-side signals. See:
+https://developers.cloudflare.com/cloudflare-challenges/precursor/
+
+Rollback: remove `no-transform` from the HTML policy in both files. Any separate
+zone setting change must be reverted in the Cloudflare dashboard as well.
