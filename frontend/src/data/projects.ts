@@ -1,3 +1,4 @@
+import { imageAssets } from '../utils/image-assets';
 import type { Locale } from '../i18n';
 
 /** Project records for the portfolio projects carousel.
@@ -93,7 +94,7 @@ const englishProjectSources: EnglishProjectSource[] = [
         ],
         tags: ['Voice Agent', 'Critical Operations'],
         filters: ['highlighted', 'agent-systems', 'speech-voice'],
-        logoSrc: '/assets/companies/netcom.svg',
+        logoSrc: imageAssets.companies.netcom,
         logoAlt: 'NetCom logo',
         companyUrl: 'https://www.netcom.eu/',
     },
@@ -121,7 +122,7 @@ const englishProjectSources: EnglishProjectSource[] = [
         ],
         tags: ['Private AI', 'LLM Platform'],
         filters: ['highlighted', 'llm-systems'],
-        logoSrc: '/assets/companies/netcom.svg',
+        logoSrc: imageAssets.companies.netcom,
         logoAlt: 'NetCom logo',
         companyUrl: 'https://www.netcom.eu/',
     },
@@ -149,7 +150,7 @@ const englishProjectSources: EnglishProjectSource[] = [
         ],
         tags: ['HPC', 'Drug Discovery'],
         filters: ['highlighted', 'research'],
-        logoSrc: '/assets/companies/uds.svg.webp',
+        logoSrc: imageAssets.companies.uds,
         logoAlt: 'Saarland University logo',
         companyUrl: 'https://www.uni-saarland.de/en/home/',
     },
@@ -177,7 +178,7 @@ const englishProjectSources: EnglishProjectSource[] = [
         ],
         tags: ['Simulation', 'Data Analysis'],
         filters: ['research', 'process-automation'],
-        logoSrc: '/assets/companies/kpmg.svg',
+        logoSrc: imageAssets.companies.kpmg,
         logoAlt: 'KPMG logo',
         companyUrl: 'https://kpmg.com/de/de.html',
     },
@@ -205,7 +206,7 @@ const englishProjectSources: EnglishProjectSource[] = [
         ],
         tags: ['Privacy-first', 'Full-stack'],
         filters: ['process-automation'],
-        logoSrc: '/assets/companies/IGS_NiederOlm_farbig.jpg',
+        logoSrc: imageAssets.companies.igs,
         logoAlt: 'IGS Nieder-Olm logo',
         companyUrl: 'https://igsno.de/',
     },
@@ -233,7 +234,7 @@ const englishProjectSources: EnglishProjectSource[] = [
         ],
         tags: ['Deep Learning', 'Biophysics'],
         filters: ['research'],
-        logoSrc: '/assets/companies/uds.svg.webp',
+        logoSrc: imageAssets.companies.uds,
         logoAlt: 'Saarland University logo',
         companyUrl: 'https://www.uni-saarland.de/en/home/',
     },

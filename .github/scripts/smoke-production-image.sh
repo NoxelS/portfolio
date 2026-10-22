@@ -51,6 +51,18 @@ curl --fail --silent --show-error "$base_url/robots.txt" --output "$smoke_dir/ro
 grep --fixed-strings --line-regexp 'Allow: /' "$smoke_dir/robots.txt"
 grep --fixed-strings --line-regexp 'Sitemap: https://noel.fyi/sitemap-index.xml' "$smoke_dir/robots.txt"
 
+# Public authentication discovery must remain accessible without locale redirects.
+curl --fail --silent --show-error --dump-header "$smoke_dir/auth.headers" \
+  --header 'Accept-Language: de' "$base_url/auth.md" --output "$smoke_dir/auth.md"
+tr -d '\r' < "$smoke_dir/auth.headers" | grep --extended-regexp '^HTTP/[0-9.]+ 200( |$)'
+tr -d '\r' < "$smoke_dir/auth.headers" | grep --ignore-case --line-regexp 'content-type: text/markdown; charset=utf-8'
+tr -d '\r' < "$smoke_dir/auth.headers" | grep --ignore-case --line-regexp 'cache-control: public, max-age=300, s-maxage=3600, stale-while-revalidate=600'
+grep --fixed-strings --line-regexp '# auth.md' "$smoke_dir/auth.md"
+for document in index.md llms.txt; do
+  curl --fail --silent --show-error "$base_url/$document" --output "$smoke_dir/$document"
+  grep --fixed-strings --quiet 'https://noel.fyi/auth.md' "$smoke_dir/$document"
+done
+
 for locale in en de; do
   curl --fail --silent --show-error --dump-header "$smoke_dir/$locale.headers" \
     "$base_url/$locale/" --output "$smoke_dir/$locale.html"
@@ -58,9 +70,9 @@ for locale in en de; do
     'cache-control: public, max-age=60, s-maxage=600, stale-while-revalidate=60'
   grep --quiet "<html lang=\"$locale\"" "$smoke_dir/$locale.html"
   # Resizing is a build-time setting: validate the HTML emitted by the actual image.
-  grep --quiet '/cdn-cgi/image/width=192,quality=80,format=auto/profile1.png 192w' "$smoke_dir/$locale.html"
-  grep --quiet '/cdn-cgi/image/width=500,quality=80,format=auto/profile1.png 500w' "$smoke_dir/$locale.html"
-  grep --quiet '/cdn-cgi/image/width=144,height=40,quality=80,format=auto/assets/companies/UNIPD_Marchio_STD_RED.png 1x' "$smoke_dir/$locale.html"
+  grep --extended-regexp --quiet '/cdn-cgi/image/width=192,quality=80,format=auto/_astro/profile1\.[A-Za-z0-9_-]+\.png 192w' "$smoke_dir/$locale.html"
+  grep --extended-regexp --quiet '/cdn-cgi/image/width=500,quality=80,format=auto/_astro/profile1\.[A-Za-z0-9_-]+\.png 500w' "$smoke_dir/$locale.html"
+  grep --extended-regexp --quiet '/cdn-cgi/image/width=144,height=40,quality=80,format=auto/_astro/UNIPD_Marchio_STD_RED\.[A-Za-z0-9_-]+\.png 1x' "$smoke_dir/$locale.html"
   if grep --extended-regexp --quiet '/cdn-cgi/image/[^" ]*\.svg([?" ]|$)' "$smoke_dir/$locale.html"; then
     echo "SVG logos must bypass image transformations." >&2
     exit 1
@@ -70,6 +82,14 @@ for locale in en de; do
     exit 1
   fi
 done
+
+# Fingerprinted source images must use the active Node adapter's immutable
+# asset cache policy. Cloudflare transformations inherit their source policy.
+portrait_path="$(grep --only-matching --extended-regexp '/_astro/profile1\.[A-Za-z0-9_-]+\.png' "$smoke_dir/en.html" | sort -u)"
+curl --fail --silent --show-error --dump-header "$smoke_dir/portrait.headers" \
+  "$base_url$portrait_path" --output /dev/null
+tr -d '\r' < "$smoke_dir/portrait.headers" | grep --ignore-case --line-regexp \
+  'cache-control: public, max-age=31536000, immutable'
 
 curl --fail --silent --show-error "$base_url/sitemap-index.xml" --output "$smoke_dir/sitemap.xml"
 grep --quiet 'https://noel.fyi/sitemap-' "$smoke_dir/sitemap.xml"

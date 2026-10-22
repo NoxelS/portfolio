@@ -1,0 +1,31 @@
+---
+import '../styles/global.css';
+
+const title = 'Portfolio health API';
+---
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>{title} | noel.fyi</title>
+		<link rel="api-catalog" href="/.well-known/api-catalog" />
+	</head>
+	<body class="bg-white text-slate-900">
+		<main class="prose mx-auto max-w-3xl px-6 py-16">
+			<h1>{title}</h1>
+			<p>A public, read-only endpoint for checking whether the portfolio server is responding. No authentication is required.</p>
+			<h2>GET /health</h2>
+			<p>Returns HTTP 200 with an <code>application/json</code> response containing:</p>
+			<ul>
+				<li><code>status</code>: <code>ok</code></li>
+				<li><code>service</code>: <code>portfolio</code></li>
+				<li><code>version</code>: build version, commit SHA, or development fallback</li>
+				<li><code>commit</code>: commit SHA or development fallback</li>
+				<li><code>builtAt</code>: configured build timestamp, or server initialization timestamp as a fallback</li>
+			</ul>
+			<p>This endpoint reports server availability; it does not check external services.</p>
+			<p><a href="/health">View current health</a> · <a href="/openapi.json">OpenAPI specification</a> · <a href="/.well-known/api-catalog">API catalog</a></p>
+		</main>
+	</body>
+</html>

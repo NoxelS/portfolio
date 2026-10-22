@@ -1,3 +1,5 @@
+import { imageAssets } from '../utils/image-assets';
+
 export const professionalTitle = 'Freelance Applied AI Engineer';
 
 export const defaultSeo = {
@@ -7,7 +9,7 @@ export const defaultSeo = {
 	title: `Noel Schwabenland | ${professionalTitle}`,
 	description:
 		`Noel Schwabenland is an EU-based freelance Applied AI Engineer building production AI systems, from inference infrastructure to autonomous agents, with a focus on reliability and data sovereignty.`,
-	image: '/profile1.png',
+	image: imageAssets.portrait,
 	imageType: 'image/png',
 	imageWidth: 500,
 	imageHeight: 500,
