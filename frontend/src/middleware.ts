@@ -1,23 +1,11 @@
 import { defineMiddleware } from 'astro:middleware';
 import { defaultLocale, isLocale, type Locale } from './i18n';
 
-const MARKDOWN_MEDIA_TYPE = 'text/markdown';
-
-function acceptsMarkdown(acceptHeader: string | null): boolean {
-	if (!acceptHeader) return false;
-
-	return acceptHeader.split(',').some((mediaRange) => {
-		const [mediaType, ...parameters] = mediaRange.trim().toLowerCase().split(';');
-		if (mediaType !== MARKDOWN_MEDIA_TYPE) return false;
-
-		const quality = parameters.find((parameter) => parameter.trim().startsWith('q='));
-		return !quality || Number.parseFloat(quality.trim().slice(2)) > 0;
-	});
-}
+import { acceptsMarkdown, markdownResponse, varyAccept } from './lib/markdown.mjs';
 
 export const onRequest = defineMiddleware(async (context, next) => {
 	if (context.url.pathname === '/' && acceptsMarkdown(context.request.headers.get('accept'))) {
-		return context.rewrite('/index.md');
+		return varyAccept(await context.rewrite('/index.md'));
 	}
 
 	if (context.url.pathname === '/') {
@@ -27,7 +15,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			headers: {
 				Location: `/${locale}/`,
 				'Cache-Control': 'private, no-store',
-				Vary: 'Cookie, Accept-Language',
+				Vary: 'Accept, Cookie, Accept-Language',
 			},
 		});
 	}
@@ -47,7 +35,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		});
 	}
 
-	return next();
+	const response = await next();
+	if (!response.headers.get('content-type')?.includes('text/html') || response.status !== 200) return response;
+	varyAccept(response);
+	if (!['GET', 'HEAD'].includes(context.request.method) || !acceptsMarkdown(context.request.headers.get('accept'))) return response;
+	return markdownResponse(response, context.url, context.request.method === 'HEAD');
 });
 
 function preferredLocale(cookie: string | null, acceptLanguage: string | null): Locale {

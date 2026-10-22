@@ -56,7 +56,11 @@ export default defineConfig({
 		plugins: [tailwindcss()],
 	},
 	integrations: [
-		sitemap(),
+		sitemap({
+			// Dynamic legal routes are not discovered by the sitemap integration.
+			customPages: ['en', 'de'].flatMap(locale =>
+				['legal-notice', 'privacy', 'cookies'].map(page => `https://noel.fyi/${locale}/${page}/`)),
+		}),
 		icon({
 			include: {
 				mdi: [
