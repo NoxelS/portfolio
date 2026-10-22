@@ -11,14 +11,14 @@ export const GET: APIRoute = () => {
 
 ## Audience
 
-This document is for AI agents accessing the public portfolio at ${defaultSeo.site}.
+This document is for AI agents accessing the public portfolio at [${defaultSeo.authorName}'s portfolio](${defaultSeo.site}).
 
 ## Public access and credential use
 
 The portfolio is publicly readable. No account, API key, bearer token, or other credential is required to read its pages or machine-readable documents.
 
-- Full portfolio: ${defaultSeo.site}/index.md
-- Overview: ${defaultSeo.site}/llms.txt
+- [Full portfolio](${defaultSeo.site}/index.md)
+- [Overview](${defaultSeo.site}/llms.txt)
 
 ## Agent registration and supported methods
 
