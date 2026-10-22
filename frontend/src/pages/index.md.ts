@@ -265,6 +265,7 @@ ${footerCvDownloadText}
 ## Machine-readable resources
 
 - Markdown portfolio: ${defaultSeo.site}/index.md
+- Authentication and agent registration status: ${defaultSeo.site}/auth.md
 - LLM-friendly overview: ${defaultSeo.site}/llms.txt
 `;
 
