@@ -16,11 +16,12 @@ export default defineConfig({
 			weights: ['400 700'],
 			styles: ['normal', 'italic'],
 			formats: ['woff2'],
-			optimizedFallbacks: false,
+			fallbacks: ['serif'],
+			display: 'optional',
 			options: {
 				variants: [
-					{ weight: '400 700', style: 'italic', src: ['./src/assets/fonts/lora/Lora-italic-variable.woff2'] },
 					{ weight: '400 700', style: 'normal', src: ['./src/assets/fonts/lora/Lora-variable.woff2'] },
+					{ weight: '400 700', style: 'italic', src: ['./src/assets/fonts/lora/Lora-italic-variable.woff2'] },
 				],
 			},
 		},
@@ -31,11 +32,12 @@ export default defineConfig({
 			weights: ['200 900'],
 			styles: ['normal', 'italic'],
 			formats: ['woff2'],
-			optimizedFallbacks: false,
+			fallbacks: ['sans-serif'],
+			display: 'optional',
 			options: {
 				variants: [
-					{ weight: '200 900', style: 'italic', src: ['./src/assets/fonts/source-sans-3/SourceSans3-italic-variable.woff2'] },
 					{ weight: '200 900', style: 'normal', src: ['./src/assets/fonts/source-sans-3/SourceSans3-variable.woff2'] },
+					{ weight: '200 900', style: 'italic', src: ['./src/assets/fonts/source-sans-3/SourceSans3-italic-variable.woff2'] },
 				],
 			},
 		},
