@@ -23,3 +23,22 @@ npm run dev
 ```
 
 Use `npm run build` to create a production build and `npm run preview` to preview it locally.
+
+## API discovery
+
+`GET /.well-known/api-catalog` returns an RFC 9727 Linkset with media type
+`application/linkset+json`. `HEAD` returns the same headers, including an
+`api-catalog` Link relation. The catalog currently lists the public `/health`
+API, with its `/openapi.json` specification and `/api-docs/` documentation.
+Add an `item` link and a corresponding API entry when publishing another API.
+
+After deploying, validate discovery with:
+
+```sh
+curl -sS https://isitagentready.com/api/scan \
+  -H 'Content-Type: application/json' \
+  -d '{"url":"https://noel.fyi"}'
+```
+
+Check `checks.discovery.apiCatalog.status` for `"pass"`. This scanner checks
+the live deployment, so a PR build alone cannot change its result.
