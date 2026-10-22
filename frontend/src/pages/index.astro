@@ -5,6 +5,7 @@
  * Composes the full-page layout: hero (LandingPage), alternating banner
  * quotes, and section blocks (Projects, TechStack, Contact, Footer).
  */
+import { imageAssets } from '../utils/image-assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LandingPage from '../components/LandingPage.astro';
 import ProjectCarousel from '../components/ProjectCarousel.astro';
@@ -54,13 +55,13 @@ const projectFilters = getAllTags(locale);
                 <PartnerLogoCarousel
                     label={localizedCopy.ui.organisations}
                     partners={[
-                        { src: '/assets/companies/netcom.svg', alt: 'NetCom Sicherheitstechnik' },
-                        { src: '/assets/companies/kpmg.svg', alt: 'KPMG' },
-                        { src: '/assets/companies/uds.svg.webp', alt: 'Saarland University' },
-                        { src: '/assets/companies/gip_logo_neg.png', alt: 'GIP Exyr', className: 'brightness-0 invert' },
-                        { src: '/assets/companies/IGS_NiederOlm_farbig.jpg', alt: 'IGS Nieder Olm' },
-                        { src: '/assets/companies/kclogo.svg', alt: 'KuppingerCole Analysts' },
-                        { src: '/assets/companies/UNIPD_Marchio_STD_RED.png', alt: 'University of Padua' },
+                        { src: imageAssets.companies.netcom, alt: 'NetCom Sicherheitstechnik' },
+                        { src: imageAssets.companies.kpmg, alt: 'KPMG' },
+                        { src: imageAssets.companies.uds, alt: 'Saarland University' },
+                        { src: imageAssets.companies.gip, alt: 'GIP Exyr', className: 'brightness-0 invert' },
+                        { src: imageAssets.companies.igs, alt: 'IGS Nieder Olm' },
+                        { src: imageAssets.companies.kuppingerCole, alt: 'KuppingerCole Analysts' },
+                        { src: imageAssets.companies.padua, alt: 'University of Padua' },
 
                     ]}
                 />

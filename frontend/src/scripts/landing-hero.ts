@@ -2,15 +2,15 @@
  * Landing Hero — client-side halftone mesh animation.
  *
  * Progressive enhancement: initialises OGL (WebGL2) instanced rendering with
- * a Canvas 2D fallback on any context / shader failure.  All deformation,
- * intensity, and colour math are preserved verbatim from the original
- * single-script `LandingHero.astro` implementation.
+ * a Canvas 2D fallback on initialization failure. Both renderers share the
+ * same point grid, colour field, and deformation, with GPU instance buffers
+ * uploaded once and only motion uniforms updated during animation.
  *
  * Entry point: call `init(landingEl, frameEl, canvasEl)` with the outer
  * 100 vh landing section, the #mesh-frame div, and the canvas element.
  */
 
-import { Renderer, Program, InstancedMesh } from 'ogl';
+import { Renderer, Program, Geometry, Mesh, type OGLRenderingContext } from 'ogl';
 
 // ---------------------------------------------------------------------------
 // Constants (identical to the original implementation)
@@ -19,7 +19,6 @@ import { Renderer, Program, InstancedMesh } from 'ogl';
 const LOGICAL_WIDTH = 1600;
 const LOGICAL_HEIGHT = 760;
 const SPACING = 10;
-const VERTS_PER_QUAD = 1;
 
 // ---------------------------------------------------------------------------
 // Animation knobs — adjust these values to tune the mesh's feel.
@@ -74,24 +73,15 @@ interface MeshPoint {
 const VERTEX_SHADER = /* glsl */ `#version 300 es
     precision highp float;
 
-    // Per-quad-vertex base position (the quad corners).
-    in vec2 aPosition;
+    in vec2 position;
+    in vec2 sourcePos;
+    in float radius;
+    in float layer;
+    in vec4 color;
 
-    // Per-point index, repeated 4x for the quad vertices.
-    in float aPointIndex;
-
-    // Source position (x, y), repeated 4x per point.
-    in vec2 aSourcePos;
-
-    // Radius, repeated 4x per point.
-    in float aRadius;
-
-    // Colour (rgba), repeated 4x per point.
-    in vec4 aColor;
-
-    uniform mat4 uProjectionMatrix;
+    uniform vec2 uViewport;
+    uniform float uScale;
     uniform vec2 uMeshDimensions;
-    uniform float uTime;
     uniform vec2 uMouse;
 
     out vec4 vColor;
@@ -105,12 +95,9 @@ const VERTEX_SHADER = /* glsl */ `#version 300 es
     }
 
     void main() {
-        // Which point this vertex belongs to.
-        int idx = int(aPointIndex);
-
         // Normalised source position.
-        vec2 uv = aSourcePos / uMeshDimensions;
-        float layerF = aSourcePos.x > 800.0 ? 1.0 : 0.0;
+        vec2 uv = sourcePos / uMeshDimensions;
+        float layerF = layer;
 
         float wave1 = sin(uv.x * 12.0 + uv.y * 7.0 + layerF * 0.7 + uMouse.x * 1.8);
         float wave2 = sin(uv.x * 5.0  - uv.y * 13.0 - layerF * 0.45 + uMouse.y * 1.5);
@@ -122,29 +109,28 @@ const VERTEX_SHADER = /* glsl */ `#version 300 es
                  + 10.0 * cos(uv.x * 4.0 + uv.y * 12.5 + uMouse.x * 1.1)
                  + 4.0 * cos(uv.x * 34.0 + uv.y * 39.0 + uMouse.y * 1.5);
 
-        vec2 lv = vortex(aSourcePos,
+        vec2 lv = vortex(sourcePos,
             vec2(425.0 + uMouse.x * 80.0, 350.0 + uMouse.y * 50.0),
             410.0, layerF == 0.0 ? 0.13 : -0.08);
-        vec2 rv = vortex(aSourcePos,
+        vec2 rv = vortex(sourcePos,
             vec2(1290.0 - uMouse.x * 70.0, 400.0 - uMouse.y * 55.0),
             460.0, layerF == 0.0 ? -0.12 : 0.075);
 
         vec2 centre = vec2(880.0 + uMouse.x * 45.0, 330.0 + uMouse.y * 35.0);
-        vec2 cd   = aSourcePos - centre;
+        vec2 cd   = sourcePos - centre;
         float cf  = exp(-(cd.x * cd.x + cd.y * cd.y) / (350.0 * 350.0));
 
-        vec2 warped = aSourcePos
+        vec2 warped = sourcePos
                     + vec2(dx, dy)
                     + lv + rv
                     + cd * 0.13 * cf;
 
-        vec2 scale = vec2(aRadius * 2.0);
-        vec2 finalPos = warped + aPosition * scale;
+        vec2 finalPos = warped + position * radius;
+        vec2 clip = (finalPos - uMeshDimensions * 0.5) * uScale * 2.0 / uViewport;
+        gl_Position = vec4(clip.x, -clip.y, 0.0, 1.0);
 
-        gl_Position = uProjectionMatrix * vec4(finalPos, 0.0, 1.0);
-
-        vColor      = aColor;
-        vLocalPos   = aPosition * scale;
+        vColor = color;
+        vLocalPos = position;
     }
 `;
 
@@ -156,26 +142,27 @@ const FRAGMENT_SHADER = /* glsl */ `#version 300 es
     out vec4 fragColor;
 
     void main() {
-        float d  = length(vLocalPos) - 1.0;
-        float alpha = 1.0 - smoothstep(0.0, 0.04, d);
+        float d = length(vLocalPos);
+        float edge = fwidth(d);
+        float alpha = 1.0 - smoothstep(1.0 - edge, 1.0, d);
         fragColor = vec4(vColor.rgb, vColor.a * alpha);
     }
 `;
 
 // ---------------------------------------------------------------------------
-// Quad base geometry (TRIANGLE_STRIP: 4 vertices)
+// Two triangles per dot; point attributes are uploaded once per instance.
 // ---------------------------------------------------------------------------
 
-const QUAD_POSITIONS = new Float32Array([-1, -1,  1, -1,  1,  1,  -1,  1]);
+const QUAD_POSITIONS = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
 
 // ---------------------------------------------------------------------------
 // Math helpers (identical to the original implementation)
 // ---------------------------------------------------------------------------
 
 function hslToRgb(hsl: string): [number, number, number] {
-    const m = hsl.match(/(\d+)[°%]?\s*(\d+)[%]?\s*(\d+)[%]?/);
+    const m = hsl.match(/hsl\(([\d.]+) ([\d.]+)% ([\d.]+)%\)/);
     if (!m) return [0.5, 0.5, 0.5];
-    const h = (+m[1] / 360) | 0, s = (+m[2] / 100) | 0, l = (+m[3] / 100) | 0;
+    const h = +m[1] / 360, s = +m[2] / 100, l = +m[3] / 100;
     const c = (1 - Math.abs(2 * l - 1)) * s;
     const x = c * (1 - Math.abs((h * 6) % 2 - 1));
     const m1 = l - c / 2;
@@ -343,49 +330,20 @@ function vortex(
 // ---------------------------------------------------------------------------
 
 interface OglHandle {
-    draw: (points: MeshPoint[], mouseX: number, mouseY: number, time: number) => void;
+    draw: (mouseX: number, mouseY: number) => void;
     resize: () => void;
-    dispose: () => void;
 }
 
-/** Build an orthographic projection matrix: mesh logical coords → NDC with letterboxing. */
-function buildProjectionMatrix(canvasW: number, canvasH: number): Float32Array {
-    const aspect = canvasW / canvasH;
-    const meshAspect = LOGICAL_WIDTH / LOGICAL_HEIGHT;
-
-    // Uniform scale to fit the mesh to the smaller canvas dimension,
-    // preserving aspect ratio (letterboxing).
-    const scale = aspect > meshAspect
-        ? canvasH * meshAspect / canvasW   // canvas is wider → letterbox sides
-        : canvasW / (canvasH * meshAspect); // canvas is taller → letterbox top/bottom
-
-    const l = -LOGICAL_WIDTH * scale / 2;
-    const r =  LOGICAL_WIDTH * scale / 2;
-    const t =  LOGICAL_HEIGHT * scale / 2;
-    const b = -LOGICAL_HEIGHT * scale / 2;
-
-    // Orthographic projection (column-major).
-    const m = new Float32Array(16);
-    m[0]  = 2 / (r - l);        m[2]  = 0;                  m[8]  = -(r + l) / (r - l); m[12] = 0;
-    m[1]  = 0;                  m[5]  = 2 / (t - b);        m[9]  = -(t + b) / (t - b); m[13] = 0;
-    m[3]  = 0;                  m[7]  = 0;                  m[11] = -1;                 m[15] = 1;
-    m[4]  = 0;                  m[6]  = 0;                  m[10] = 0;                 m[14] = 0;
-    return m;
-}
-
-function initOgl(
-    canvas: HTMLCanvasElement,
-    points: MeshPoint[],
-): OglHandle | null {
+function initOgl(canvas: HTMLCanvasElement, points: MeshPoint[]): OglHandle | null {
     try {
-        // ── WebGL context & renderer ────────────────────────────────────
-        const gl = canvas.getContext('webgl2', { alpha: true, depth: false });
+        // Choose WebGL before requesting any other context on this canvas.
+        const gl = canvas.getContext('webgl2', { alpha: true, depth: false, antialias: false }) as OGLRenderingContext | null;
         if (!gl) return null;
-
-        const renderer = new Renderer({ canvas, alpha: true, depth: false, antialias: false });
-        renderer.gl.clearColor(0, 0, 0, 0);
-
-        // ── Shader program ──────────────────────────────────────────────
+        const renderer = new Renderer({
+            canvas, alpha: true, depth: false, antialias: false,
+            dpr: Math.min(window.devicePixelRatio || 1, 1.5),
+        });
+        gl.clearColor(0, 0, 0, 0);
         const program = new Program(gl, {
             vertex: VERTEX_SHADER,
             fragment: FRAGMENT_SHADER,
@@ -394,127 +352,42 @@ function initOgl(
             depthTest: false,
             depthWrite: false,
             uniforms: {
-                uProjectionMatrix: { value: new Float32Array(16) },
-                uMeshDimensions:   { value: new Float32Array([LOGICAL_WIDTH, LOGICAL_HEIGHT]) },
-                uTime:             { value: 0 },
-                uMouse:            { value: new Float32Array([0, 0]) },
+                uViewport: { value: new Float32Array(2) },
+                uScale: { value: 1 },
+                uMeshDimensions: { value: new Float32Array([LOGICAL_WIDTH, LOGICAL_HEIGHT]) },
+                uMouse: { value: new Float32Array(2) },
             },
         });
+        if (!gl.getProgramParameter(program.program, gl.LINK_STATUS)) return null;
 
-        // ── Base quad geometry (non-instanced, 4 vertices) ──────────────
-        const baseGeom = new Geometry(gl, {
+        const geometry = new Geometry(gl, {
             position: { data: QUAD_POSITIONS, size: 2 },
+            sourcePos: { data: new Float32Array(points.flatMap(p => [p.sourceX, p.sourceY])), size: 2, instanced: 1 },
+            radius: { data: new Float32Array(points.map(p => p.radius)), size: 1, instanced: 1 },
+            layer: { data: new Float32Array(points.map(p => p.layer)), size: 1, instanced: 1 },
+            color: { data: new Float32Array(points.flatMap(p => [p._r, p._g, p._b, p.alpha])), size: 4, instanced: 1 },
         });
-
-        // ── Per-vertex data buffers (duplicated 4× for TRIANGLE_STRIP)
-        //     Each point contributes 4 vertices; per-point data is repeated
-        //     for all 4 vertices. This avoids relying on gl_InstanceID or
-        //     instanced attribute divisors, making it compatible with all
-        //     OGL rendering paths.
-        const totalVerts = points.length * VERTS_PER_QUAD;
-
-        // aPointIndex: [0,0,0,0, 1,1,1,1, 2,2,2,2, …]
-        const pointIndexData = new Float32Array(totalVerts);
-        // aSourcePos: [sx,sy, sx,sy, sx,sy, sx,sy, …]  (8 floats per point)
-        const sourcePosData = new Float32Array(totalVerts * 2);
-        // aRadius: [r,r,r,r, r,r,r,r, …]  (4 floats per point)
-        const radiusData = new Float32Array(totalVerts);
-        // aColor: [r,g,b,a, r,g,b,a, …]  (16 floats per point)
-        const colorData = new Float32Array(totalVerts * 4);
-
-        // Pre-fill all per-vertex data (static — uploaded once).
-        for (let i = 0; i < points.length; i++) {
-            const pt = points[i];
-            const o = i * VERTS_PER_QUAD;
-
-            // Point index (same for all 4 vertices).
-            for (let v = 0; v < VERTS_PER_QUAD; v++) {
-                pointIndexData[o + v] = i;
-            }
-
-            // Source position (repeated 4×).
-            const so = o * 2;
-            sourcePosData[so]     = pt.sourceX;
-            sourcePosData[so + 1] = pt.sourceY;
-            sourcePosData[so + 2] = pt.sourceX;
-            sourcePosData[so + 3] = pt.sourceY;
-            sourcePosData[so + 4] = pt.sourceX;
-            sourcePosData[so + 5] = pt.sourceY;
-            sourcePosData[so + 6] = pt.sourceX;
-            sourcePosData[so + 7] = pt.sourceY;
-
-            // Radius (repeated 4×).
-            for (let v = 0; v < VERTS_PER_QUAD; v++) {
-                radiusData[o + v] = pt.radius;
-            }
-
-            // Colour (static).
-            const r = pt._r, g = pt._g, b = pt._b, a = pt.alpha;
-            const co = o * 4;
-            for (let v = 0; v < VERTS_PER_QUAD; v++) {
-                const vo = co + v * 4;
-                colorData[vo]     = r;
-                colorData[vo + 1] = g;
-                colorData[vo + 2] = b;
-                colorData[vo + 3] = a;
-            }
-        }
-
-        // ── Instanced geometry (all attributes flat per-vertex) ─────────
-        //     All attributes are per-vertex (non-instanced). The geometry's
-        //     instancedCount is set to points.length each frame so that
-        //     InstancedMesh.draw() calls drawArraysInstanced(…, count, N).
-        const instGeom = new Geometry(gl, {
-            position:   { data: QUAD_POSITIONS,      size: 2 },
-            pointIndex: { data: pointIndexData,       size: 1 },
-            sourcePos:  { data: sourcePosData,        size: 2 },
-            radius:     { data: radiusData,           size: 1 },
-            color:      { data: colorData,            size: 4 },
-        });
-
-        const mesh = new InstancedMesh(instGeom, program);
-        mesh.frustumCulled = false;
-
-        const scene = {
-            children: [mesh],
-            traverse: (cb: (n: any) => void) => { for (const c of scene.children) cb(c); },
-            updateMatrixWorld: () => {},
-        };
-
-        // ── Projection matrix (updated on resize) ───────────────────────
-        let cw = renderer.width, ch = renderer.height;
-        let projectionMatrix = buildProjectionMatrix(cw, ch);
+        const mesh = new Mesh(gl, { geometry, program, frustumCulled: false });
 
         function resize() {
-            const b = canvas.getBoundingClientRect();
-            const nw = Math.max(1, Math.round(b.width));
-            const nh = Math.max(1, Math.round(b.height));
-            if (nw === cw && nh === ch) return;
-            cw = nw; ch = nh;
-            renderer.setSize(nw, nh);
-            projectionMatrix = buildProjectionMatrix(nw, nh);
+            const bounds = canvas.parentElement!.getBoundingClientRect();
+            const width = Math.max(1, Math.round(bounds.width));
+            const height = Math.max(1, Math.round(bounds.height));
+            renderer.setSize(width, height);
+            // Keep Tailwind's responsive dimensions instead of OGL's fixed size.
+            canvas.style.removeProperty('width');
+            canvas.style.removeProperty('height');
+            program.uniforms.uViewport.value.set([width, height]);
+            program.uniforms.uScale.value = Math.max(width / LOGICAL_WIDTH, height / LOGICAL_HEIGHT);
+        }
+
+        function draw(mouseX: number, mouseY: number) {
+            program.uniforms.uMouse.value.set([mouseX, mouseY]);
+            renderer.render({ scene: mesh, sort: false, frustumCull: false });
         }
 
         resize();
-
-        // ── Draw (uniforms only; buffer data is static) ─────────────────
-        function draw(_points: MeshPoint[], mouseX: number, mouseY: number, time: number) {
-            program.uniforms.uTime.value = time;
-            program.uniforms.uMouse.value[0] = mouseX;
-            program.uniforms.uMouse.value[1] = mouseY;
-            program.uniforms.uProjectionMatrix.value = projectionMatrix;
-
-            instGeom.instancedCount = points.length;
-
-            renderer.render({ scene, camera: null, clear: true, sort: false, frustumCull: false });
-        }
-
-        // ── Disposal ────────────────────────────────────────────────────
-        function dispose() {
-            try { program.remove(); baseGeom.remove(); instGeom.remove(); } catch { /* noop */ }
-        }
-
-        return { draw, resize, dispose };
+        return { draw, resize };
     } catch {
         return null;
     }
@@ -534,8 +407,6 @@ function initOgl(
  * @param canvasEl  - The `<canvas id="mesh-canvas">` inside the frame.
  */
 export function init(landingEl: HTMLElement, frameEl: HTMLElement, canvasEl: HTMLCanvasElement) {
-    const ctx = canvasEl.getContext('2d', { alpha: true, desynchronized: true });
-
     // Build the full point grid (both layers, secondary first so primary on top).
     const points: MeshPoint[] = [...createPoints(1), ...createPoints(0)];
 
@@ -584,18 +455,30 @@ export function init(landingEl: HTMLElement, frameEl: HTMLElement, canvasEl: HTM
 
     // --- OGL handle (optional) ----------------------------------------
     const ogl = initOgl(canvasEl, points);
-    if (ogl) ogl.resize();
+    let ctx: CanvasRenderingContext2D | null = null;
+    if (!ogl) {
+        // A failed shader/context initialization may already own the canvas.
+        // Replace it so Canvas 2D can always acquire a fresh context.
+        const fallbackCanvas = canvasEl.cloneNode(false) as HTMLCanvasElement;
+        canvasEl.replaceWith(fallbackCanvas);
+        canvasEl = fallbackCanvas;
+        canvasEl.style.removeProperty('width');
+        canvasEl.style.removeProperty('height');
+        ctx = canvasEl.getContext('2d', { alpha: true, desynchronized: true });
+    }
+    canvasEl.dataset.meshRenderer = ogl ? 'webgl2' : 'canvas2d';
 
-    // --- Canvas 2D first frame (instant) ------------------------------
-    drawFallback(ctx, points);
+    const drawCurrentFrame = () => {
+        const motion = meshMotion();
+        if (ogl) ogl.draw(motion.x, motion.y);
+        else drawFallback(ctx, points, motion.x, motion.y);
+    };
+    drawCurrentFrame();
 
     // --- ResizeObserver (observe the mesh frame, not the full landing) --
     const resizeObs = new ResizeObserver(() => {
         if (ogl) ogl.resize();
-        if (canAnimate()) {
-            const motion = meshMotion();
-            drawFallback(ctx, points, motion.x, motion.y);
-        }
+        drawCurrentFrame();
     });
     resizeObs.observe(frameEl);
 
@@ -605,8 +488,7 @@ export function init(landingEl: HTMLElement, frameEl: HTMLElement, canvasEl: HTM
             visible = entry.isIntersecting;
             if (canAnimate()) {
                 if (ogl) ogl.resize();
-                const motion = meshMotion();
-                drawFallback(ctx, points, motion.x, motion.y);
+                drawCurrentFrame();
                 startLoop();
             } else {
                 stopLoop();
@@ -621,8 +503,7 @@ export function init(landingEl: HTMLElement, frameEl: HTMLElement, canvasEl: HTM
         pageVisible = document.visibilityState === 'visible';
         if (canAnimate()) {
             if (ogl) ogl.resize();
-            const motion = meshMotion();
-            drawFallback(ctx, points, motion.x, motion.y);
+            drawCurrentFrame();
             startLoop();
         } else {
             stopLoop();
@@ -633,10 +514,11 @@ export function init(landingEl: HTMLElement, frameEl: HTMLElement, canvasEl: HTM
     reducedMotion.addEventListener('change', () => {
         if (canAnimate()) {
             if (ogl) ogl.resize();
-            const motion = meshMotion();
-            drawFallback(ctx, points, motion.x, motion.y);
+            drawCurrentFrame();
+            startLoop();
         } else {
             stopLoop();
+            drawCurrentFrame();
         }
     });
 
@@ -689,19 +571,13 @@ export function init(landingEl: HTMLElement, frameEl: HTMLElement, canvasEl: HTM
         velocityY *= Math.exp(-POINTER_VELOCITY_DAMPING * deltaSeconds);
 
         if (now - lastDraw >= DRAW_INTERVAL_MS) {
-            const motion = meshMotion();
-
-            if (ogl) {
-                ogl.draw(points, motion.x, motion.y, animTime);
-            } else {
-                drawFallback(ctx, points, motion.x, motion.y);
-            }
+            drawCurrentFrame();
             lastDraw = now;
         }
 
         rafId = requestAnimationFrame(loop);
     }
 
-    // Kick off — 2D fallback renders immediately; OGL takes over on first frame.
     startLoop();
+    return canvasEl;
 }
