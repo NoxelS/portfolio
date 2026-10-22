@@ -8,7 +8,7 @@ type Partner = {
     className?: string;
 };
 
-import { cloudflareImageUrl } from '../utils/cloudflare-image';
+import { cloudflareImageDensitySrcSet, cloudflareImageUrl } from '../utils/cloudflare-image';
 
 const { partners, label } = Astro.props as { partners: Partner[]; label: string };
 const carouselPartners = [...partners, ...partners, ...partners];
@@ -19,12 +19,15 @@ const carouselPartners = [...partners, ...partners, ...partners];
         {carouselPartners.map((partner, index) => (
             <div class="group flex h-12 w-36 shrink-0 items-center justify-center" data-partner-logo-item aria-hidden={index >= partners.length ? 'true' : undefined}>
                 <img
-                    src={cloudflareImageUrl(partner.src, { width: 320 })}
+                    src={cloudflareImageUrl(partner.src, { width: 144, height: 40 })}
+                    srcset={cloudflareImageDensitySrcSet(partner.src, { width: 144, height: 40 })}
                     alt={index < partners.length ? partner.alt : ''}
                     class:list={[
-                        'max-h-10 max-w-full opacity-80 transition-opacity duration-300 group-hover:opacity-100',
+                        'h-10 w-36 object-contain opacity-80 transition-opacity duration-300 group-hover:opacity-100',
                         partner.className ?? 'grayscale invert mix-blend-screen',
                     ]}
+                    width="144"
+                    height="40"
                     loading="lazy"
                     decoding="async"
                 />
