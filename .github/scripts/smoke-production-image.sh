@@ -57,6 +57,14 @@ for locale in en de; do
   tr -d '\r' < "$smoke_dir/$locale.headers" | grep --ignore-case --line-regexp \
     'cache-control: public, max-age=60, s-maxage=600, stale-while-revalidate=60'
   grep --quiet "<html lang=\"$locale\"" "$smoke_dir/$locale.html"
+  # Resizing is a build-time setting: validate the HTML emitted by the actual image.
+  grep --quiet '/cdn-cgi/image/width=192,quality=80,format=auto/profile1.png 192w' "$smoke_dir/$locale.html"
+  grep --quiet '/cdn-cgi/image/width=500,quality=80,format=auto/profile1.png 500w' "$smoke_dir/$locale.html"
+  grep --quiet '/cdn-cgi/image/width=144,height=40,quality=80,format=auto/assets/companies/UNIPD_Marchio_STD_RED.png 1x' "$smoke_dir/$locale.html"
+  if grep --extended-regexp --quiet '/cdn-cgi/image/[^" ]*\.svg([?" ]|$)' "$smoke_dir/$locale.html"; then
+    echo "SVG logos must bypass image transformations." >&2
+    exit 1
+  fi
   if grep --extended-regexp --quiet '<meta[^>]*name="robots"[^>]*content="[^"]*noindex' "$smoke_dir/$locale.html"; then
     echo "The production $locale homepage must be indexable." >&2
     exit 1
@@ -66,4 +74,4 @@ done
 curl --fail --silent --show-error "$base_url/sitemap-index.xml" --output "$smoke_dir/sitemap.xml"
 grep --quiet 'https://noel.fyi/sitemap-' "$smoke_dir/sitemap.xml"
 
-echo "Production image passed health, version, HTTPS redirects, cache headers, locale, robots, and sitemap checks."
+echo "Production image passed health, version, HTTPS redirects, cache headers, locale, responsive images, robots, and sitemap checks."
