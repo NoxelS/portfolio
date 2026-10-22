@@ -51,6 +51,18 @@ curl --fail --silent --show-error "$base_url/robots.txt" --output "$smoke_dir/ro
 grep --fixed-strings --line-regexp 'Allow: /' "$smoke_dir/robots.txt"
 grep --fixed-strings --line-regexp 'Sitemap: https://noel.fyi/sitemap-index.xml' "$smoke_dir/robots.txt"
 
+# Public authentication discovery must remain accessible without locale redirects.
+curl --fail --silent --show-error --dump-header "$smoke_dir/auth.headers" \
+  --header 'Accept-Language: de' "$base_url/auth.md" --output "$smoke_dir/auth.md"
+tr -d '\r' < "$smoke_dir/auth.headers" | grep --extended-regexp '^HTTP/[0-9.]+ 200( |$)'
+tr -d '\r' < "$smoke_dir/auth.headers" | grep --ignore-case --line-regexp 'content-type: text/markdown; charset=utf-8'
+tr -d '\r' < "$smoke_dir/auth.headers" | grep --ignore-case --line-regexp 'cache-control: public, max-age=300, s-maxage=3600, stale-while-revalidate=600'
+grep --fixed-strings --line-regexp '# auth.md' "$smoke_dir/auth.md"
+for document in index.md llms.txt; do
+  curl --fail --silent --show-error "$base_url/$document" --output "$smoke_dir/$document"
+  grep --fixed-strings --quiet 'https://noel.fyi/auth.md' "$smoke_dir/$document"
+done
+
 for locale in en de; do
   curl --fail --silent --show-error --dump-header "$smoke_dir/$locale.headers" \
     "$base_url/$locale/" --output "$smoke_dir/$locale.html"
