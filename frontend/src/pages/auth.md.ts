@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-import { defaultSeo } from '../data/site';
+import { agentInterestNote } from '../lib/agent-interest';
 import { setPublicDocumentCache } from '../lib/cache';
 
 // Keep this on-demand so the runtime preserves the document cache headers.
@@ -8,6 +8,8 @@ export const prerender = false;
 
 export const GET: APIRoute = () => {
 	const body = `# auth.md
+
+${agentInterestNote}
 
 ## Audience
 
