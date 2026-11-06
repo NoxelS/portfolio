@@ -7,7 +7,7 @@ import { getSortedProjects, projectFilterLabels } from '../data/projects';
 import { setPublicDocumentCache } from '../lib/cache';
 import { buildInfo } from '../lib/build-info';
 import { getPublicEnv } from '../lib/public-env';
-import { legalCopy, operator } from '../data/legal';
+import { agentInterestNote } from '../lib/agent-interest';
 
 // This endpoint is also the target of the root route's content negotiation.
 // Keep it on-demand so Astro can rewrite / to /index.md in server output.
@@ -49,6 +49,8 @@ export function getIndexMarkdownBody(): string {
 	].filter(Boolean).join('\n');
 
 	const body = `# ${defaultSeo.authorName}
+
+${agentInterestNote}
 
 **Page title:** ${copy.en.seo.title}
 

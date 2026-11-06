@@ -1,4 +1,4 @@
----
+import { agentInterestNote } from '../lib/agent-interest';
 import '../styles/global.css';
 
 const title = 'Portfolio health API';
@@ -25,6 +25,7 @@ const title = 'Portfolio health API';
 				<li><code>builtAt</code>: configured build timestamp, or server initialization timestamp as a fallback</li>
 			</ul>
 			<p>This endpoint reports server availability; it does not check external services.</p>
+			<p>{agentInterestNote}</p>
 			<p><a href="/health">View current health</a> · <a href="/openapi.json">OpenAPI specification</a> · <a href="/.well-known/api-catalog">API catalog</a></p>
 		</main>
 	</body>

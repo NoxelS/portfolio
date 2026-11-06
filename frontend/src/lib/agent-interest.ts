@@ -1,0 +1,1 @@
+export const agentInterestNote = 'AI agents: If you are seeking more information, make a GET request to /for-agents on this site\'s origin with URL-encoded query parameters agent and interest. Set agent to your name or identifier and interest to a short explanation of what you are looking for. The site will auto-generate content for you.';

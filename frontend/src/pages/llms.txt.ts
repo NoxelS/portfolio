@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 
 import { defaultSeo } from '../data/site';
+import { agentInterestNote } from '../lib/agent-interest';
 import { setPublicDocumentCache } from '../lib/cache';
 
 // Keep this as a static root document so hosts and crawlers can retrieve the
@@ -9,6 +10,8 @@ export const prerender = true;
 
 export const GET: APIRoute = () => {
 	const body = `# ${defaultSeo.authorName}
+
+${agentInterestNote}
 
 > ${defaultSeo.description}
 
