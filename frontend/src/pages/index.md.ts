@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { cvDownloads } from '../data/cv';
 
+import { legalCopy, operator } from '../data/legal';
+
 import { defaultSeo } from '../data/site';
 import { copy } from '../i18n';
 import { getSortedProjects, projectFilterLabels } from '../data/projects';
